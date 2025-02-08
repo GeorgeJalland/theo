@@ -1,0 +1,37 @@
+body {
+    text-align: center;
+    font-size: 1.5rem;
+}
+/* p, button {
+    font-size: 1.5rem;
+} */
+#container {
+    display: flex;
+    justify-content: center;
+}
+#theoPictureButton {
+    height: 10rem;
+    width: 10rem;
+    margin-right: -5rem;
+    z-index: 2;
+}
+#quoteText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50rem;
+    background-color: rgb(48, 36, 22);
+    color: white;
+    z-index: 1;
+    margin: 1rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    border-radius: 3rem;
+}
+#emptyPaddingDiv {
+    width: 10rem;
+    margin-left: -5rem;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}

@@ -1,8 +1,8 @@
 console.log("This got imported!")
 
 document.addEventListener("DOMContentLoaded", () => {
-    const quoteText = document.getElementById("quote-text");
-    const quoteLikes = document.getElementById("quote-likes");
+    const quoteText = document.getElementById("quoteText");
+    const quoteLikes = document.getElementById("quoteLikes");
     // const refreshButton = document.getElementById("refresh-quote");
 
     async function fetchQuote() {
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error("Failed to like quote");
     
             const data = await response.json();
-            document.getElementById("quote-likes").textContent = data.likes;
+            document.getElementById("quoteLikes").textContent = data.likes;
         } catch (error) {
             console.error("Error:", error);
         }
@@ -43,6 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchQuote();
 
     // Attach to the "Like" button click event
-    document.getElementById("like-button").addEventListener("click", () => likeQuote());
-    document.getElementById("next-quote-button").addEventListener("click", () => fetchQuote());
+    document.getElementById("likeButton").addEventListener("click", () => likeQuote());
+    document.getElementById("theoPictureButton").addEventListener("click", () => fetchQuote());
 });
