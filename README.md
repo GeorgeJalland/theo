@@ -17,6 +17,18 @@ sqlite3 app.db
 
 Table creation will be handled by SQLModel library
 
+### Run App Locally
+
+**Api**
+```
+fastapi dev app/main.py
+```
+
+**Client**
+```
+python3 -m http.server --directory app/static/ 5500
+```
+
 ### Docker
 
 ### Deployment
