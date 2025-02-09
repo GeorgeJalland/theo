@@ -2,13 +2,13 @@ import json
 from fastapi import FastAPI, Depends, HTTPException, Response, Cookie
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import create_engine, Session, select, SQLModel, func
-from models import Quote
+from models import Quote, Counter
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5500"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -24,14 +24,23 @@ def get_session():
 
 @app.get("/quote")
 async def get_quote(response: Response, quote_id: int = Cookie(1), session: Session = Depends(get_session)):
+    quotes_served = session.exec(select(Counter)).first()
+    quotes_served.served += 1
+    session.add(quotes_served)
+    session.commit()
+
     next_quote_id = get_next_quote_id(session, quote_id)
 
     statement = select(Quote).where(Quote.id == next_quote_id)
     quote = session.exec(statement).first()
 
-    print(next_quote_id)
     response.set_cookie(key="quote_id", value=quote.id)
     return quote
+
+@app.get("/quotes-served")
+async def get_quotes_served(session: Session = Depends(get_session)):
+    quotes_served = session.exec(select(Counter)).first()
+    return {"quotes_served": quotes_served.served}
 
 @app.put("/like-quote")
 async def like_quote(response: Response, quote_id: int = Cookie(None), liked_quotes: str= Cookie(None), session: Session = Depends(get_session)):
@@ -60,7 +69,6 @@ async def like_quote(response: Response, quote_id: int = Cookie(None), liked_quo
 def get_next_quote_id(session: Session, current_id: int) -> int:
     max_id = get_max_id(session)
     return (current_id % max_id) + 1
-
 
 def get_max_id(session: Session) -> int:
     statement = select(func.max(Quote.id))

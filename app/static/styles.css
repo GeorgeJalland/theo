@@ -1,37 +1,99 @@
-body {
-    text-align: center;
-    font-size: 1.5rem;
+@font-face {
+    font-family: 'posh';
+    src: url('./fonts/Tangerine-Regular.ttf');
 }
-/* p, button {
-    font-size: 1.5rem;
-} */
-#container {
+body {
+    color: white;
+    text-align: center;
+    font-size: 2rem;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    background-image: url("./images/f2b617fdfb8e851.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed; /* Keeps background fixed on scroll */
+}
+header {
+    font-size: 3rem;
+    font-family: 'posh';
+}
+h1 {
+    margin-top: 2rem;
+    text-decoration: underline;
+    text-decoration-thickness: 4px;
+}
+#mainContainer {
     display: flex;
     justify-content: center;
+    margin-top: 6rem;
 }
 #theoPictureButton {
     height: 10rem;
     width: 10rem;
     margin-right: -5rem;
     z-index: 2;
+    transition: filter 0.1s ease-in-out, transform 0.1s ease-in-out;
+    cursor: pointer;
 }
-#quoteText {
+#theoPictureButton:active {
+    transform: scale(0.7); /* Shrinks the image on click */
+    filter: saturate(0.5)
+}
+#theoPictureButton:hover {
+    filter: saturate(1.5)
+}
+#quoteContainer {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 50rem;
-    background-color: rgb(48, 36, 22);
-    color: white;
+    background-color: rgb(228, 216, 216);
+    color: black;
     z-index: 1;
     margin: 1rem;
     padding-left: 3rem;
     padding-right: 3rem;
-    border-radius: 3rem;
+    border-radius: 2rem;
+    border: solid black 5px;
+    box-shadow: -2px -2px 5px black;
+}
+#innerQuoteContainer {
+}
+#likeButton {
+    height: 1.5rem;
+    width: 1.5rem;
+    transition: filter 0.1s ease-in-out, transform 0.1s ease-in-out;
+    cursor: pointer;
+}
+#likeButton:hover {
+    filter:invert(0.5);
+}
+#likeButton:active {
+    transform: scale(0.7);
+}
+#likesOverlay {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    bottom: 10px;
+    right: 10px;
 }
 #emptyPaddingDiv {
+    height: 10rem;
     width: 10rem;
     margin-left: -5rem;
     display: flex;
     align-items: center;
     justify-content: right;
+}
+#quoteLikes {
+    padding-right: 0.4rem;
+    font-size: 1.5rem;
+}
+#metaContainer {
+    font-size: 1rem;
+    display: flex;
+    justify-content: center;
 }

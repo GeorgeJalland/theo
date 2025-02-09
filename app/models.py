@@ -4,3 +4,7 @@ class Quote(SQLModel, table=True):
    id: int = Field(primary_key=True, index=True)
    text: str
    likes: int
+
+class Counter(SQLModel, table=True):
+   id: int = Field(primary_key=True, index=True)
+   served: int

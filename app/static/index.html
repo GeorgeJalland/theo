@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A simple webpage">
+    <meta name="description" content="Simple website displaying some of Theo Von's best quotes, user's can like their favourite quotes.">
     <title>Theo Von Quotes</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="./images/theo_2.png">
     <script src="script.js" defer></script>
 </head>
 <body>
@@ -14,12 +15,26 @@
     </header>
     
     <main>
-        <div id="container">
+        <div id="mainContainer">
             <img src="./images/theo_2.png" id="theoPictureButton" />
-            <div id="quoteText"></div>
+            <div id="quoteContainer">
+                <div id="innerQuoteContainer">
+                    <span class="speechMarks">"</span>
+                    <span id="quoteText"></span>
+                    <span class="speechMarks">"</span>
+                </div>
+                <div id="likesOverlay">
+                    <div id="quoteLikes"></div>
+                    <img src="images/like-button.png" id="likeButton" />
+                </div>
+            </div>
             <div id="emptyPaddingDiv">
-                <div id="quoteLikes">0</div>
-                <div id="likeButton">👍</div>
+            </div>
+        </div>
+        <div id="metaContainer">
+            <div>
+                <div>Quote's Served:</div>
+                <div id="servedCount"></div>
             </div>
         </div>
     </main>
