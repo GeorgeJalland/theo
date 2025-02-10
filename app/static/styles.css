@@ -59,6 +59,11 @@ h1 {
 #theoPictureButton:hover {
     filter: saturate(1.5)
 }
+#quotesServed {
+    position: absolute;
+    font-size: 1rem;
+    width: 10rem;
+}
 #quoteContainer {
     position: relative;
     display: flex;
@@ -110,7 +115,4 @@ h1 {
     font-size: 1.5rem;
 }
 #metaContainer {
-    font-size: 1rem;
-    display: flex;
-    justify-content: center;
 }
