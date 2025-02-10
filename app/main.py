@@ -1,4 +1,5 @@
 import json
+import urllib.parse
 from fastapi import FastAPI, Depends, HTTPException, Response, Cookie
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import create_engine, Session, select, SQLModel, func
@@ -42,28 +43,31 @@ async def get_quotes_served(session: Session = Depends(get_session)):
     quotes_served = session.exec(select(Counter)).first()
     return {"quotes_served": quotes_served.served}
 
-@app.put("/like-quote")
-async def like_quote(response: Response, quote_id: int = Cookie(None), liked_quotes: str= Cookie(None), session: Session = Depends(get_session)):
+@app.put("/like-quote/{quote_id}")
+async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cookie(None), session: Session = Depends(get_session)):
     if not liked_quotes:
         liked_quotes_list = []
     else:
-        liked_quotes_list = json.loads(liked_quotes)
-
-    if quote_id in liked_quotes_list:
-        raise HTTPException(status_code=304, detail="Quote Already Liked")
+        liked_quotes_list =  json.loads(urllib.parse.unquote(liked_quotes))
 
     quote = session.exec(select(Quote).where(Quote.id == quote_id)).first()
 
     if not quote:
         raise HTTPException(status_code=404, detail="Quote not found")
 
-    quote.likes += 1
+    if quote_id not in liked_quotes_list:
+        quote.likes += 1
+        liked_quotes_list.append(quote_id)
+    else:
+        quote.likes -= 1
+        liked_quotes_list.remove(quote_id)
+
     session.add(quote)
     session.commit()
     session.refresh(quote)
 
-    liked_quotes_list.append(quote_id)
-    response.set_cookie(key="liked_quotes", value=json.dumps(liked_quotes_list))
+    encoded_quotes_list = urllib.parse.quote(json.dumps(liked_quotes_list))
+    response.set_cookie(key="liked_quotes", value=encoded_quotes_list)
     return {"id": quote.id, "likes": quote.likes}
 
 def get_next_quote_id(session: Session, current_id: int) -> int:

@@ -14,11 +14,11 @@ body {
     background-attachment: fixed; /* Keeps background fixed on scroll */
 }
 header {
-    font-size: 3rem;
+    font-size: 3vw;
     font-family: 'posh';
 }
 h1 {
-    margin-top: 2rem;
+    margin-top: 5vh;
     text-decoration: underline;
     text-decoration-thickness: 4px;
 }
@@ -26,7 +26,7 @@ h1 {
     position: relative;
     display: flex;
     justify-content: center;
-    margin-top: 6rem;
+    margin-top: 20vh;
 }
 #clickMe {
     position: absolute;
@@ -87,9 +87,13 @@ h1 {
     width: 1.5rem;
     transition: filter 0.1s ease-in-out, transform 0.1s ease-in-out;
     cursor: pointer;
+    filter:invert(0.6);
+}
+.quoteLiked {
+    filter:invert(0) !important;
 }
 #likeButton:hover {
-    filter:invert(0.5);
+    filter:invert(0);
 }
 #likeButton:active {
     transform: scale(0.7);
