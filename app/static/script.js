@@ -3,10 +3,13 @@ console.log("script.js got imported!")
 const quoteText = document.getElementById("quoteText");
 const quoteLikes = document.getElementById("quoteLikes");
 const quotesServedCount = document.getElementById("servedCount");
+const likeButton = document.getElementById("likeButton");
+const apiBase = window.location.protocol + '//' + window.location.hostname
+const apiPort = "8000"
 
 async function fetchQuote() {
     try {
-        const response = await fetch("http://localhost:8000/quote", {
+        const response = await fetch(buildApiString("quote"), {
             method: "GET",
             credentials: "include"
         });
@@ -15,7 +18,8 @@ async function fetchQuote() {
         quoteText.textContent = data.text;
         quoteLikes.textContent = data.likes;
 
-        setLikeButtonColourWhenQuoteIsLiked(data.id);
+        setLikeButtonColourWhenQuoteIsLiked(likeButton, data.has_user_liked_quote);
+        await fetchQuotesServedCount();
 
     } catch (error) {
         quoteText.textContent = "Error loading quote.";
@@ -25,7 +29,7 @@ async function fetchQuote() {
 
 async function fetchQuotesServedCount() {
     try {
-        const response = await fetch("http://localhost:8000/quotes-served", {
+        const response = await fetch(buildApiString("quotes-served"), {
             method: "GET"
         });
         if (!response.ok) throw new Error("Failed to fetch");
@@ -39,9 +43,9 @@ async function fetchQuotesServedCount() {
 }
 
 async function likeQuote() {
-    const quoteId = getCookie("quote_id");
+    setLikeButtonColourWhenGoingToLikeQuote(likeButton);
     try {
-        const response = await fetch(`http://localhost:8000/like-quote/` + quoteId, {
+        const response = await fetch(buildApiString("like-quote"), {
             method: "PUT",
             credentials: "include"
         });
@@ -51,48 +55,37 @@ async function likeQuote() {
         const data = await response.json();
         document.getElementById("quoteLikes").textContent = data.likes;
 
-        setLikeButtonColourWhenQuoteIsLiked(quoteId);
-
     } catch (error) {
         console.error("Error:", error);
     }
 }
 
-function setLikeButtonColourWhenQuoteIsLiked(quoteId) {
-    const likeButton = document.getElementById("likeButton")
-    if (isQuoteLiked(quoteId)) {
-        likeButton.classList.add("quoteLiked");
+function buildApiString(endpoint){
+    return apiBase + ':' + apiPort + '/' + endpoint
+}
+
+function setLikeButtonColourWhenQuoteIsLiked(element, hasUserLikedQuote) {
+    if (hasUserLikedQuote) {
+        element.classList.add("quoteLiked");
     } else {
-        likeButton.classList.remove("quoteLiked");
+        element.classList.remove("quoteLiked");
     }
 }
 
-function isQuoteLiked (quoteId) {
-    return getCookie("liked_quotes").includes(quoteId)
-}
-
-// Function to get the value of a specific cookie by name
-function getCookie(name) {
-    const cookieArr = document.cookie.split('; ');
-    for (let i = 0; i < cookieArr.length; i++) {
-        const [key, value] = cookieArr[i].split('=');
-        if (key === name) {
-            return decodeAndParseCookie(value);
-        }
+function setLikeButtonColourWhenGoingToLikeQuote(element) {
+    // If we are going to like quote, then quote won't be liked yet so we can pre-empt colour change
+    // This means Page instantly renders colour change; don't have to wait for api response
+    const is_quote_liked = element.classList.contains("quoteLiked")
+    if (!is_quote_liked) {
+        element.classList.add("quoteLiked");
+    } else {
+        element.classList.remove("quoteLiked");
     }
-    return null; // If cookie is not found
 }
 
-function decodeAndParseCookie(cookie) {
-    const decodedCookie = decodeURIComponent(cookie)
-    return JSON.parse(decodedCookie)
-}
-
-fetchQuotesServedCount();
 fetchQuote();
 
 document.getElementById("likeButton").addEventListener("click", () => likeQuote());
 document.getElementById("theoPictureButton").addEventListener("click", () => {
-    fetchQuotesServedCount();
     fetchQuote();
 });
