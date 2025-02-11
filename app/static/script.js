@@ -4,6 +4,8 @@ const quoteText = document.getElementById("quoteText");
 const quoteLikes = document.getElementById("quoteLikes");
 const quotesServedCount = document.getElementById("servedCount");
 const likeButton = document.getElementById("likeButton");
+const theoPictureButton = document.getElementById("theoPictureButton");
+
 const apiBase = window.location.protocol + '//' + window.location.hostname
 const apiPort = "8000"
 
@@ -53,7 +55,7 @@ async function likeQuote() {
         if (!response.ok) throw new Error("Failed to like quote");
 
         const data = await response.json();
-        document.getElementById("quoteLikes").textContent = data.likes;
+        quoteLikes.textContent = data.likes;
 
     } catch (error) {
         console.error("Error:", error);
@@ -85,7 +87,5 @@ function setLikeButtonColourWhenGoingToLikeQuote(element) {
 
 fetchQuote();
 
-document.getElementById("likeButton").addEventListener("click", () => likeQuote());
-document.getElementById("theoPictureButton").addEventListener("click", () => {
-    fetchQuote();
-});
+likeButton.addEventListener("click", () => likeQuote());
+theoPictureButton.addEventListener("click", () => fetchQuote());

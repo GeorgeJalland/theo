@@ -1,5 +1,6 @@
 import random
 import bisect
+from itertools import accumulate
 
 class Random:
     # need to unit test this and add docstrings, also add print function or equivalent to see properties
@@ -29,18 +30,15 @@ class Random:
         return random_ranges
 
     def _calculate_cumulative_probablities(self) -> list[float]:
-        cum_probabilities = []
+        probabilities = []
         total = self._max - len(self._exclude)
-        prev_probability = 0
         for start, end in self._random_ranges:
             weight = end - start
-            probability = (weight / total)
-            cum_probabilities.append(probability + prev_probability)
-            prev_probability = probability
-        return cum_probabilities
+            probabilities.append(weight / total)
+        return list(accumulate(probabilities))
 
 if __name__ == "__main__":
-    randomGen = Random(max=10, exclude=[1, 6, 10])
+    randomGen = Random(max=6, exclude=[1, 2, 3])
     print(f"ranges: {randomGen._random_ranges}")
     print(f"cum: {randomGen._cumulative_probabilities}")
     for i in range(10):
