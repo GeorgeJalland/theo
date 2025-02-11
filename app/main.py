@@ -28,30 +28,20 @@ async def startup_event():
 
 @app.get("/quote")
 async def get_quote(response: Response, liked_quotes: str = Cookie(None), prev_quote_ids: str = Cookie(None), session: AsyncSession = Depends(get_session)):
-    # Organise this function
-    liked_quotes_list = read_cookie_list_value(liked_quotes)
+    await increment_quotes_served(session)
+
     prev_quote_ids_list = read_cookie_list_value(prev_quote_ids)
     prev_quote_ids_deque = deque(prev_quote_ids_list, maxlen=DEQUE_MAX_LENGTH)
 
-    # put this in function
-    result = await session.execute(select(Counter))
-    quotes_served = result.scalar()
-    quotes_served.served += 1
-    session.add(quotes_served)
-    await session.commit()
-
     next_quote_id = await get_next_quote_id(session, prev_quote_ids_list)
     prev_quote_ids_deque.append(next_quote_id)
-    has_user_liked_quote = next_quote_id in liked_quotes_list
+    response.set_cookie(key="prev_quote_ids", value=encode_and_jsonify_list(list(prev_quote_ids_deque)), httponly=True)
 
-    statement = select(Quote).where(Quote.id == next_quote_id)
-    result = await session.execute(statement)
-    quote = result.scalar()
+    has_user_liked_quote = next_quote_id in read_cookie_list_value(liked_quotes)
 
-    encoded_prev_quote_ids = encode_and_jsonify_list(list(prev_quote_ids_deque))
-
+    quote = await get_quote_record(session, next_quote_id)
     response.set_cookie(key="quote_id", value=quote.id, httponly=True)
-    response.set_cookie(key="prev_quote_ids", value=encoded_prev_quote_ids, httponly=True)
+
     return {**quote.model_dump() , "has_user_liked_quote": has_user_liked_quote}
 
 @app.get("/quotes-served")
@@ -84,6 +74,22 @@ async def like_quote(response: Response, quote_id: int = Cookie(), liked_quotes:
     encoded_quotes_list = encode_and_jsonify_list(liked_quotes_list)
     response.set_cookie(key="liked_quotes", value=encoded_quotes_list, httponly=True)
     return {"id": quote.id, "likes": quote.likes}
+
+@app.post("/clear-cookies")
+async def clear_cookies(response: Response):
+    response.delete_cookie
+
+async def get_quote_record(session: AsyncSession, quote_id: int) -> Quote:
+    statement = select(Quote).where(Quote.id == quote_id)
+    result = await session.execute(statement)
+    return result.scalar()
+
+async def increment_quotes_served(session: AsyncSession) -> None:
+    result = await session.execute(select(Counter))
+    quotes_served = result.scalar()
+    quotes_served.served += 1
+    session.add(quotes_served)
+    await session.commit()
 
 def read_cookie_list_value(cookie: str) -> list:
     if not cookie:
