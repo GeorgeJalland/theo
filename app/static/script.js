@@ -5,11 +5,35 @@ const quoteLikes = document.getElementById("quoteLikes");
 const quotesServedCount = document.getElementById("servedCount");
 const likeButton = document.getElementById("likeButton");
 const theoPictureButton = document.getElementById("theoPictureButton");
+const likeArrow = document.getElementById("arrow2");
+const likeMe = document.getElementById("likeMe");
+const theoArrow = document.getElementById("arrow");
+const clickMe = document.getElementById("clickMe");
 
 const apiBase = window.location.protocol + '//' + window.location.hostname
 const apiPort = "8000"
 
 let quote_id = 0
+let userHasClickedLike = false
+let userHasClickedTheo = false
+
+async function handleClickLike(quote_id) {
+    if (!userHasClickedLike) {
+        hideElement(likeArrow)
+        hideElement(likeMe)
+    }
+    await likeQuote(quote_id)
+    userHasClickedLike = true
+}
+
+async function handleClickTheo() {
+    if (!userHasClickedTheo) {
+        hideElement(theoArrow)
+        hideElement(clickMe)
+    }
+    await fetchQuote()
+    userHasClickedTheo = true
+}
 
 async function fetchQuote() {
     try {
@@ -65,6 +89,10 @@ async function likeQuote(quote_id) {
     }
 }
 
+function hideElement(element) {
+    element.classList.add("hide")
+}
+
 function buildApiString(endpoint){
     return apiBase + ':' + apiPort + '/' + endpoint
 }
@@ -90,5 +118,5 @@ function setLikeButtonColourWhenGoingToLikeQuote(element) {
 
 fetchQuote();
 
-likeButton.addEventListener("click", () => likeQuote(quote_id));
-theoPictureButton.addEventListener("click", () => fetchQuote());
+likeButton.addEventListener("click", () => handleClickLike(quote_id));
+theoPictureButton.addEventListener("click", () => handleClickTheo());

@@ -147,6 +147,9 @@ h1 {
 }
 #metaContainer {
 }
+.hide {
+    display: none;
+}
 
 /* mobile styling */
 @media screen and (max-width: 768px) {
