@@ -2,10 +2,15 @@
     font-family: 'posh';
     src: url('./fonts/Tangerine-Regular.ttf');
 }
+@font-face{
+    font-family: 'playful';
+    src: url('./fonts/Knewave-Regular.ttf');
+
+}
 body {
     color: white;
     text-align: center;
-    font-size: 2rem;
+    font-size: 1.6rem;
     display: flex;
     align-items: center;
     gap: 12vh;
@@ -16,10 +21,9 @@ body {
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed; /* Keeps background fixed on scroll */
-    border: solid black 2px;
 }
 header {
-    font-size: 3vw;
+    font-size: 2.5rem;
     font-family: 'posh';
 }
 h1 {
@@ -31,13 +35,14 @@ h1 {
     position: relative;
     display: flex;
     justify-content: center;
-    border: solid black 2px;
     width: 60vw;
 }
 #clickMe {
     position: absolute;
-    top: -3.5rem;
+    top: -3.8rem;
     left: -10.5rem;
+    font-family: 'playful';
+    font-size: 1.7rem;
 }
 #arrow {
     position: absolute;
@@ -109,16 +114,32 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    bottom: 10px;
-    right: 10px;
+    bottom: 0.8rem;
+    right: 0.8rem;
 }
 #emptyPaddingDiv {
+    position: relative;
+}
+#emptyDiv {
     height: 10rem;
     width: 10rem;
     margin-left: -5rem;
-    display: flex;
-    align-items: center;
-    justify-content: right;
+
+}
+#likeMe {
+    position: absolute;
+    bottom: -6.8rem;
+    right: -5rem;
+    font-family: 'playful';
+    font-size: 1.7rem;
+}
+#arrow2 {
+    position: absolute;
+    height: 8rem;
+    width: 8rem;
+    bottom: -4rem;
+    right: -2.5rem;
+    transform: rotate(180deg);
 }
 #quoteLikes {
     padding-right: 0.4rem;
@@ -139,13 +160,24 @@ h1 {
         width: 100vw;
     }
     #clickMe {
-        top: -10rem;
-        left: 12rem;
+        top: -9.5rem;
+        left: 10.5rem;
+        width: 10rem;
     }
     #arrow {
-        display: block;
         top: -9rem;
         left: 3rem;
         transform: rotate(90deg);
+    }
+    #arrow2 {
+        bottom: -7.5rem;
+        right: 6.5rem;
+        transform: rotate(270deg);
+    }
+    #likeMe {
+        bottom: -8rem;
+        right: 14rem;
+        font-size: 1.7rem;
+        width: 10rem;
     }
 }
