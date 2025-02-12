@@ -9,6 +9,8 @@ const theoPictureButton = document.getElementById("theoPictureButton");
 const apiBase = window.location.protocol + '//' + window.location.hostname
 const apiPort = "8000"
 
+let quote_id = 0
+
 async function fetchQuote() {
     try {
         const response = await fetch(buildApiString("quote"), {
@@ -19,6 +21,7 @@ async function fetchQuote() {
         const data = await response.json();
         quoteText.textContent = data.text;
         quoteLikes.textContent = data.likes;
+        quote_id = data.id
 
         setLikeButtonColourWhenQuoteIsLiked(likeButton, data.has_user_liked_quote);
         await fetchQuotesServedCount();
@@ -44,10 +47,10 @@ async function fetchQuotesServedCount() {
     }
 }
 
-async function likeQuote() {
+async function likeQuote(quote_id) {
     setLikeButtonColourWhenGoingToLikeQuote(likeButton);
     try {
-        const response = await fetch(buildApiString("like-quote"), {
+        const response = await fetch(buildApiString("like-quote" + "/" + quote_id), {
             method: "PUT",
             credentials: "include"
         });
@@ -87,5 +90,5 @@ function setLikeButtonColourWhenGoingToLikeQuote(element) {
 
 fetchQuote();
 
-likeButton.addEventListener("click", () => likeQuote());
+likeButton.addEventListener("click", () => likeQuote(quote_id));
 theoPictureButton.addEventListener("click", () => fetchQuote());

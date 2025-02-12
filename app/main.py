@@ -40,7 +40,6 @@ async def get_quote(response: Response, liked_quotes: str = Cookie(None), prev_q
     has_user_liked_quote = next_quote_id in read_cookie_list_value(liked_quotes)
 
     quote = await get_quote_record(session, next_quote_id)
-    response.set_cookie(key="quote_id", value=quote.id, httponly=True)
 
     return {**quote.model_dump() , "has_user_liked_quote": has_user_liked_quote}
 
@@ -50,8 +49,8 @@ async def get_quotes_served(session: AsyncSession = Depends(get_session)):
     quotes_served = result.scalar()
     return {"quotes_served": quotes_served.served}
 
-@app.put("/like-quote")
-async def like_quote(response: Response, quote_id: int = Cookie(), liked_quotes: str= Cookie(None), session: AsyncSession = Depends(get_session)):
+@app.put("/like-quote/{quote_id}")
+async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cookie(None), session: AsyncSession = Depends(get_session)):
     liked_quotes_list = read_cookie_list_value(liked_quotes)
 
     result = await session.execute(select(Quote).where(Quote.id == quote_id))
