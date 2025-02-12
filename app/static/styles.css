@@ -183,4 +183,8 @@ h1 {
         font-size: 1.7rem;
         width: 10rem;
     }
+    body{
+        background-image: url("./images/0d9a3e9958673e4.png");
+        color: black;
+    }
 }
