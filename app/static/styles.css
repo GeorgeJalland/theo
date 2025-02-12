@@ -6,12 +6,17 @@ body {
     color: white;
     text-align: center;
     font-size: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 12vh;
+    flex-direction: column;
     font-family:Georgia, 'Times New Roman', Times, serif;
     background-image: url("./images/f2b617fdfb8e851.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed; /* Keeps background fixed on scroll */
+    border: solid black 2px;
 }
 header {
     font-size: 3vw;
@@ -26,7 +31,8 @@ h1 {
     position: relative;
     display: flex;
     justify-content: center;
-    margin-top: 20vh;
+    border: solid black 2px;
+    width: 60vw;
 }
 #clickMe {
     position: absolute;
@@ -119,4 +125,27 @@ h1 {
     font-size: 1.5rem;
 }
 #metaContainer {
+}
+
+/* mobile styling */
+@media screen and (max-width: 768px) {
+    html {
+        font-size: 8px;
+    }
+    header {
+        font-size: 6vw;
+    }
+    #mainContainer {
+        width: 100vw;
+    }
+    #clickMe {
+        top: -10rem;
+        left: 12rem;
+    }
+    #arrow {
+        display: block;
+        top: -9rem;
+        left: 3rem;
+        transform: rotate(90deg);
+    }
 }
