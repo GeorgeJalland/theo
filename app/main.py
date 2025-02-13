@@ -63,11 +63,10 @@ async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cooki
 
     session.add(quote)
     await session.commit()
-    await session.refresh(quote)
 
     encoded_quotes_list = encode_and_jsonify_list(liked_quotes_list)
     response.set_cookie(key="liked_quotes", value=encoded_quotes_list, httponly=True)
-    return {"id": quote.id, "likes": quote.likes}
+    return None
 
 async def get_quote_record(session: AsyncSession, quote_id: int) -> Quote:
     statement = select(Quote).where(Quote.id == quote_id)

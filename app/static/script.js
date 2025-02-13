@@ -14,16 +14,19 @@ const apiBase = window.location.protocol + '//' + window.location.hostname
 const apiPort = "8000"
 
 let quote_id = 0
+let quoteIsLiked = false
 let userHasClickedLike = false
 let userHasClickedTheo = false
+let quotesServed = 0
 
-async function handleClickLike(quote_id) {
+function handleClickLike(quote_id) {
     if (!userHasClickedLike) {
         hideElement(likeArrow)
         hideElement(likeMe)
         userHasClickedLike = true
     }
-    await likeQuote(quote_id)
+    setLikeButtonColourAndValue(likeButton, quoteLikes)
+    likeQuote(quote_id)
 }
 
 async function handleClickTheo() {
@@ -32,23 +35,25 @@ async function handleClickTheo() {
         hideElement(clickMe)
         userHasClickedTheo = true
     }
-    await fetchQuote()
+    fetchQuote()
 }
 
 async function fetchQuote() {
+    quotesServed += 1;
+    quotesServedCount.textContent = quotesServed.toLocaleString();
     try {
         const response = await fetch(buildApiString("quote"), {
             method: "GET",
             credentials: "include"
         });
         if (!response.ok) throw new Error("Failed to fetch");
+
         const data = await response.json();
         quoteText.textContent = data.text;
         quoteLikes.textContent = data.likes;
-        quote_id = data.id
 
-        setLikeButtonColourWhenQuoteIsLiked(likeButton, data.has_user_liked_quote);
-        await fetchQuotesServedCount();
+        quote_id = data.id;
+        setLikeButtonColourInitial(likeButton, data.has_user_liked_quote);
 
     } catch (error) {
         quoteText.textContent = "Error loading quote.";
@@ -63,6 +68,7 @@ async function fetchQuotesServedCount() {
         });
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
+        quotesServed = data.quotes_served
         quotesServedCount.textContent = data.quotes_served.toLocaleString();
 
     } catch (error) {
@@ -72,17 +78,12 @@ async function fetchQuotesServedCount() {
 }
 
 async function likeQuote(quote_id) {
-    setLikeButtonColourWhenGoingToLikeQuote(likeButton);
     try {
         const response = await fetch(buildApiString("like-quote" + "/" + quote_id), {
             method: "PUT",
             credentials: "include"
         });
-
         if (!response.ok) throw new Error("Failed to like quote");
-
-        const data = await response.json();
-        quoteLikes.textContent = data.likes;
 
     } catch (error) {
         console.error("Error:", error);
@@ -97,25 +98,27 @@ function buildApiString(endpoint){
     return apiBase + ':' + apiPort + '/' + endpoint
 }
 
-function setLikeButtonColourWhenQuoteIsLiked(element, hasUserLikedQuote) {
+function setLikeButtonColourInitial(likeButtonLocal, hasUserLikedQuote) {
+    quoteIsLiked = hasUserLikedQuote
     if (hasUserLikedQuote) {
-        element.classList.add("quoteLiked");
+        likeButtonLocal.classList.add("quoteLiked");
     } else {
-        element.classList.remove("quoteLiked");
+        likeButtonLocal.classList.remove("quoteLiked");
     }
 }
 
-function setLikeButtonColourWhenGoingToLikeQuote(element) {
-    // If we are going to like quote, then quote won't be liked yet so we can pre-empt colour change
-    // This means Page instantly renders colour change; don't have to wait for api response
-    const is_quote_liked = element.classList.contains("quoteLiked")
-    if (!is_quote_liked) {
-        element.classList.add("quoteLiked");
+function setLikeButtonColourAndValue(likeButtonLocal, quoteLikesLocal) {
+    if (quoteIsLiked) {
+        quoteLikesLocal.textContent = parseInt(quoteLikesLocal.textContent) - 1
+        likeButtonLocal.classList.remove("quoteLiked");
     } else {
-        element.classList.remove("quoteLiked");
+        quoteLikesLocal.textContent = parseInt(quoteLikesLocal.textContent) + 1
+        likeButtonLocal.classList.add("quoteLiked");
     }
+    quoteIsLiked = !quoteIsLiked
 }
 
+fetchQuotesServedCount();
 fetchQuote();
 
 likeButton.addEventListener("click", () => handleClickLike(quote_id));
