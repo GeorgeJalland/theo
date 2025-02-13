@@ -21,18 +21,18 @@ async function handleClickLike(quote_id) {
     if (!userHasClickedLike) {
         hideElement(likeArrow)
         hideElement(likeMe)
+        userHasClickedLike = true
     }
     await likeQuote(quote_id)
-    userHasClickedLike = true
 }
 
 async function handleClickTheo() {
     if (!userHasClickedTheo) {
         hideElement(theoArrow)
         hideElement(clickMe)
+        userHasClickedTheo = true
     }
     await fetchQuote()
-    userHasClickedTheo = true
 }
 
 async function fetchQuote() {
