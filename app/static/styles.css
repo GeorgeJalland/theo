@@ -37,19 +37,35 @@ h1 {
     justify-content: center;
     width: 60vw;
 }
-#clickMe {
+#clickMe, #likeMe {
     position: absolute;
-    top: -3.8rem;
-    left: -10.5rem;
     font-family: 'playful';
     font-size: 1.7rem;
+    transition: opacity 1s ease-out;
 }
-#arrow {
+#clickMe {
+    top: -3.8rem;
+    left: -10.5rem;
+}
+#likeMe {
+    bottom: -6.8rem;
+    right: -5rem;
+}
+#arrow, #arrow2 {
     position: absolute;
     height: 8rem;
     width: 8rem;
+    transition: opacity 1s ease-out;
+}
+#arrow {
+    width: 8rem;
     top: -1rem;
     left: -8rem;
+}
+#arrow2 {
+    bottom: -4rem;
+    right: -2.5rem;
+    transform: rotate(180deg);;
 }
 #theoHeadContainer{
     position: relative;
@@ -126,21 +142,6 @@ h1 {
     margin-left: -5rem;
 
 }
-#likeMe {
-    position: absolute;
-    bottom: -6.8rem;
-    right: -5rem;
-    font-family: 'playful';
-    font-size: 1.7rem;
-}
-#arrow2 {
-    position: absolute;
-    height: 8rem;
-    width: 8rem;
-    bottom: -4rem;
-    right: -2.5rem;
-    transform: rotate(180deg);
-}
 #quoteLikes {
     padding-right: 0.4rem;
     font-size: 1.5rem;
@@ -148,7 +149,7 @@ h1 {
 #metaContainer {
 }
 .hide {
-    display: none;
+    opacity: 0;
 }
 
 /* mobile styling */
@@ -171,11 +172,13 @@ h1 {
         top: -9rem;
         left: 3rem;
         transform: rotate(90deg);
+        filter: invert(1);
     }
     #arrow2 {
         bottom: -7.5rem;
         right: 6.5rem;
         transform: rotate(270deg);
+        filter: invert(1);
     }
     #likeMe {
         bottom: -8rem;
