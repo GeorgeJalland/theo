@@ -154,15 +154,41 @@ h1 {
     opacity: 0;
 }
 
+/* animations */
+
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-0.4rem); }
 }
 
+@keyframes grow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+}
+@keyframes grow2 {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(2); }
+}
+@keyframes grow3 {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(2.5); }
+}
+
 .bounce {
     animation: bounce 0.5s ease-in-out;
 }
-
+.grow {
+    animation: grow 1s linear;
+    color:  rgb(205, 127, 50); /* bronze */
+}
+.grow2 {
+    animation: grow2 1s linear;
+    color: silver;
+}
+.grow3 {
+    animation: grow3 1s linear;
+    color: gold;
+}
 /* mobile styling */
 @media screen and (max-width: 768px) {
     html {

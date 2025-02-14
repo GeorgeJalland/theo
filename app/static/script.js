@@ -9,6 +9,7 @@ const likeArrow = document.getElementById("arrow2");
 const likeMe = document.getElementById("likeMe");
 const theoArrow = document.getElementById("arrow");
 const clickMe = document.getElementById("clickMe");
+const innerQuoteContainer = document.getElementById("innerQuoteContainer")
 
 const apiBase = window.location.protocol + '//' + window.location.hostname
 const apiPort = "8000"
@@ -40,7 +41,7 @@ async function handleClickTheo() {
 
 async function fetchQuote() {
     quotesServed += 1;
-    quotesServedCount.textContent = quotesServed.toLocaleString();
+    setQuoteValueAndAnimation(quotesServed)
     try {
         const response = await fetch(buildApiString("quote"), {
             method: "GET",
@@ -49,7 +50,7 @@ async function fetchQuote() {
         if (!response.ok) throw new Error("Failed to fetch");
 
         const data = await response.json();
-        updateTextWithAnimation(quoteText, data.text)
+        updateTextWithAnimation(innerQuoteContainer, quoteText, data.text, 'bounce', 500)
         quoteLikes.textContent = data.likes;
 
         quote_id = data.id;
@@ -90,12 +91,30 @@ async function likeQuote(quote_id) {
     }
 }
 
-function updateTextWithAnimation(element, newText) {
+
+function setQuoteValueAndAnimation(quotesServed) {
+    animation = getAnimationTypeFromCount(quotesServed, ['grow', 'grow2', 'grow3'])
+    if (!animation) {
+        quotesServedCount.textContent = quotesServed.toLocaleString()
+        return
+    }
+    updateTextWithAnimation(quotesServedCount, quotesServedCount, quotesServed.toLocaleString(), animation, 1000)
+};
+
+function getAnimationTypeFromCount(count, options) {
+    // This checks to see if count is multiple of powers of 10 and returns corresponding animation options
+    for (let i = 0; i < options.length; i++) {
+        if (count % 10**(i+1) != 0) return options[i-1];
+    }
+    return options[options.length-1]
+}
+
+function updateTextWithAnimation(containerElement, element, newText, animation, duration) {
     element.textContent = newText;
-    document.getElementById("innerQuoteContainer").classList.add("bounce");
+    containerElement.classList.add(animation);
     setTimeout(() => {
-        document.getElementById("innerQuoteContainer").classList.remove("bounce");
-    }, 500);
+        containerElement.classList.remove(animation);
+    }, duration);
 }
 
 function hideElement(element) {
