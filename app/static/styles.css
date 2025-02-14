@@ -152,6 +152,15 @@ h1 {
     opacity: 0;
 }
 
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-0.4rem); }
+}
+
+.bounce {
+    animation: bounce 0.5s ease-in-out;
+}
+
 /* mobile styling */
 @media screen and (max-width: 768px) {
     html {

@@ -7,7 +7,7 @@ from sqlmodel import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
 
-from db import get_session, init_db
+from db import get_session, init_db, AsyncSessionLocal
 from models import Quote, Counter
 
 app = FastAPI()
@@ -20,11 +20,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DEQUE_MAX_LENGTH = 10
-
 @app.on_event("startup")
 async def startup_event():
     await init_db()
+    async with AsyncSessionLocal() as session:
+        app.state.QUOTE_MAX_ID = await get_max_quote_id(session)
+
 
 @app.get("/quote")
 async def get_quote(response: Response, quote_id: int = Cookie(None), liked_quotes: str = Cookie(None), session: AsyncSession = Depends(get_session)):
@@ -68,13 +69,19 @@ async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cooki
     response.set_cookie(key="liked_quotes", value=encoded_quotes_list, httponly=True)
     return None
 
+async def get_max_quote_id(session: AsyncSession) -> int:
+    statement = select(func.max(Quote.id))
+    result = await session.execute(statement)
+    max_id = result.scalar()
+    return max_id
+
 async def get_quote_record(session: AsyncSession, quote_id: int) -> Quote:
     statement = select(Quote).where(Quote.id == quote_id)
     result = await session.execute(statement)
     return result.scalar()
 
 async def increment_quotes_served() -> None:
-    async for session in get_session():
+    async with AsyncSessionLocal() as session:
         result = await session.execute(select(Counter))
         quotes_served = result.scalar()
         quotes_served.served += 1
@@ -94,17 +101,11 @@ def encode_and_jsonify_list(list_input: str):
     return urllib.parse.quote(json.dumps(list_input))
 
 async def get_next_quote(session: AsyncSession, current_id: int) -> Quote:
-    max_id = await get_max_quote_id(session)
-    next_id = (current_id % max_id) + 1
+    print(app.state.QUOTE_MAX_ID)
+    next_id = (current_id % app.state.QUOTE_MAX_ID) + 1
     next_quote = await session.execute(select(Quote).where(Quote.id == next_id))
     return next_quote.scalar()
 
 async def get_random_quote_id(session: AsyncSession) -> int:
     max_id = await get_max_quote_id(session)
     return random.randint(1, max_id)
-
-async def get_max_quote_id(session: AsyncSession) -> int:
-    statement = select(func.max(Quote.id))
-    result = await session.execute(statement)
-    max_id = result.scalar()
-    return max_id

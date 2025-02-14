@@ -49,7 +49,7 @@ async function fetchQuote() {
         if (!response.ok) throw new Error("Failed to fetch");
 
         const data = await response.json();
-        quoteText.textContent = data.text;
+        updateTextWithAnimation(quoteText, data.text)
         quoteLikes.textContent = data.likes;
 
         quote_id = data.id;
@@ -88,6 +88,14 @@ async function likeQuote(quote_id) {
     } catch (error) {
         console.error("Error:", error);
     }
+}
+
+function updateTextWithAnimation(element, newText) {
+    element.textContent = newText;
+    document.getElementById("innerQuoteContainer").classList.add("bounce");
+    setTimeout(() => {
+        document.getElementById("innerQuoteContainer").classList.remove("bounce");
+    }, 500);
 }
 
 function hideElement(element) {
