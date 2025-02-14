@@ -21,6 +21,7 @@ body {
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed; /* Keeps background fixed on scroll */
+    text-shadow: 0.2rem 0.2rem 0.5rem black;
 }
 header {
     font-size: 2.5rem;
@@ -104,8 +105,9 @@ h1 {
     padding-left: 3rem;
     padding-right: 3rem;
     border-radius: 2rem;
-    border: solid black 5px;
-    box-shadow: -2px -2px 5px black;
+    border: solid black 0.25rem;
+    box-shadow: 0.2rem 0.2rem 0.5rem black;
+    text-shadow: none;
 }
 #innerQuoteContainer {
 }
@@ -195,8 +197,12 @@ h1 {
         font-size: 1.7rem;
         width: 10rem;
     }
+    #quotesServed {
+        font-size: 1.2rem;
+    }
     body{
         background-image: url("./images/0d9a3e9958673e4.png");
         color: black;
+        text-shadow: 0.2rem 0.2rem 0.5rem grey;
     }
 }
