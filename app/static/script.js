@@ -12,7 +12,8 @@ const clickMe = document.getElementById("clickMe");
 const innerQuoteContainer = document.getElementById("innerQuoteContainer")
 
 const apiBase = window.location.protocol + '//' + window.location.hostname
-const apiPort = "7000"
+const apiRoot = "/api"
+const apiPort = ""
 
 let quote_id = 0
 let quoteIsLiked = false
@@ -44,7 +45,7 @@ async function fetchQuote() {
     quotesServed += 1;
     setValueAndAnimation(quotesServedCount, quotesServed, ['grow', 'grow2', 'grow3'], setLocaleString=true)
     try {
-        const response = await fetch(buildApiString("quote"), {
+        const response = await fetch(buildApiString("/quote"), {
             method: "GET",
             credentials: "include"
         });
@@ -65,7 +66,7 @@ async function fetchQuote() {
 
 async function fetchQuotesServedCount() {
     try {
-        const response = await fetch(buildApiString("quotes-served"), {
+        const response = await fetch(buildApiString("/quotes-served"), {
             method: "GET"
         });
         if (!response.ok) throw new Error("Failed to fetch");
@@ -81,7 +82,7 @@ async function fetchQuotesServedCount() {
 
 async function likeQuote(quote_id) {
     try {
-        const response = await fetch(buildApiString("like-quote" + "/" + quote_id), {
+        const response = await fetch(buildApiString("/like-quote" + "/" + quote_id), {
             method: "PUT",
             credentials: "include"
         });
@@ -125,7 +126,7 @@ function hideElement(element) {
 }
 
 function buildApiString(endpoint){
-    return apiBase + ':' + apiPort + '/' + endpoint
+    return apiBase + ':' + apiPort + apiRoot + endpoint
 }
 
 function setLikeButtonColourInitial(likeButtonLocal, hasUserLikedQuote) {

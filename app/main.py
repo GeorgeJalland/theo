@@ -10,7 +10,7 @@ import asyncio
 from app.db import get_session, init_db, AsyncSessionLocal
 from app.models import Quote, Counter
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 
 app.add_middleware(
     CORSMiddleware,
