@@ -7,8 +7,8 @@ from sqlmodel import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
 
-from db import get_session, init_db, AsyncSessionLocal
-from models import Quote, Counter
+from app.db import get_session, init_db, AsyncSessionLocal
+from app.models import Quote, Counter
 
 app = FastAPI()
 

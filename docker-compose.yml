@@ -1,0 +1,12 @@
+services:
+  theo:
+    build:
+      context: .
+      dockerfile: ./dockerfile
+    image: theo
+    ports:
+      - "7000:7000"
+    volumes:
+      - type: bind
+        source: ./app/instance
+        target: /code/app/instance

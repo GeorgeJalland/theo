@@ -12,7 +12,7 @@ const clickMe = document.getElementById("clickMe");
 const innerQuoteContainer = document.getElementById("innerQuoteContainer")
 
 const apiBase = window.location.protocol + '//' + window.location.hostname
-const apiPort = "8000"
+const apiPort = "7000"
 
 let quote_id = 0
 let quoteIsLiked = false
