@@ -70,3 +70,13 @@ git pull origin master
 docker compose build
 docker compose up --detach
 ```
+
+### Nginx
+Copy nginx.conf file nginx folder, e.g.:
+```bash
+cp /var/www/html/theo/nginx.conf /etc/nginx/sites-available/theo
+# Create symlink
+sudo ln -s /etc/nginx/sites-available/theo /etc/nginx/sites-enabled/
+sudo -t nginx # test config
+sudo systemctl restart nginx
+```
