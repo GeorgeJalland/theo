@@ -138,6 +138,9 @@ h1 {
 #emptyPaddingDiv {
     position: relative;
 }
+.speechMarks {
+    font-size: 2rem;
+}
 #emptyDiv {
     height: 10rem;
     width: 10rem;

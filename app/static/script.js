@@ -26,8 +26,9 @@ function handleClickLike(quote_id) {
         hideElement(likeMe)
         userHasClickedLike = true
     }
-    setLikeButtonColourAndValue(likeButton, quoteLikes)
+    setLikeProperties(likeButton, quoteLikes, ['grow', 'grow2', 'grow3'])
     likeQuote(quote_id)
+    quoteIsLiked = !quoteIsLiked
 }
 
 async function handleClickTheo() {
@@ -41,7 +42,7 @@ async function handleClickTheo() {
 
 async function fetchQuote() {
     quotesServed += 1;
-    setQuoteValueAndAnimation(quotesServed)
+    setValueAndAnimation(quotesServedCount, quotesServed, ['grow', 'grow2', 'grow3'], setLocaleString=true)
     try {
         const response = await fetch(buildApiString("quote"), {
             method: "GET",
@@ -91,14 +92,16 @@ async function likeQuote(quote_id) {
     }
 }
 
-
-function setQuoteValueAndAnimation(quotesServed) {
-    animation = getAnimationTypeFromCount(quotesServed, ['grow', 'grow2', 'grow3'])
+function setValueAndAnimation(element, value, animationOptions, setLocaleString = false) {
+    animation = getAnimationTypeFromCount(value, animationOptions)
+    if (setLocaleString) {
+        value =  value.toLocaleString()
+    }
     if (!animation) {
-        quotesServedCount.textContent = quotesServed.toLocaleString()
+        element.textContent = value
         return
     }
-    updateTextWithAnimation(quotesServedCount, quotesServedCount, quotesServed.toLocaleString(), animation, 1000)
+    updateTextWithAnimation(element, element, value, animation, 1000)
 };
 
 function getAnimationTypeFromCount(count, options) {
@@ -134,15 +137,15 @@ function setLikeButtonColourInitial(likeButtonLocal, hasUserLikedQuote) {
     }
 }
 
-function setLikeButtonColourAndValue(likeButtonLocal, quoteLikesLocal) {
+function setLikeProperties(likeButtonElement, quoteLikesElement, animationOptions) {
+    // This function sets like count and button colour based on if like was previously selected, sets animation on positive increment
     if (quoteIsLiked) {
-        quoteLikesLocal.textContent = parseInt(quoteLikesLocal.textContent) - 1
-        likeButtonLocal.classList.remove("quoteLiked");
+        quoteLikesElement.textContent = parseInt(quoteLikesElement.textContent) - 1
+        likeButtonElement.classList.remove("quoteLiked");
     } else {
-        quoteLikesLocal.textContent = parseInt(quoteLikesLocal.textContent) + 1
-        likeButtonLocal.classList.add("quoteLiked");
+        setValueAndAnimation(quoteLikesElement, parseInt(quoteLikesElement.textContent) + 1, animationOptions)
+        likeButtonElement.classList.add("quoteLiked");
     }
-    quoteIsLiked = !quoteIsLiked
 }
 
 fetchQuotesServedCount();
