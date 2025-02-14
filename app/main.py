@@ -25,6 +25,8 @@ async def startup_event():
     await init_db()
     async with AsyncSessionLocal() as session:
         app.state.QUOTE_MAX_ID = await get_max_quote_id(session)
+        app.state.MAX_COOKIE_LIKES = app.state.QUOTE_MAX_ID
+        app.state.cookie_expiry = 5 * 365 * 24 * 60 * 60
 
 
 @app.get("/quote")
@@ -36,7 +38,7 @@ async def get_quote(response: Response, quote_id: int = Cookie(None), liked_quot
     quote = await get_next_quote(session, quote_id)
 
     has_user_liked_quote = quote.id in read_cookie_list_value(liked_quotes)
-    response.set_cookie(key="quote_id", value=quote.id, httponly=True) #add max expiry here
+    response.set_cookie(key="quote_id", value=quote.id, httponly=True, max_age=app.state.cookie_expiry)
     return {**quote.model_dump() , "has_user_liked_quote": has_user_liked_quote}
 
 @app.get("/quotes-served")
@@ -57,6 +59,8 @@ async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cooki
 
     if quote_id not in liked_quotes_list:
         quote.likes += 1
+        if len(liked_quotes_list) == app.state.MAX_COOKIE_LIKES:
+            liked_quotes_list.pop(0)
         liked_quotes_list.append(quote_id)
     else:
         quote.likes -= 1
@@ -66,7 +70,7 @@ async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cooki
     await session.commit()
 
     encoded_quotes_list = encode_and_jsonify_list(liked_quotes_list)
-    response.set_cookie(key="liked_quotes", value=encoded_quotes_list, httponly=True)
+    response.set_cookie(key="liked_quotes", value=encoded_quotes_list, httponly=True, max_age=app.state.cookie_expiry)
     return None
 
 async def get_max_quote_id(session: AsyncSession) -> int:
