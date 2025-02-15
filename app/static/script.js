@@ -61,7 +61,6 @@ async function fetchQuote() {
         updateTextWithAnimation(innerQuoteContainer, quoteText, data.text, 'bounce', 500)
         quoteLikes.textContent = data.likes;
         quoteReference.href = data.reference;
-        quoteReference.textContent = data.reference.slice("https://".length);
         quote_id = data.id;
 
         setLikeButtonColourInitial(likeButton, data.has_user_liked_quote);

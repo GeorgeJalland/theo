@@ -33,13 +33,13 @@ h1 {
     text-decoration-thickness: 4px;
 }
 a {
-    color: inherit;
+    color: black;
+    text-shadow: none;
 }
 #mainContainer {
     position: relative;
     display: flex;
     justify-content: center;
-    width: 60vw;
 }
 #clickMe, #likeMe {
     position: absolute;
@@ -71,11 +71,13 @@ a {
     right: -2.5rem;
     transform: rotate(180deg);;
 }
-#theoHeadContainer{
+#theoHeadContainer, #emptyPaddingDiv{
     position: relative;
-    z-index: 2;
     display: flex;
     align-items: center;
+}
+#theoHeadContainer {
+    z-index: 2;
 }
 #theoPictureButton {
     height: 10rem;
@@ -103,7 +105,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50rem;
+    width: 50vw;
     background-color: rgb(228, 216, 216);
     color: black;
     z-index: 1;
@@ -114,8 +116,6 @@ a {
     border: solid black 0.25rem;
     box-shadow: 0.2rem 0.2rem 0.5rem black;
     text-shadow: none;
-}
-#innerQuoteContainer {
 }
 #likeButton {
     height: 1.5rem;
@@ -142,9 +142,11 @@ a {
     right: 0.8rem;
 }
 #quoteReferenceContainer {
+    z-index: 2;
     position: absolute;
-    bottom: -0.3rem;
+    top: 1.4rem;
     font-size: 1rem;
+    right: 7.4rem;
 }
 #emptyPaddingDiv {
     position: relative;
@@ -156,7 +158,6 @@ a {
     height: 10rem;
     width: 10rem;
     margin-left: -5rem;
-
 }
 #quoteLikes {
     padding-right: 0.4rem;
@@ -211,8 +212,8 @@ a {
     header {
         font-size: 6vw;
     }
-    #mainContainer {
-        width: 100vw;
+    #quoteContainer {
+        width: 60vw;
     }
     #clickMe {
         top: -9.5rem;
