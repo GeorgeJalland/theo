@@ -31,7 +31,9 @@ pip install -r requirements.txt
 ### Database
 Create sqlite database under instance/app.db by running
 ```bash
-sqlite3 ./app/instance/app.db
+mkdir ./app/instance
+touch ./app/instance.db
+sqlite3 ./app/instance/app.db #check
 ```
 
 Table creation will be handled by SQLModel library
@@ -40,7 +42,7 @@ Table creation will be handled by SQLModel library
 
 **Api**
 ```bash
-fastapi dev app/main.py
+fastapi dev app/main.py --port 7000
 ```
 
 **Client**

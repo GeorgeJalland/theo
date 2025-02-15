@@ -11,9 +11,14 @@ const theoArrow = document.getElementById("arrow");
 const clickMe = document.getElementById("clickMe");
 const innerQuoteContainer = document.getElementById("innerQuoteContainer")
 
+const isLocal = window.location.hostname === "localhost"
 const apiBase = window.location.protocol + '//' + window.location.hostname
 const apiRoot = "/api"
-const apiPort = ""
+const apiPort =  isLocal ? "7000" : ""
+
+function buildApiString(endpoint){
+    return apiBase + ':' + apiPort + apiRoot + endpoint
+}
 
 let quote_id = 0
 let quoteIsLiked = false
@@ -123,10 +128,6 @@ function updateTextWithAnimation(containerElement, element, newText, animation, 
 
 function hideElement(element) {
     element.classList.add("hide")
-}
-
-function buildApiString(endpoint){
-    return apiBase + ':' + apiPort + apiRoot + endpoint
 }
 
 function setLikeButtonColourInitial(likeButtonLocal, hasUserLikedQuote) {
