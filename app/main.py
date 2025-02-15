@@ -107,7 +107,7 @@ def encode_and_jsonify_list(list_input: str):
 async def get_next_quote(session: AsyncSession, current_id: int) -> Quote:
     print(app.state.QUOTE_MAX_ID)
     next_id = (current_id % app.state.QUOTE_MAX_ID) + 1
-    next_quote = await session.execute(select(Quote).where(Quote.id == next_id))
+    next_quote = await session.execute(select(Quote).where(Quote.id >= next_id).limit(1))
     return next_quote.scalar()
 
 async def get_random_quote_id(session: AsyncSession) -> int:
