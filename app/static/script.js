@@ -10,6 +10,7 @@ const likeMe = document.getElementById("likeMe");
 const theoArrow = document.getElementById("arrow");
 const clickMe = document.getElementById("clickMe");
 const innerQuoteContainer = document.getElementById("innerQuoteContainer")
+const quoteReference = document.getElementById("quoteReference")
 
 const isLocal = window.location.hostname === "localhost"
 const apiBase = window.location.protocol + '//' + window.location.hostname
@@ -59,10 +60,11 @@ async function fetchQuote() {
         const data = await response.json();
         updateTextWithAnimation(innerQuoteContainer, quoteText, data.text, 'bounce', 500)
         quoteLikes.textContent = data.likes;
-
+        quoteReference.href = data.reference;
+        quoteReference.textContent = data.reference.slice("https://".length);
         quote_id = data.id;
-        setLikeButtonColourInitial(likeButton, data.has_user_liked_quote);
 
+        setLikeButtonColourInitial(likeButton, data.has_user_liked_quote);
     } catch (error) {
         quoteText.textContent = "Error loading quote.";
         console.error("Error:", error);

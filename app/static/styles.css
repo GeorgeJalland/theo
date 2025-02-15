@@ -32,6 +32,9 @@ h1 {
     text-decoration: underline;
     text-decoration-thickness: 4px;
 }
+a {
+    color: inherit;
+}
 #mainContainer {
     position: relative;
     display: flex;
@@ -135,6 +138,11 @@ h1 {
     bottom: 0.8rem;
     right: 0.8rem;
 }
+#quoteReferenceContainer {
+    position: absolute;
+    bottom: -0.3rem;
+    font-size: 1rem;
+}
 #emptyPaddingDiv {
     position: relative;
 }
@@ -226,8 +234,11 @@ h1 {
         font-size: 1.7rem;
         width: 10rem;
     }
-    #quotesServed {
+    #quotesServed, #quoteReferenceContainer {
         font-size: 1.2rem;
+    }
+    #quoteReferenceContainer {
+        bottom: -0.6rem;
     }
     body{
         background-image: url("./images/0d9a3e9958673e4.png");
