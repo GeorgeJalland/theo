@@ -69,7 +69,7 @@ docker compose up
 ```bash
 git checkout master
 git pull origin master
-docker compose build
+sudo docker compose build
 docker compose up --detach
 ```
 
@@ -82,4 +82,12 @@ sudo cp /var/www/html/theo/nginx.conf /etc/nginx/sites-available/theo
 sudo ln -s /etc/nginx/sites-available/theo /etc/nginx/sites-enabled/
 sudo nginx -t # test config
 sudo systemctl restart nginx
+```
+### Migrate Local SQLite Database to Server
+
+Can use SFTP to copy SQLite database file to server since for current setup we are on the same private network
+
+```powershell
+sftp <user>@<server>
+put <local_file_path> <remote_file_path>
 ```

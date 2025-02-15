@@ -39,32 +39,46 @@ class Random:
             probabilities.append(weight / total)
         return list(accumulate(probabilities))
     
-class BoundedSet:
-    def __init__(self, max_size: int, values_set: set = set(), values_ordered_list: list = list()):
+class SetQueue():
+    """A queue object with constant time lookup
+
+    Object maintains a queue and a set of the same values allowing queue FIFO properties
+    as well as allow constant time, O(1), lookups using the set
+    """
+    def __init__(self, max_size: int, values_queue: list = list()):
+        if len(values_queue) > max_size:
+            raise ValueError("values_queue length must not exceed max_size")
         self.max_size = max_size
-        self.values_set = values_set
-        self.values_ordered_list = values_ordered_list
+        self.values_set = set(values_queue)
+        self.values_queue = values_queue
 
-    # @staticmethod
-    # def deserialise(json_string: str) -> Type["BoundedSet"]:
-    #     return BoundedSet(**json.loads(json_string))
+    @staticmethod
+    def deserialise(json_string: str) -> Type["SetQueue"]:
+        return SetQueue(**json.loads(json_string))
 
-    # def serialise(self):
-    #     test = dict(max_size=self.max_size, set = self.values_set, list = self.values_ordered_list)
-    #     return json.dumps(test)
+    def serialise(self) -> str:
+        return json.dumps({"max_size": self.max_size, "values_queue": self.values_queue})
     
-    def add(self, value):
+    def append(self, value: int) -> None:
         if len(self.values_set) >= self.max_size:
-            self.values_set.remove(self.values_ordered_list.pop(0))
+            self.pop()
         if value not in self.values_set:
             self.values_set.add(value)
-            self.values_ordered_list.append(value)
+            self.values_queue.append(value)
 
-    def __contains__(self, value):
+    def pop(self) -> int:
+        popped_value = self.values_queue.pop(0)
+        self.values_set.remove(popped_value)
+        return popped_value
+
+    def __len__(self):
+        return len(self.values_set)
+
+    def __contains__(self, value: int):
         return value in self.values_set
 
     def __repr__(self):
-        return repr(self.values_set) + repr(self.values_ordered_list)
+        return repr(self.values_queue)
 
 if __name__ == "__main__":
     # randomGen = Random(max=6, exclude=[1, 2, 3])
@@ -72,4 +86,17 @@ if __name__ == "__main__":
     # print(f"cum: {randomGen._cumulative_probabilities}")
     # for i in range(10):
     #     print(f"random number: {randomGen.get_random_number()}")
-    pass
+    s = SetQueue(max_size=5, values_queue=[1,2,3,4,5])
+    s.append(9)
+    s.append(7)
+    print(s)
+    print(7 in s)
+    x = s.serialise()
+    print(x)
+    t = SetQueue.deserialise(x)
+    print(t)
+    print(1 in t)
+    print(len(t))
+    print(t.pop())
+    print(t)
+    print(t.values_set)
