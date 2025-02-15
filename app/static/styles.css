@@ -74,6 +74,8 @@ a {
 #theoHeadContainer{
     position: relative;
     z-index: 2;
+    display: flex;
+    align-items: center;
 }
 #theoPictureButton {
     height: 10rem;
@@ -93,6 +95,7 @@ a {
 #quotesServed {
     position: absolute;
     font-size: 1rem;
+    bottom: -2rem;
     width: 10rem;
 }
 #quoteContainer {
@@ -236,6 +239,9 @@ a {
     }
     #quotesServed, #quoteReferenceContainer {
         font-size: 1.2rem;
+    }
+    #quotesServed {
+        bottom: -2.5rem;
     }
     #quoteReferenceContainer {
         bottom: -0.6rem;
