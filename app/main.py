@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
+from typing import Optional
 
 from app.db import get_session, init_db, AsyncSessionLocal
 from app.models import Quote, Counter
@@ -30,12 +31,15 @@ async def startup_event():
 
 
 @app.get("/quote")
-async def get_quote(response: Response, quote_id: int = Cookie(None), liked_quotes: str = Cookie(None), session: AsyncSession = Depends(get_session)):
+async def get_quote(response: Response, id: Optional[int] = None, quote_id: int = Cookie(None), liked_quotes: str = Cookie(None), session: AsyncSession = Depends(get_session)):
     asyncio.create_task(increment_quotes_served())
 
-    if not quote_id:
-        quote_id = await get_random_quote_id(session)
-    quote = await get_next_quote(session, quote_id)
+    if not id:
+        if quote_id:
+            id = quote_id + 1
+        else:
+            id = await get_random_quote_id(session)
+    quote = await get_quote_record(session, id)
 
     has_user_liked_quote = quote.id in read_cookie_list_value(liked_quotes)
     response.set_cookie(key="quote_id", value=quote.id, httponly=True, max_age=app.state.cookie_expiry)
@@ -79,11 +83,6 @@ async def get_max_quote_id(session: AsyncSession) -> int:
     max_id = result.scalar()
     return max_id
 
-async def get_quote_record(session: AsyncSession, quote_id: int) -> Quote:
-    statement = select(Quote).where(Quote.id == quote_id)
-    result = await session.execute(statement)
-    return result.scalar()
-
 async def increment_quotes_served() -> None:
     async with AsyncSessionLocal() as session:
         result = await session.execute(select(Counter))
@@ -105,10 +104,14 @@ def encode_and_jsonify_list(list_input: str):
     return urllib.parse.quote(json.dumps(list_input))
 
 async def get_next_quote(session: AsyncSession, current_id: int) -> Quote:
-    print(app.state.QUOTE_MAX_ID)
     next_id = (current_id % app.state.QUOTE_MAX_ID) + 1
     next_quote = await session.execute(select(Quote).where(Quote.id >= next_id).limit(1))
     return next_quote.scalar()
+
+async def get_quote_record(session: AsyncSession, id: int) -> Quote:
+    id = (id % app.state.QUOTE_MAX_ID) # Creates loop of quote ids
+    quote = await session.execute(select(Quote).where(Quote.id >= id).limit(1))
+    return quote.scalar()
 
 async def get_random_quote_id(session: AsyncSession) -> int:
     max_id = await get_max_quote_id(session)

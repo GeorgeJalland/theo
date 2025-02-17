@@ -11,6 +11,7 @@ const theoArrow = document.getElementById("arrow");
 const clickMe = document.getElementById("clickMe");
 const innerQuoteContainer = document.getElementById("innerQuoteContainer")
 const quoteReference = document.getElementById("quoteReference")
+const shareButton = document.getElementById("shareButton")
 
 const isLocal = window.location.hostname === "localhost"
 const apiBase = window.location.protocol + '//' + window.location.hostname
@@ -21,37 +22,52 @@ function buildApiString(endpoint){
     return apiBase + ':' + apiPort + apiRoot + endpoint
 }
 
-let quote_id = 0
+const searchParams = new URLSearchParams(window.location.search)
+let quoteId = parseInt(searchParams.get("quoteId"));
 let quoteIsLiked = false
 let userHasClickedLike = false
 let userHasClickedTheo = false
 let quotesServed = 0
 
-function handleClickLike(quote_id) {
+function handleClickLike(quoteId) {
     if (!userHasClickedLike) {
         hideElement(likeArrow)
         hideElement(likeMe)
         userHasClickedLike = true
     }
     setLikeProperties(likeButton, quoteLikes, ['grow', 'grow2', 'grow3'])
-    likeQuote(quote_id)
+    likeQuote(quoteId)
     quoteIsLiked = !quoteIsLiked
 }
 
-async function handleClickTheo() {
+async function handleClickTheo(localQuoteId) {
     if (!userHasClickedTheo) {
         hideElement(theoArrow)
         hideElement(clickMe)
         userHasClickedTheo = true
     }
-    fetchQuote()
+    await fetchQuote(localQuoteId)
+    history.pushState({quoteId}, "", `?quoteId=${quoteId}`)
 }
 
-async function fetchQuote() {
+async function handleClickShare() {
+    const shareData = {
+        title: 'Theo Von Quote',
+        text: quoteText,
+        url: window.location.href
+    };
+    let shared = await navigator.share(shareData);
+    if (shared) {
+        console.log("Quote successfully shared");
+    }
+}
+
+async function fetchQuote(localQuoteId) {
     quotesServed += 1;
     setValueAndAnimation(quotesServedCount, quotesServed, ['grow', 'grow2', 'grow3'], setLocaleString=true)
+    const api_uri = localQuoteId ? "/quote" + "?" + "id=" + localQuoteId : "/quote"
     try {
-        const response = await fetch(buildApiString("/quote"), {
+        const response = await fetch(buildApiString(api_uri), {
             method: "GET",
             credentials: "include"
         });
@@ -61,7 +77,7 @@ async function fetchQuote() {
         updateTextWithAnimation(innerQuoteContainer, quoteText, data.text, 'bounce', 500)
         quoteLikes.textContent = data.likes;
         quoteReference.href = data.reference;
-        quote_id = data.id;
+        quoteId = data.id;
 
         setLikeButtonColourInitial(likeButton, data.has_user_liked_quote);
     } catch (error) {
@@ -86,9 +102,9 @@ async function fetchQuotesServedCount() {
     }
 }
 
-async function likeQuote(quote_id) {
+async function likeQuote(quoteId) {
     try {
-        const response = await fetch(buildApiString("/like-quote" + "/" + quote_id), {
+        const response = await fetch(buildApiString("/like-quote" + "/" + quoteId), {
             method: "PUT",
             credentials: "include"
         });
@@ -152,7 +168,15 @@ function setLikeProperties(likeButtonElement, quoteLikesElement, animationOption
 }
 
 fetchQuotesServedCount();
-fetchQuote();
+fetchQuote(quoteId).then(() => {
+    history.pushState({quoteId}, "", `?quoteId=${quoteId}`)
+});
 
-likeButton.addEventListener("click", () => handleClickLike(quote_id));
-theoPictureButton.addEventListener("click", () => handleClickTheo());
+likeButton.addEventListener("click", () => handleClickLike(quoteId));
+theoPictureButton.addEventListener("click", () => handleClickTheo(quoteId+1));
+shareButton.addEventListener("click", () => handleClickShare());
+window.addEventListener('popstate', (event) => {
+    if (event.state && event.state.quoteId) {
+        fetchQuote(event.state.quoteId)
+    }
+  });

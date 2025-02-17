@@ -121,12 +121,14 @@ a:hover {
     box-shadow: 0.2rem 0.2rem 0.5rem black;
     text-shadow: none;
 }
-#likeButton {
+#likeButton, #shareButton {
     height: 1.5rem;
     width: 1.5rem;
-    transition: filter 0.1s ease-in-out, transform 0.1s ease-in-out;
     cursor: pointer;
+}
+#likeButton {
     filter:invert(0.6);
+    transition: filter 0.1s ease-in-out, transform 0.1s ease-in-out;
 }
 .quoteLiked {
     filter:invert(0) !important;
@@ -134,7 +136,7 @@ a:hover {
 #likeButton:hover {
     filter:invert(0);
 }
-#likeButton:active {
+#likeButton:active, #shareButton:active {
     transform: scale(0.7);
 }
 #likesOverlay {
@@ -142,15 +144,25 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    bottom: 0.8rem;
+    bottom: 0.5rem;
     right: 0.8rem;
 }
-#quoteReferenceContainer {
+#quoteReference {
+    font-size: 1rem;
+}
+#share {
     z-index: 2;
     position: absolute;
-    top: 1.4rem;
-    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    top: 1.5rem;
+    font-size: 0.8rem;
+    color: black;
     right: 7.2rem;
+    height: 1.6rem;
+    width: 1.5rem;
+    text-shadow: none;
 }
 #emptyPaddingDiv {
     position: relative;
@@ -242,14 +254,11 @@ a:hover {
         font-size: 1.7rem;
         width: 10rem;
     }
-    #quotesServed, #quoteReferenceContainer {
+    #quotesServed, #quoteReference {
         font-size: 1.2rem;
     }
     #quotesServed {
         bottom: -2.5rem;
-    }
-    #quoteReferenceContainer {
-        bottom: -0.6rem;
     }
     body{
         background-image: url("./images/0d9a3e9958673e4.png");
