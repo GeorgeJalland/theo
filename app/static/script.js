@@ -29,14 +29,14 @@ let userHasClickedLike = false
 let userHasClickedTheo = false
 let quotesServed = 0
 
-function handleClickLike(quoteId) {
+function handleClickLike(localQuoteId) {
     if (!userHasClickedLike) {
         hideElement(likeArrow)
         hideElement(likeMe)
         userHasClickedLike = true
     }
     setLikeProperties(likeButton, quoteLikes, ['grow', 'grow2', 'grow3'])
-    likeQuote(quoteId)
+    likeQuote(localQuoteId)
     quoteIsLiked = !quoteIsLiked
 }
 
@@ -50,15 +50,19 @@ async function handleClickTheo(localQuoteId) {
     history.pushState({quoteId}, "", `?quoteId=${quoteId}`)
 }
 
-async function handleClickShare() {
+async function handleClickShare(localQuoteId) {
     const shareData = {
         title: 'Theo Von Quote',
         text: quoteText,
         url: window.location.href
     };
-    let shared = await navigator.share(shareData);
-    if (shared) {
+    try {
+        await navigator.share(shareData);
         console.log("Quote successfully shared");
+        shareQuote(localQuoteId)
+    } catch (error) {
+        quoteText.textContent = "Error sharing quote.";
+        console.error("Error:", error);
     }
 }
 
@@ -97,18 +101,31 @@ async function fetchQuotesServedCount() {
         quotesServedCount.textContent = data.quotes_served.toLocaleString();
 
     } catch (error) {
-        quoteText.textContent = "Error loading quote.";
+        quoteText.textContent = "Error loading quote count.";
         console.error("Error:", error);
     }
 }
 
-async function likeQuote(quoteId) {
+async function likeQuote(localQuoteId) {
     try {
-        const response = await fetch(buildApiString("/like-quote" + "/" + quoteId), {
+        const response = await fetch(buildApiString("/like-quote" + "/" + localQuoteId), {
             method: "PUT",
             credentials: "include"
         });
         if (!response.ok) throw new Error("Failed to like quote");
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+async function shareQuote(localQuoteId) {
+    try {
+        const response = await fetch(buildApiString("/share-quote" + "/" + localQuoteId), {
+            method: "PUT",
+            credentials: "include"
+        });
+        if (!response.ok) throw new Error("Failed to share quote");
 
     } catch (error) {
         console.error("Error:", error);
@@ -174,7 +191,7 @@ fetchQuote(quoteId).then(() => {
 
 likeButton.addEventListener("click", () => handleClickLike(quoteId));
 theoPictureButton.addEventListener("click", () => handleClickTheo(quoteId+1));
-shareButton.addEventListener("click", () => handleClickShare());
+shareButton.addEventListener("click", () => handleClickShare(quoteId));
 window.addEventListener('popstate', (event) => {
     if (event.state && event.state.quoteId) {
         fetchQuote(event.state.quoteId)

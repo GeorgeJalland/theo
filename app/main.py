@@ -77,6 +77,20 @@ async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cooki
     response.set_cookie(key="liked_quotes", value=encoded_quotes_list, httponly=True, max_age=app.state.cookie_expiry)
     return None
 
+@app.put("/share-quote/{quote_id}")
+async def like_quote(quote_id: int, session: AsyncSession = Depends(get_session)):
+
+    result = await session.execute(select(Quote).where(Quote.id == quote_id))
+    quote = result.scalar()
+
+    if not quote:
+        raise HTTPException(status_code=404, detail="Quote not found")
+
+    quote.shares += 1
+    session.add(quote)
+    await session.commit()
+    return None
+
 async def get_max_quote_id(session: AsyncSession) -> int:
     statement = select(func.max(Quote.id))
     result = await session.execute(statement)
