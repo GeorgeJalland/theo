@@ -53,16 +53,15 @@ async function handleClickTheo(localQuoteId) {
 async function handleClickShare(localQuoteId) {
     const shareData = {
         title: 'Theo Von Quote',
-        text: quoteText,
+        text: quoteText.textContent,
         url: window.location.href
     };
     try {
-        await navigator.share(shareData);
+        console.log(await navigator.share(shareData));
         console.log("Quote successfully shared");
         shareQuote(localQuoteId)
     } catch (error) {
-        quoteText.textContent = "Error sharing quote.";
-        console.error("Error:", error);
+        console.error("Error sharing quote: ", error);
     }
 }
 
