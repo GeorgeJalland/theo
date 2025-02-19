@@ -123,7 +123,7 @@ async def get_next_quote(session: AsyncSession, current_id: int) -> Quote:
     return next_quote.scalar()
 
 async def get_quote_record(session: AsyncSession, id: int) -> Quote:
-    id = (id % app.state.QUOTE_MAX_ID) # Creates loop of quote ids
+    id = (id - 1) % app.state.QUOTE_MAX_ID + 1# Creates loop of quote ids
     quote = await session.execute(select(Quote).where(Quote.id >= id).limit(1))
     return quote.scalar()
 
