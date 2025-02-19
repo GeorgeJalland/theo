@@ -53,7 +53,7 @@ async function handleClickTheo(localQuoteId) {
 async function handleClickShare(localQuoteId) {
     const shareData = {
         title: 'Theo Von Quote',
-        text: '"'+quoteText.textContent'+',
+        text: '"'+quoteText.textContent+'"',
         url: window.location.href
     };
     try {
