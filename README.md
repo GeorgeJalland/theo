@@ -55,8 +55,7 @@ python3 -m http.server --directory app/static/ 5500
 Make sure database is created under ./app/instance/app.db
 
 ```bash
-docker compose build
-docker compose up
+sudo docker compose up --build --detach
 ```
 
 ## Deployment
