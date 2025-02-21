@@ -120,6 +120,7 @@ a:hover {
     border: solid black 0.25rem;
     box-shadow: 0.2rem 0.2rem 0.5rem black;
     text-shadow: none;
+    font-style: italic;
 }
 #likeButton, #shareButton {
     height: 1.5rem;
