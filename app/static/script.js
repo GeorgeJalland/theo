@@ -2,6 +2,7 @@ console.log("script.js got imported!")
 
 const quoteText = document.getElementById("quoteText");
 const quoteLikes = document.getElementById("quoteLikes");
+const quoteShares = document.getElementById("quoteShares");
 const quotesServedCount = document.getElementById("servedCount");
 const likeButton = document.getElementById("likeButton");
 const theoPictureButton = document.getElementById("theoPictureButton");
@@ -12,6 +13,8 @@ const clickMe = document.getElementById("clickMe");
 const innerQuoteContainer = document.getElementById("innerQuoteContainer")
 const quoteReference = document.getElementById("quoteReference")
 const shareButton = document.getElementById("shareButton")
+
+const growAnimations = ['grow', 'grow2', 'grow3']
 
 const isLocal = window.location.hostname === "localhost"
 const apiBase = window.location.protocol + '//' + window.location.hostname
@@ -35,7 +38,7 @@ function handleClickLike(localQuoteId) {
         hideElement(likeMe)
         userHasClickedLike = true
     }
-    setLikeProperties(likeButton, quoteLikes, ['grow', 'grow2', 'grow3'])
+    setLikeProperties(likeButton, quoteLikes, growAnimations)
     likeQuote(localQuoteId)
     quoteIsLiked = !quoteIsLiked
 }
@@ -60,6 +63,7 @@ async function handleClickShare(localQuoteId) {
         console.log(await navigator.share(shareData));
         console.log("Quote successfully shared");
         shareQuote(localQuoteId)
+        setValueAndAnimation(quoteShares, parseInt(quoteShares.textContent)+1, growAnimations)
     } catch (error) {
         console.error("Error sharing quote: ", error);
     }
@@ -67,7 +71,7 @@ async function handleClickShare(localQuoteId) {
 
 async function fetchQuote(localQuoteId) {
     quotesServed += 1;
-    setValueAndAnimation(quotesServedCount, quotesServed, ['grow', 'grow2', 'grow3'], setLocaleString=true)
+    setValueAndAnimation(quotesServedCount, quotesServed, growAnimations, setLocaleString=true)
     const api_uri = localQuoteId ? "/quote" + "?" + "id=" + localQuoteId : "/quote"
     try {
         const response = await fetch(buildApiString(api_uri), {
@@ -79,6 +83,7 @@ async function fetchQuote(localQuoteId) {
         const data = await response.json();
         updateTextWithAnimation(innerQuoteContainer, quoteText, data.text, 'bounce', 500)
         quoteLikes.textContent = data.likes;
+        quoteShares.textContent = data.shares;
         quoteReference.href = data.reference;
         quoteId = data.id;
 
