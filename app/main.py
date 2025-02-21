@@ -2,13 +2,16 @@ import json
 import urllib.parse
 from fastapi import FastAPI, Depends, HTTPException, Response, Cookie
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import Page, add_pagination
 from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from app import db
+from app.models import Quote
 
 app = FastAPI(root_path="/api")
+add_pagination(app)
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,7 +31,7 @@ async def startup_event():
 
 
 @app.get("/quote")
-async def get_quote(response: Response, id: Optional[int] = None, quote_id: int = Cookie(None), liked_quotes: str = Cookie(None), session: AsyncSession = Depends(db.get_session)):
+async def get_quote(response: Response, id: Optional[int] = None, quote_id: int = Cookie(None), liked_quotes: str = Cookie(None), session: AsyncSession = Depends(db.get_session)) -> Dict[str, Any]:
     asyncio.create_task(db.increment_quotes_served())
 
     if not id:
@@ -42,13 +45,17 @@ async def get_quote(response: Response, id: Optional[int] = None, quote_id: int 
     response.set_cookie(key="quote_id", value=quote.id, httponly=True, max_age=app.state.cookie_expiry)
     return {**quote.model_dump() , "has_user_liked_quote": has_user_liked_quote}
 
+@app.get("/quotes")
+async def get_quotes(order_by: str, session: AsyncSession = Depends(db.get_session)) -> Page[Quote]:
+    return await db.get_quotes(session, order_by)
+
 @app.get("/quotes-served")
-async def get_quotes_served(session: AsyncSession = Depends(db.get_session)):
+async def get_quotes_served(session: AsyncSession = Depends(db.get_session)) -> Dict[str, int]:
     quotes_served = await db.get_quotes_served_count(session)
     return {"quotes_served": quotes_served.served}
 
 @app.put("/like-quote/{quote_id}")
-async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cookie(None), session: AsyncSession = Depends(db.get_session)):
+async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cookie(None), session: AsyncSession = Depends(db.get_session)) -> None:
     liked_quotes_list = read_cookie_list_value(liked_quotes)
 
     quote = await db.get_exact_quote_record(session, quote_id)
@@ -62,7 +69,7 @@ async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cooki
     return None
 
 @app.put("/share-quote/{quote_id}")
-async def like_quote(quote_id: int, session: AsyncSession = Depends(db.get_session)):
+async def like_quote(quote_id: int, session: AsyncSession = Depends(db.get_session)) -> None:
 
     quote = await db.get_exact_quote_record(session, quote_id)
     if not quote:

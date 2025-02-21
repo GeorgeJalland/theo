@@ -2,7 +2,8 @@ from sqlmodel import SQLModel
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 import random
-from sqlmodel import select, func
+from sqlmodel import select, func, desc
+from fastapi_pagination.ext.sqlalchemy import paginate
 
 from app.models import Quote, Counter
 
@@ -78,3 +79,7 @@ async def increment_quotes_served() -> None:
 async def get_quotes_served_count(session: AsyncSession) -> int:
     result = await session.execute(select(Counter))
     return result.scalar()
+
+async def get_quotes(session: AsyncSession, order_by: str) -> list[Quote]:
+    order_column = getattr(Quote, order_by, None)
+    return await paginate(session, select(Quote).order_by(desc(order_column)))
