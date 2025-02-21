@@ -56,7 +56,7 @@ async function handleClickTheo(localQuoteId) {
 async function handleClickShare(localQuoteId) {
     const shareData = {
         title: 'Theo Von Quote',
-        text: '"'+quoteText.textContent+'"',
+        text: quoteText.textContent,
         url: window.location.href
     };
     try {
@@ -81,7 +81,7 @@ async function fetchQuote(localQuoteId) {
         if (!response.ok) throw new Error("Failed to fetch");
 
         const data = await response.json();
-        updateTextWithAnimation(innerQuoteContainer, quoteText, data.text, 'bounce', 500)
+        updateTextWithAnimation(innerQuoteContainer, quoteText, '"'+data.text+'"', 'bounce', 500)
         quoteLikes.textContent = data.likes;
         quoteShares.textContent = data.shares;
         quoteReference.href = data.reference;
