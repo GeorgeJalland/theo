@@ -15,7 +15,7 @@ body {
     align-items: center;
     gap: 12vh;
     flex-direction: column;
-    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-family:Arial, Helvetica, sans-serif;
     background-image: url("./images/f2b617fdfb8e851.png");
     background-size: cover;
     background-repeat: no-repeat;
@@ -56,8 +56,9 @@ a:hover {
     left: -10.5rem;
 }
 #likeMe {
-    bottom: -6.8rem;
-    right: -5rem;
+    bottom: -8.9rem;
+    right: -7rem;
+    width: 12rem;
 }
 #arrow, #arrow2 {
     position: absolute;
@@ -71,7 +72,7 @@ a:hover {
     left: -8rem;
 }
 #arrow2 {
-    bottom: -4rem;
+    bottom: -6.5rem;
     right: -2.5rem;
     transform: rotate(180deg);;
 }
@@ -104,10 +105,17 @@ a:hover {
     bottom: -2rem;
     width: 10rem;
 }
-#quoteContainer {
-    position: relative;
+#quoteContainer, #actionContainer {
     display: flex;
     align-items: center;
+    background-color: rgb(228, 216, 216);
+    color: black;
+    z-index: 1;
+    box-shadow: 0.2rem 0.2rem 0.4rem black;
+    text-shadow: none;
+}
+#quoteContainer {
+    position: relative;
     justify-content: center;
     width: 50vw;
     background-color: rgb(228, 216, 216);
@@ -116,53 +124,59 @@ a:hover {
     margin: 1rem;
     padding-left: 3rem;
     padding-right: 3rem;
-    border-radius: 2rem;
+    border-radius: 1.5rem;
     border: solid black 0.25rem;
-    box-shadow: 0.2rem 0.2rem 0.5rem black;
-    text-shadow: none;
     font-style: italic;
+}
+#actionContainer {
+    position: absolute;
+    justify-content: left;
+    height: 1.8rem;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    border-top: solid black 0.125rem;
+    border-left: solid black 0.25rem;
+    border-right: solid black 0.25rem;
+    border-bottom: solid black 0.25rem;
+    right: 7.2rem;
+    bottom: -1.2rem;
+    text-shadow: none;
+    font-size: 1.2rem;
+    padding: 0.125rem;
 }
 #likeButton, #shareButton {
     height: 1.5rem;
     width: 1.5rem;
     cursor: pointer;
-}
-#likeButton {
     filter:invert(0.6);
     transition: filter 0.1s ease-in-out, transform 0.1s ease-in-out;
 }
 .quoteLiked {
     filter:invert(0) !important;
 }
-#likeButton:hover {
+#likeButton:hover, #shareButton:hover {
     filter:invert(0);
 }
 #likeButton:active, #shareButton:active {
     transform: scale(0.7);
 }
 #likesOverlay {
-    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    bottom: 0.5rem;
-    right: 0.8rem;
+    margin-left: 0.8vw;
 }
 #quoteReference {
     font-size: 1rem;
 }
 #share {
-    z-index: 2;
-    position: absolute;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
     top: 1.5rem;
-    font-size: 0.8rem;
     color: black;
-    right: 7.2rem;
-    height: 1.6rem;
-    width: 1.5rem;
+    margin-left: 0.4vw;
+    margin-right: 1.6vw;
     text-shadow: none;
 }
 #emptyPaddingDiv {
@@ -177,8 +191,10 @@ a:hover {
     margin-left: -5rem;
 }
 #quoteLikes {
-    padding-right: 0.4rem;
-    font-size: 1.5rem;
+    margin-right: 0.4rem;
+}
+#quoteLikes, #quoteShares {
+    margin-left: 0.1rem;
 }
 #metaContainer {
 }
@@ -244,14 +260,14 @@ a:hover {
         filter: invert(1);
     }
     #arrow2 {
-        bottom: -7.5rem;
-        right: 6.5rem;
+        bottom: -10.5rem;
+        right: 9rem;
         transform: rotate(270deg);
         filter: invert(1);
     }
     #likeMe {
-        bottom: -8rem;
-        right: 14rem;
+        bottom: -12.5rem;
+        right: 15.5rem;
         font-size: 1.7rem;
         width: 10rem;
     }
