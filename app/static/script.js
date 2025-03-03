@@ -1,5 +1,9 @@
 console.log("script.js got imported!")
-
+//elements
+const qotdButton = document.getElementById("menu-qotd");
+const leaderboardButton = document.getElementById("menu-leaderboard");
+const mainContainer = document.getElementById("mainContainer");
+const leaderboardContainer = document.getElementById("leaderboardContainer");
 const quoteText = document.getElementById("quoteText");
 const quoteLikes = document.getElementById("quoteLikes");
 const quoteShares = document.getElementById("quoteShares");
@@ -10,9 +14,10 @@ const likeArrow = document.getElementById("arrow2");
 const likeMe = document.getElementById("likeMe");
 const theoArrow = document.getElementById("arrow");
 const clickMe = document.getElementById("clickMe");
-const innerQuoteContainer = document.getElementById("innerQuoteContainer")
-const quoteReference = document.getElementById("quoteReference")
-const shareButton = document.getElementById("shareButton")
+const innerQuoteContainer = document.getElementById("innerQuoteContainer");
+const quoteReference = document.getElementById("quoteReference");
+const shareButton = document.getElementById("shareButton");
+const leaderboard = document.getElementById("leaderboard");
 
 const growAnimations = ['grow', 'grow2', 'grow3']
 
@@ -25,17 +30,38 @@ function buildApiString(endpoint){
     return apiBase + ':' + apiPort + apiRoot + endpoint
 }
 
+const quote_limit = 10
 const searchParams = new URLSearchParams(window.location.search)
+// states
 let quoteId = parseInt(searchParams.get("quoteId"));
+// let displayQotd = true
+// let displayLeaderboard = false
 let quoteIsLiked = false
 let userHasClickedLike = false
 let userHasClickedTheo = false
 let quotesServed = 0
+let top_quotes_page = 1
+
+function handleClickQotd() {
+    console.log("clicked quote of the day")
+    hideElement(leaderboardContainer)
+    unhideElement(mainContainer)
+    unselectElement(leaderboardButton)
+    selectElement(qotdButton)
+}
+
+function handleClickLeaderboard() {
+    console.log("clicked leaderboard")
+    hideElement(mainContainer)
+    unhideElement(leaderboardContainer)
+    unselectElement(qotdButton)
+    selectElement(leaderboardButton)
+}
 
 function handleClickLike(localQuoteId) {
     if (!userHasClickedLike) {
-        hideElement(likeArrow)
-        hideElement(likeMe)
+        makeOpaque(likeArrow)
+        makeOpaque(likeMe)
         userHasClickedLike = true
     }
     setLikeProperties(likeButton, quoteLikes, growAnimations)
@@ -45,8 +71,8 @@ function handleClickLike(localQuoteId) {
 
 async function handleClickTheo(localQuoteId) {
     if (!userHasClickedTheo) {
-        hideElement(theoArrow)
-        hideElement(clickMe)
+        makeOpaque(theoArrow)
+        makeOpaque(clickMe)
         userHasClickedTheo = true
     }
     await fetchQuote(localQuoteId)
@@ -110,6 +136,36 @@ async function fetchQuotesServedCount() {
     }
 }
 
+async function fetchTopQuotes(orderBy, page, limit) {
+    endpoint_uri = "/quotes"+"?"+"order_by="+orderBy+"&"+"page="+page+"&"+"size="+limit
+    try {
+        const response = await fetch(buildApiString(endpoint_uri), {
+            method: "GET"
+        });
+        if (!response.ok) throw new Error("Failed to fetch");
+        const data = await response.json();
+        data.items.forEach(function(item) {
+            const tr = document.createElement('tr');
+            const likesCell = document.createElement('td');
+            const quoteCell = document.createElement('td');
+
+            likesCell.textContent = item.likes;
+            quoteCell.textContent = '"'+item.text+'"';
+
+            tr.appendChild(likesCell);
+            tr.appendChild(quoteCell);
+            leaderboard.appendChild(tr);
+          });
+        // populate some state with top quotes???
+        // display in tables
+        console.log(data.items)
+
+    } catch (error) {
+        quoteText.textContent = "Error loading quotes.";
+        console.error("Error:", error);
+    }
+}
+
 async function likeQuote(localQuoteId) {
     try {
         const response = await fetch(buildApiString("/like-quote" + "/" + localQuoteId), {
@@ -168,6 +224,22 @@ function hideElement(element) {
     element.classList.add("hide")
 }
 
+function unhideElement(element) {
+    element.classList.remove("hide")
+}
+
+function selectElement(element) {
+    element.classList.add("selected")
+}
+
+function unselectElement(element) {
+    element.classList.remove("selected")
+}
+
+function makeOpaque(element) {
+    element.classList.add("makeOpaque")
+}
+
 function setLikeButtonColourInitial(likeButtonLocal, hasUserLikedQuote) {
     quoteIsLiked = hasUserLikedQuote
     if (hasUserLikedQuote) {
@@ -192,10 +264,13 @@ fetchQuotesServedCount();
 fetchQuote(quoteId).then(() => {
     history.pushState({quoteId}, "", `?quoteId=${quoteId}`)
 });
+fetchTopQuotes("likes", top_quotes_page, quote_limit);
 
 likeButton.addEventListener("click", () => handleClickLike(quoteId));
 theoPictureButton.addEventListener("click", () => handleClickTheo(quoteId+1));
 shareButton.addEventListener("click", () => handleClickShare(quoteId));
+qotdButton.addEventListener("click", () => handleClickQotd())
+leaderboardButton.addEventListener("click", () => handleClickLeaderboard())
 window.addEventListener('popstate', (event) => {
     if (event.state && event.state.quoteId) {
         fetchQuote(event.state.quoteId)

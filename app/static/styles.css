@@ -5,17 +5,19 @@
 @font-face{
     font-family: 'playful';
     src: url('./fonts/Knewave-Regular.ttf');
-
+}
+@font-face {
+    font-family: 'retro';
+    src: url('./fonts/cool_font.woff2') format('woff2');
 }
 body {
     color: white;
     text-align: center;
-    font-size: 1.6rem;
+    font-size: 2.75rem;
     display: flex;
     align-items: center;
-    gap: 12vh;
     flex-direction: column;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: 'retro';
     background-image: url("./images/f2b617fdfb8e851.png");
     background-size: cover;
     background-repeat: no-repeat;
@@ -23,14 +25,27 @@ body {
     background-attachment: fixed; /* Keeps background fixed on scroll */
     text-shadow: 0.2rem 0.2rem 0.5rem black;
 }
-header {
-    font-size: 2.5rem;
-    font-family: 'posh';
+main {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
 }
-h1 {
+header {
+    font-size: 3rem;
+    font-family: 'retro';
     margin-top: 5vh;
+    margin-bottom: 8vh;
+}
+#menu {
+    margin-top: -2vh;
+}
+.menuItem {
+    filter: invert(0.4)
+}
+.menuItem:hover {
     text-decoration: underline;
-    text-decoration-thickness: 4px;
+    cursor: pointer;
 }
 a {
     color: black;
@@ -47,8 +62,8 @@ a:hover {
 }
 #clickMe, #likeMe {
     position: absolute;
-    font-family: 'playful';
-    font-size: 1.7rem;
+    font-family: 'retro';
+    font-size: 2.5rem;
     transition: opacity 1s ease-out;
 }
 #clickMe {
@@ -56,7 +71,7 @@ a:hover {
     left: -10.5rem;
 }
 #likeMe {
-    bottom: -8.9rem;
+    bottom: -11.1rem;
     right: -7rem;
     width: 12rem;
 }
@@ -101,8 +116,8 @@ a:hover {
 }
 #quotesServed {
     position: absolute;
-    font-size: 1rem;
-    bottom: -2rem;
+    font-size: 2.25rem;
+    bottom: -4rem;
     width: 10rem;
 }
 #quoteContainer, #actionContainer {
@@ -126,27 +141,29 @@ a:hover {
     padding-right: 3rem;
     border-radius: 1.5rem;
     border: solid black 0.25rem;
+    font-size: 2.25rem;
+    font-family:Arial, Helvetica, sans-serif;
     font-style: italic;
 }
 #actionContainer {
     position: absolute;
     justify-content: left;
-    height: 1.8rem;
     border-bottom-left-radius: 1rem;
     border-bottom-right-radius: 1rem;
     border-top: solid black 0.125rem;
     border-left: solid black 0.25rem;
     border-right: solid black 0.25rem;
     border-bottom: solid black 0.25rem;
-    right: 7.2rem;
-    bottom: -1.2rem;
+    right: 3rem;
+    bottom: -2.5rem;
     text-shadow: none;
-    font-size: 1.2rem;
     padding: 0.125rem;
 }
 #likeButton, #shareButton {
-    height: 1.5rem;
-    width: 1.5rem;
+    height: 2.5rem;
+    width: 2.5rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
     cursor: pointer;
     filter:invert(0.6);
     transition: filter 0.1s ease-in-out, transform 0.1s ease-in-out;
@@ -167,7 +184,7 @@ a:hover {
     margin-left: 0.8vw;
 }
 #quoteReference {
-    font-size: 1rem;
+    font-size: 1.5rem;
 }
 #share {
     display: flex;
@@ -185,7 +202,7 @@ a:hover {
 #emptyDiv {
     height: 10rem;
     width: 10rem;
-    margin-left: -5rem;
+    margin-left: -9rem;
 }
 #quoteLikes {
     margin-right: 0.4rem;
@@ -193,12 +210,64 @@ a:hover {
 #quoteLikes, #quoteShares {
     margin-left: 0.1rem;
 }
-#metaContainer {
+#leaderboardContainer {
+    margin-top: -15rem;
+}
+#leaderboard {
+    color: black;
+    /* border-collapse: collapse; */
+    border-spacing: 0.75rem;
+    /* box-shadow: 0.2rem 0.2rem 0.4rem black; */
+    font-family:Arial, Helvetica, sans-serif;
+    font-style: italic;
+    font-size: 2rem;
+}
+tr, td {
+    padding: 0.5rem;
+    background-color: rgb(228, 216, 216);
+    text-shadow: none;
+    /* border: solid black 0.25rem; */
+}
+td {
+    box-shadow: 0 0.2rem 0.4rem black;
+    border-radius: 0.25rem;
+    border: solid black 0.125rem;
+}
+#likeButton2 {
+    filter: invert(0);
+    height: 1.5rem;
+    width: 1.5rem;
+}
+#titleContainer {
+    /* color: white; */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#rat {
+    height: 6rem;
+    width: 9rem;
+    margin-bottom: 3rem;
+}
+.line {
+    height: 0.25rem;
+    /* width: 30vw; */
+    width: 100%;
+    margin-left: 2vw;
+    margin-right: 2vw;
+    background: white;
 }
 .hide {
+    display: none !important;
+}
+.selected {
+    filter: invert(0);
+    font-weight: bold;
+}
+.makeOpaque {
     opacity: 0;
 }
-
 /* animations */
 
 @keyframes bounce {
@@ -241,9 +310,10 @@ a:hover {
     }
     header {
         font-size: 6vw;
+        margin-bottom: 16vh;
     }
     #quoteContainer {
-        width: 60vw;
+        width: 72vw;
     }
     #clickMe {
         top: -9.5rem;
@@ -257,26 +327,26 @@ a:hover {
         filter: invert(1);
     }
     #arrow2 {
-        bottom: -10.5rem;
-        right: 9rem;
+        bottom: -11.5rem;
+        right: 6rem;
         transform: rotate(270deg);
         filter: invert(1);
     }
     #likeMe {
         bottom: -12.5rem;
-        right: 15.5rem;
+        right: 12.5rem;
         font-size: 1.7rem;
         width: 10rem;
     }
-    #quotesServed, #quoteReference {
-        font-size: 1.2rem;
-    }
-    #quotesServed {
-        bottom: -2.5rem;
+    #clickMe, #likeMe {
+        font-size: 2.8rem;
     }
     body{
         background-image: url("./images/0d9a3e9958673e4.png");
         color: black;
         text-shadow: 0.2rem 0.2rem 0.5rem grey;
+    }
+    .line {
+        background: black;
     }
 }
