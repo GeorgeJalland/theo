@@ -55,51 +55,54 @@ a {
 a:hover {
     text-decoration: underline;
 }
-#mainContainer {
+.mainContainer {
     position: relative;
     display: flex;
     justify-content: center;
 }
-#clickMe, #likeMe {
+.mainContainer.modal {
+    margin: 90% auto;
+}
+.clickMe, .likeMe {
     position: absolute;
     font-family: 'retro';
     font-size: 2.5rem;
     transition: opacity 1s ease-out;
 }
-#clickMe {
+.clickMe {
     top: -3.8rem;
     left: -10.5rem;
 }
-#likeMe {
+.likeMe {
     bottom: -11.1rem;
     right: -7rem;
     width: 12rem;
 }
-#arrow, #arrow2 {
+.arrow, .arrow2 {
     position: absolute;
     height: 8rem;
     width: 8rem;
     transition: opacity 1s ease-out;
 }
-#arrow {
+.arrow {
     width: 8rem;
     top: -1rem;
     left: -8rem;
 }
-#arrow2 {
+.arrow2 {
     bottom: -6.5rem;
     right: -2.5rem;
     transform: rotate(180deg);;
 }
-#theoHeadContainer, #emptyPaddingDiv{
+.theoHeadContainer, .emptyPaddingDiv{
     position: relative;
     display: flex;
     align-items: center;
 }
-#theoHeadContainer {
+.theoHeadContainer {
     z-index: 2;
 }
-#theoPictureButton {
+.theoPictureButton {
     height: 10rem;
     width: 10rem;
     margin-right: -5rem;
@@ -107,20 +110,27 @@ a:hover {
     transition: filter 0.1s ease-in-out, transform 0.1s ease-in-out;
     cursor: pointer;
 }
-#theoPictureButton:active {
+.theoPictureButton:active {
     transform: scale(0.7); /* Shrinks the image on click */
     filter: saturate(0.5)
 }
-#theoPictureButton:hover {
+.theoPictureButton.modal:active {
+    transform: none;
+    filter: none
+}
+.theoPictureButton:hover {
     filter: saturate(1.5)
 }
-#quotesServed {
+.theoPictureButton.modal:hover {
+    filter: none
+}
+.quotesServed {
     position: absolute;
     font-size: 2.25rem;
     bottom: -4rem;
     width: 10rem;
 }
-#quoteContainer, #actionContainer {
+.quoteContainer, .actionContainer {
     display: flex;
     align-items: center;
     background-color: rgb(228, 216, 216);
@@ -129,7 +139,7 @@ a:hover {
     box-shadow: 0.2rem 0.2rem 0.4rem black;
     text-shadow: none;
 }
-#quoteContainer {
+.quoteContainer {
     position: relative;
     justify-content: center;
     width: 50vw;
@@ -145,7 +155,7 @@ a:hover {
     font-family:Arial, Helvetica, sans-serif;
     font-style: italic;
 }
-#actionContainer {
+.actionContainer {
     position: absolute;
     justify-content: left;
     border-bottom-left-radius: 1rem;
@@ -159,7 +169,7 @@ a:hover {
     text-shadow: none;
     padding: 0.125rem;
 }
-#likeButton, #shareButton {
+.likeButton, .shareButton {
     height: 2.5rem;
     width: 2.5rem;
     margin-top: 0.25rem;
@@ -171,22 +181,22 @@ a:hover {
 .quoteLiked {
     filter:invert(0) !important;
 }
-#likeButton:hover, #shareButton:hover {
+.likeButton:hover, .shareButton:hover {
     filter:invert(0);
 }
-#likeButton:active, #shareButton:active {
+.likeButton:active, .shareButton:active {
     transform: scale(0.7);
 }
-#likesOverlay {
+.likesOverlay {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-left: 0.8vw;
 }
-#quoteReference {
+.quoteReference {
     font-size: 1.5rem;
 }
-#share {
+.share {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -196,18 +206,18 @@ a:hover {
     margin-right: 1.6vw;
     text-shadow: none;
 }
-#emptyPaddingDiv {
+.emptyPaddingDiv {
     position: relative;
 }
-#emptyDiv {
+.emptyDiv {
     height: 10rem;
     width: 10rem;
     margin-left: -9rem;
 }
-#quoteLikes {
+.quoteLikes {
     margin-right: 0.4rem;
 }
-#quoteLikes, #quoteShares {
+.quoteLikes, .quoteShares {
     margin-left: 0.1rem;
 }
 #leaderboardContainer {
@@ -219,24 +229,39 @@ a:hover {
     border-spacing: 0.75rem;
     /* box-shadow: 0.2rem 0.2rem 0.4rem black; */
     font-family:Arial, Helvetica, sans-serif;
-    font-style: italic;
+    /* font-family: "retro"; */
+    /* font-style: italic; */
     font-size: 2rem;
 }
-tr, td {
-    padding: 0.5rem;
-    background-color: rgb(228, 216, 216);
-    text-shadow: none;
-    /* border: solid black 0.25rem; */
-}
 td {
+    padding: 0.3rem;
+    text-shadow: none;
+    background-color: rgb(228, 216, 216);
     box-shadow: 0 0.2rem 0.4rem black;
-    border-radius: 0.25rem;
+    border-radius: 0.5rem;
     border: solid black 0.125rem;
+    height: 3rem;
+    max-width: 80vw;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
-#likeButton2 {
-    filter: invert(0);
-    height: 1.5rem;
-    width: 1.5rem;
+th {
+    font-family: "retro";
+    font-size: 3rem;
+    text-shadow: none;
+}
+.modal-layout {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(255, 255, 255, 0.7);
+}
+.quoteCell {
 }
 #titleContainer {
     /* color: white; */
@@ -248,10 +273,10 @@ td {
 #rat {
     height: 6rem;
     width: 9rem;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
 }
 .line {
-    height: 0.25rem;
+    height: 0.3rem;
     /* width: 30vw; */
     width: 100%;
     margin-left: 2vw;
@@ -312,33 +337,33 @@ td {
         font-size: 6vw;
         margin-bottom: 16vh;
     }
-    #quoteContainer {
+    .quoteContainer {
         width: 72vw;
     }
-    #clickMe {
+    .clickMe {
         top: -9.5rem;
         left: 10.5rem;
         width: 10rem;
     }
-    #arrow {
+    .arrow {
         top: -9rem;
         left: 3rem;
         transform: rotate(90deg);
         filter: invert(1);
     }
-    #arrow2 {
+    .arrow2 {
         bottom: -11.5rem;
         right: 6rem;
         transform: rotate(270deg);
         filter: invert(1);
     }
-    #likeMe {
+    .likeMe {
         bottom: -12.5rem;
         right: 12.5rem;
         font-size: 1.7rem;
         width: 10rem;
     }
-    #clickMe, #likeMe {
+    .clickMe, .likeMe {
         font-size: 2.8rem;
     }
     body{

@@ -4,6 +4,8 @@ const qotdButton = document.getElementById("menu-qotd");
 const leaderboardButton = document.getElementById("menu-leaderboard");
 const mainContainer = document.getElementById("mainContainer");
 const leaderboardContainer = document.getElementById("leaderboardContainer");
+const menuItems = [{"element": mainContainer, "button": qotdButton}, {"element": leaderboardContainer, "button": leaderboardButton}];
+
 const quoteText = document.getElementById("quoteText");
 const quoteLikes = document.getElementById("quoteLikes");
 const quoteShares = document.getElementById("quoteShares");
@@ -18,6 +20,13 @@ const innerQuoteContainer = document.getElementById("innerQuoteContainer");
 const quoteReference = document.getElementById("quoteReference");
 const shareButton = document.getElementById("shareButton");
 const leaderboard = document.getElementById("leaderboard");
+const menu = document.getElementById("menu")
+
+const modal = document.getElementById("modal-layout");
+const quoteTextModal = document.getElementById("quoteTextModal");
+const quoteReferenceModal = document.getElementById("quoteReferenceModal");
+const quoteLikesModal = document.getElementById("quoteLikesModal");
+const quoteSharesModal = document.getElementById("quoteSharesModal");
 
 const growAnimations = ['grow', 'grow2', 'grow3']
 
@@ -34,28 +43,20 @@ const quote_limit = 10
 const searchParams = new URLSearchParams(window.location.search)
 // states
 let quoteId = parseInt(searchParams.get("quoteId"));
-// let displayQotd = true
-// let displayLeaderboard = false
 let quoteIsLiked = false
 let userHasClickedLike = false
 let userHasClickedTheo = false
 let quotesServed = 0
 let top_quotes_page = 1
+let selectedMenuItem = {"element": mainContainer, "button": qotdButton}
 
-function handleClickQotd() {
-    console.log("clicked quote of the day")
-    hideElement(leaderboardContainer)
-    unhideElement(mainContainer)
-    unselectElement(leaderboardButton)
-    selectElement(qotdButton)
-}
-
-function handleClickLeaderboard() {
-    console.log("clicked leaderboard")
-    hideElement(mainContainer)
-    unhideElement(leaderboardContainer)
-    unselectElement(qotdButton)
-    selectElement(leaderboardButton)
+function displayMenuItem(element, menuButton) {
+    unselectElement(selectedMenuItem.button)
+    selectElement(menuButton)
+    hideElement(selectedMenuItem.element)
+    unhideElement(element)
+    selectedMenuItem.element = element
+    selectedMenuItem.button = menuButton
 }
 
 function handleClickLike(localQuoteId) {
@@ -149,8 +150,13 @@ async function fetchTopQuotes(orderBy, page, limit) {
             const likesCell = document.createElement('td');
             const quoteCell = document.createElement('td');
 
-            likesCell.textContent = item.likes;
-            quoteCell.textContent = '"'+item.text+'"';
+            likesCell.textContent = item.likes
+            quoteCell.textContent = '"' + item.text + '"'
+            quoteCell.dataset.quoteId = item.id
+            quoteCell.dataset.ref = item.reference
+            quoteCell.dataset.shares = item.shares
+            quoteCell.dataset.likes = item.likes
+            quoteCell.classList = "quoteCell"
 
             tr.appendChild(likesCell);
             tr.appendChild(quoteCell);
@@ -158,7 +164,6 @@ async function fetchTopQuotes(orderBy, page, limit) {
           });
         // populate some state with top quotes???
         // display in tables
-        console.log(data.items)
 
     } catch (error) {
         quoteText.textContent = "Error loading quotes.";
@@ -266,11 +271,30 @@ fetchQuote(quoteId).then(() => {
 });
 fetchTopQuotes("likes", top_quotes_page, quote_limit);
 
+// listeners
 likeButton.addEventListener("click", () => handleClickLike(quoteId));
 theoPictureButton.addEventListener("click", () => handleClickTheo(quoteId+1));
 shareButton.addEventListener("click", () => handleClickShare(quoteId));
-qotdButton.addEventListener("click", () => handleClickQotd())
-leaderboardButton.addEventListener("click", () => handleClickLeaderboard())
+menu.addEventListener("click", event => {
+    if (event.target.classList.contains("menuItem")) {
+        let menuItem = menuItems.filter(item => item.button === event.target)[0]
+        displayMenuItem(menuItem.element, menuItem.button)
+    }
+})
+leaderboard.addEventListener("click", event => {
+    if (event.target.classList.contains("quoteCell")) {
+        unhideElement(modal)
+        quoteTextModal.textContent = event.target.textContent
+        quoteReferenceModal.href = event.target.dataset.ref
+        quoteLikesModal.textContent = event.target.dataset.likes
+        quoteSharesModal.textContent = event.target.dataset.shares
+    }
+});
+window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+        hideElement(modal);
+    }
+});
 window.addEventListener('popstate', (event) => {
     if (event.state && event.state.quoteId) {
         fetchQuote(event.state.quoteId)

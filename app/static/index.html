@@ -19,35 +19,35 @@
         </div>
     </header>
     <main>
-        <div id="mainContainer" >
-            <div id="theoHeadContainer">
-                <img src="./images/theo_2.png" alt="Theo Von Cartoon Head" id="theoPictureButton" />
-                <div id="clickMe">Click Me!</div>
-                <img src="./images/arrow1.png" alt="arrow" id="arrow">
-                <div id="quotesServed">
+        <div id="mainContainer" class="mainContainer">
+            <div id="theoHeadContainer" class="theoHeadContainer">
+                <img src="./images/favicon.png" alt="Theo Von Cartoon Head" id="theoPictureButton" class="theoPictureButton"/>
+                <div id="clickMe" class="clickMe">Click Me!</div>
+                <img src="./images/arrow1.png" alt="arrow" id="arrow" class="arrow">
+                <div id="quotesServed" class="quotesServed">
                     <div>Served:</div>
-                    <div id="servedCount"></div>
+                    <div id="servedCount" class="servedCount"></div>
                 </div>
             </div>
-            <div id="quoteContainer">
-                <div id="innerQuoteContainer">
-                    <span id="quoteText"></span>
-                    <a id="quoteReference">[ref]</a>
+            <div id="quoteContainer" class="quoteContainer">
+                <div id="innerQuoteContainer" class="innerQuoteContainer">
+                    <span id="quoteText" class="quoteText"></span>
+                    <a id="quoteReference" class="quoteReference">[ref]</a>
                 </div>
             </div>
-            <div id="emptyPaddingDiv">
-                <div id="emptyDiv"></div>
-                <div id="likeMe">Like & Share!</div>
-                <img src="./images/arrow1.png" id="arrow2">
+            <div id="emptyPaddingDiv" class="emptyPaddingDiv">
+                <div id="emptyDiv" class="emptyDiv"></div>
+                <div id="likeMe" class="likeMe">Like & Share!</div>
+                <img src="./images/arrow1.png" id="arrow2" class="arrow2">
             </div>
-            <div id="actionContainer">
-                <div id="likesOverlay">
-                    <img src="images/like-button.png" alt="like button" id="likeButton"/>
-                    <div id="quoteLikes">0</div>
+            <div id="actionContainer" class="actionContainer">
+                <div id="likesOverlay" class="likesOverlay">
+                    <img src="images/like-button.png" alt="like button" id="likeButton" class="likeButton"/>
+                    <div id="quoteLikes" class="quoteLikes">0</div>
                 </div>
-                <div id="share">
-                    <img src="images/share3.png" alt="share button" id="shareButton"/>
-                    <div id="quoteShares">0</div>
+                <div id="share" class="share">
+                    <img src="images/share3.png" alt="share button" id="shareButton" class="shareButton"/>
+                    <div id="quoteShares" class="quoteShares">0</div>
                 </div>
             </div>
         </div>
@@ -58,7 +58,39 @@
                 <div class="line"></div>
             </div>
             <table id="leaderboard">
+                <tr>
+                    <th>Likes</th>
+                    <th>Quote</th>
+                </tr>
             </table>
+            <div id="modal-layout" class="modal-layout hide">
+                <div id="mainContainerModal" class="mainContainer modal">
+                    <div id="theoHeadContainerModal" class="theoHeadContainer">
+                        <img src="./images/favicon.png" alt="Theo Von Cartoon Head" id="theoPictureButtonModal" class="theoPictureButton modal"/>
+                    </div>
+                    <div id="quoteContainerModal" class="quoteContainer">
+                        <div id="innerQuoteContainerModal" class="innerQuoteContainer">
+                            <span id="quoteTextModal" class="quoteText"></span>
+                            <a id="quoteReferenceModal" class="quoteReference">[ref]</a>
+                        </div>
+                    </div>
+                    <div id="emptyPaddingDivModal" class="emptyPaddingDiv">
+                        <div id="emptyDivModal" class="emptyDiv"></div>
+                        <div id="likeMeModal" class="likeMe">Like & Share!</div>
+                        <img src="./images/arrow1.png" id="arrow2Modal" class="arrow2">
+                    </div>
+                    <div id="actionContainerModal" class="actionContainer">
+                        <div id="likesOverlayModal" class="likesOverlay">
+                            <img src="images/like-button.png" alt="like button" id="likeButtonModal" class="likeButton"/>
+                            <div id="quoteLikesModal" class="quoteLikes">0</div>
+                        </div>
+                        <div id="shareModal" class="share">
+                            <img src="images/share3.png" alt="share button" id="shareButtonModal" class="shareButton"/>
+                            <div id="quoteSharesModal" class="quoteShares">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 </body>
