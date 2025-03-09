@@ -8,7 +8,7 @@ import asyncio
 from typing import Optional, Dict, Any
 
 from app import db
-from app.models import Quote
+from app.models import Quote, QuoteOut
 
 app = FastAPI(root_path="/api")
 add_pagination(app)
@@ -31,7 +31,7 @@ async def startup_event():
 
 
 @app.get("/quote")
-async def get_quote(response: Response, id: Optional[int] = None, quote_id: int = Cookie(None), liked_quotes: str = Cookie(None), session: AsyncSession = Depends(db.get_session)) -> Dict[str, Any]:
+async def get_quote(response: Response, id: Optional[int] = None, quote_id: int = Cookie(None), liked_quotes: str = Cookie(None), session: AsyncSession = Depends(db.get_session)) -> QuoteOut:
     asyncio.create_task(db.increment_quotes_served())
 
     if not id:
@@ -41,13 +41,16 @@ async def get_quote(response: Response, id: Optional[int] = None, quote_id: int 
             id = await db.get_random_quote_id(session)
     quote = await db.get_quote_record(session, id, app.state.QUOTE_MAX_ID)
 
-    has_user_liked_quote = quote.id in read_cookie_list_value(liked_quotes)
     response.set_cookie(key="quote_id", value=quote.id, httponly=True, max_age=app.state.cookie_expiry)
-    return {**quote.model_dump() , "has_user_liked_quote": has_user_liked_quote}
+    return {**quote.model_dump() , "has_user_liked_quote": has_user_liked_quote(id=quote.id, liked_quotes=liked_quotes)}
 
 @app.get("/quotes")
 async def get_quotes(order_by: str, session: AsyncSession = Depends(db.get_session)) -> Page[Quote]:
     return await db.get_quotes(session, order_by)
+
+@app.get("/user-liked-quote/{quote_id}")
+async def user_liked_quote(quote_id: int, liked_quotes: str = Cookie(None)) -> bool:
+    return has_user_liked_quote(quote_id, liked_quotes)
 
 @app.get("/quotes-served")
 async def get_quotes_served(session: AsyncSession = Depends(db.get_session)) -> Dict[str, int]:
@@ -88,3 +91,6 @@ def decode_and_parse_cookie(cookie: str):
 
 def encode_and_jsonify_list(list_input: str):
     return urllib.parse.quote(json.dumps(list_input))
+
+def has_user_liked_quote(id: int, liked_quotes: str) -> str:
+    return id in read_cookie_list_value(liked_quotes)

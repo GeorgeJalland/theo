@@ -4,17 +4,57 @@ const qotdButton = document.getElementById("menu-qotd");
 const leaderboardButton = document.getElementById("menu-leaderboard");
 const mainContainer = document.getElementById("mainContainer");
 const leaderboardContainer = document.getElementById("leaderboardContainer");
-const mainLoadFunction = () => {
-    fetchQuotesServedCount();
-    fetchQuote(qotdState.quoteId).then(() => {
-        history.pushState(qotdState, "", `?quoteId=${qotdState.quoteId}`)
-    })
+
+class MenuItem {
+    constructor(mode, displayElement, state, button, loadFunction, historyStatesToPush=[]) {
+        this.mode = mode;
+        this.displayElement = displayElement;
+        this.state = state;
+        this.button = button;
+        this.loadFunction = loadFunction;
+        this.historyStatesToPush = historyStatesToPush
+    }
+
+    static getMenuItemFromEvent(event) {
+        return menuItems.filter(item => item.button === event.target)[0];
+    }
+
+    static getMenuItemByMode(mode) {
+        return menuItems.filter(item => item.mode === mode)[0];
+    }
+
+    setState(state) {
+        for (const key in state) {
+            this.state[key] = state[key]
+        }
+    }
+
+    async render(menuState) {
+        await this.load()
+        this.display(menuState)
+        this.pushHistory(menuState)
+    }
+
+    async load() {
+        await this.loadFunction(this.state)
+    }
+
+    display(menuState) {
+        unselectElement(menuState.selectedItem.button)
+        selectElement(this.button)
+        hideElement(menuState.selectedItem.displayElement)
+        unhideElement(this.displayElement)
+        menuState.selectedItem = this
+    }
+
+    pushHistory() {
+        let additionalUrlStates = ""
+        for (const state of this.historyStatesToPush){
+            additionalUrlStates += `&${state}=${this.state[state]}`
+        }
+        history.pushState({"mode": this.mode, "state": this.state}, "", `?mode=${this.mode}${additionalUrlStates}`)
+    }
 }
-const leaderboardLoadFunction = () => {
-    fetchTopQuotes("likes", leaderboardState.top_quotes_page, quote_limit);
-}
-const menuItems = [{ element: mainContainer, button: qotdButton, loadFunction: mainLoadFunction },
-{ element: leaderboardContainer, button: leaderboardButton, loadFunction: leaderboardLoadFunction }];
 
 const quoteText = document.getElementById("quoteText");
 const quoteLikes = document.getElementById("quoteLikes");
@@ -56,9 +96,9 @@ function buildApiString(endpoint) {
 
 const quote_limit = 10
 const searchParams = new URLSearchParams(window.location.search)
-let selectedMenuItem = { "element": mainContainer, "button": qotdButton }
+
 // states, maybe qotd and modal can be instances of same class
-qotdState = {
+let qotdState = {
     quoteId: parseInt(searchParams.get("quoteId")),
     quoteIsLiked: false,
     userHasClickedLike: false,
@@ -66,44 +106,51 @@ qotdState = {
     quotesServed: 0
 }
 
-leaderboardState = {
+let leaderboardState = {
     top_quotes_page: 1
 }
 
-modalState = {
+let modalState = {
     quoteId: 0,
     quoteIsLiked: false,
     userHasClickedLike: false,
     userHasClickedTheo: false,
 }
 
+const qotdLoadFunction = async (state) => {
+    await fetchQuotesServedCount();
+    await fetchQuote(state.quoteId);
+}
+const leaderboardLoadFunction = async (state) => {
+    await fetchTopQuotes("likes", state.top_quotes_page, quote_limit);
+}
+const qotdMenuItem = new MenuItem(mode="qotd", displayElement=mainContainer, state=qotdState, button=qotdButton, loadFunction=qotdLoadFunction, historyStatesToPush=["quoteId"])
+const leaderboardMenuItem = new MenuItem(mode="leaderboard", displayElement=leaderboardContainer, state=leaderboardState, button=leaderboardButton, loadFunction=leaderboardLoadFunction)
+const menuItems = [qotdMenuItem, leaderboardMenuItem]
 
-function handleClickMenuItem(event) {
-    if (event.target.classList.contains("menuItem")) {
-        let menuItem = menuItems.filter(item => item.button === event.target)[0]
-        menuItem.loadFunction()
-        displayMenuItem(menuItem.element, menuItem.button)
-    }
+let menuState = {
+    selectedItem: qotdMenuItem
 }
 
-function displayMenuItem(element, menuButton) {
-    unselectElement(selectedMenuItem.button)
-    selectElement(menuButton)
-    hideElement(selectedMenuItem.element)
-    unhideElement(element)
-    selectedMenuItem.element = element
-    selectedMenuItem.button = menuButton
+async function mainLoad(searchParameters, menuState) {
+    const menuItem = MenuItem.getMenuItemByMode(searchParameters.get("mode")) || qotdMenuItem
+    await menuItem.render(menuState)
 }
 
-function handleClickQuoteCell(event) {
-        unhideElement(modal)
-        quoteTextModal.textContent = event.target.textContent
-        quoteReferenceModal.href = event.target.dataset.ref
-        quoteLikesModal.textContent = event.target.dataset.likes
-        quoteSharesModal.textContent = event.target.dataset.shares
-        modalState.quoteId = event.target.dataset.quoteId
+async function handleClickMenuItem(event, menuState) {
+    const menuItem = MenuItem.getMenuItemFromEvent(event)
+    await menuItem.render(menuState)
+}
 
-        setLikeButtonColourInitial(modalState, likeButtonModal, event.target.dataset.hasUserLikedQuote)
+async function handleClickQuoteCell(event) {
+    unhideElement(modal)
+    const row = event.target.parentElement
+    quoteTextModal.textContent = event.target.textContent
+    quoteReferenceModal.href = row.dataset.ref
+    quoteLikesModal.textContent = row.dataset.likes
+    quoteSharesModal.textContent = row.dataset.shares
+    modalState.quoteId = row.dataset.quoteId
+    setLikeButtonColourInitial(modalState, likeButtonModal, await userLikedQuote(modalState.quoteId))
 }
 
 function handleClickLike(state, likeButtonElement, quoteLikesElement, likeArrowElement, likeMeElement) {
@@ -119,7 +166,9 @@ function handleClickLike(state, likeButtonElement, quoteLikesElement, likeArrowE
 
 function handleClickLikeModal(state, likeButtonElement, quoteLikesElement, likeArrowElement, likeMeElement) {
     handleClickLike(state, likeButtonElement, quoteLikesElement, likeArrowElement, likeMeElement)
-    // set the table row dataset likes to new likes value, consider storing in leaderboard state as opposed to table?
+    const row = document.getElementById("quote_id_"+state.quoteId)
+    row.dataset.likes = quoteLikesElement.textContent
+    row.querySelector(".likesCell").textContent = quoteLikesElement.textContent
 }
 
 async function handleClickTheo(localQuoteId) {
@@ -129,14 +178,14 @@ async function handleClickTheo(localQuoteId) {
         qotdState.userHasClickedTheo = true
     }
     await fetchQuote(localQuoteId)
-    history.pushState(qotdState, "", `?quoteId=${qotdState.quoteId}`)
+    qotdMenuItem.pushHistory()
 }
 
 async function handleClickShare(localQuoteId) {
     const shareData = {
         title: 'Theo Von Quote',
         text: quoteText.textContent,
-        url: window.location.href
+        url: window.location.origin + window.location.pathname + `?mode=qotd&quoteId=${localQuoteId}`
     };
     try {
         console.log(await navigator.share(shareData));
@@ -204,13 +253,15 @@ async function fetchTopQuotes(orderBy, page, limit) {
             const quoteCell = document.createElement('td');
 
             likesCell.textContent = item.likes
+            likesCell.classList = "likesCell"
             quoteCell.textContent = '"' + item.text + '"'
-            quoteCell.dataset.quoteId = item.id
-            quoteCell.dataset.ref = item.reference
-            quoteCell.dataset.shares = item.shares
-            quoteCell.dataset.likes = item.likes
-            quoteCell.dataset.hasUserLikedQuote = item.has_user_liked_quote
             quoteCell.classList = "quoteCell"
+
+            tr.dataset.quoteId = item.id
+            tr.dataset.ref = item.reference
+            tr.dataset.shares = item.shares
+            tr.dataset.likes = item.likes
+            tr.id = "quote_id_"+item.id
 
             tr.appendChild(likesCell);
             tr.appendChild(quoteCell);
@@ -245,6 +296,20 @@ async function shareQuote(localQuoteId) {
             credentials: "include"
         });
         if (!response.ok) throw new Error("Failed to share quote");
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+async function userLikedQuote(localQuoteId) {
+    try {
+        const response = await fetch(buildApiString("/user-liked-quote" + "/" + localQuoteId), {
+            method: "GET",
+            credentials: "include"
+        });
+        if (!response.ok) throw new Error("Failed to determine if quote is liked by user.");
+        return response.json()
 
     } catch (error) {
         console.error("Error:", error);
@@ -308,15 +373,6 @@ function setLikeButtonColourInitial(state, likeButtonLocal, hasUserLikedQuote) {
     }
 }
 
-function setLikeButtonModalColourInitial(likeButtonLocal, hasUserLikedQuote) {
-    modalState.quoteModalIsLiked = hasUserLikedQuote
-    if (hasUserLikedQuote) {
-        likeButtonLocal.classList.add("quoteLiked");
-    } else {
-        likeButtonLocal.classList.remove("quoteLiked");
-    }
-}
-
 function setLikeProperties(likeButtonElement, quoteLikesElement, animationOptions, quoteLiked) {
     // This function sets like count and button colour based on if like was previously selected, sets animation on positive increment
     if (quoteLiked) {
@@ -329,10 +385,14 @@ function setLikeProperties(likeButtonElement, quoteLikesElement, animationOption
 }
 
 // Functions called on page load
-mainLoadFunction();
+mainLoad(searchParams, menuState)
 
 // listeners
-menu.addEventListener("click", event => handleClickMenuItem(event))
+menu.addEventListener("click", async (event) => {
+    if (event.target.classList.contains("menuItem")) {
+        await handleClickMenuItem(event, menuState)
+    }
+})
 
 likeButton.addEventListener("click", () => handleClickLike(qotdState, likeButton, quoteLikes, likeArrow, likeMe));
 theoPictureButton.addEventListener("click", () => handleClickTheo(qotdState.quoteId + 1));
@@ -352,7 +412,10 @@ window.addEventListener("click", (event) => {
 });
 window.addEventListener('popstate', (event) => {
     console.log("popping state: ", event.state)
-    if (event.state && event.state.quoteId) {
-        fetchQuote(event.state.quoteId)
+    if (event.state && event.state.mode) {
+        const menuItem = MenuItem.getMenuItemByMode(event.state.mode)
+        menuItem.setState(event.state.state)
+        menuItem.load()
+        menuItem.display(menuState)
     }
 });

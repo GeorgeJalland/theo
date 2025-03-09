@@ -8,6 +8,9 @@ class Quote(SQLModel, table=True):
    shares: Optional[int]  = Field(default=0, sa_column_kwargs={"server_default": "0"})
    reference: str
 
+class QuoteOut(Quote):
+   has_user_liked_quote: bool
+
 class Counter(SQLModel, table=True):
    id: int = Field(primary_key=True, index=True)
    served: int

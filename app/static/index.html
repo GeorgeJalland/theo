@@ -11,7 +11,7 @@
 </head>
 <body>
     <header>
-        <h1>[Theo Von Quotes]</h1>
+        <h1 id="theoh1">[Theo Von Quotes]</h1>
         <div id="menu">
             <span id="menu-qotd" class="menuItem selected">[QUOTE OF THE DAY]</span>
             |
@@ -57,6 +57,10 @@
                 <img id="rat" alt="pixelart rat with a crown" src="images/pixel rat.png">
                 <div class="line"></div>
             </div>
+            <div id="instructions">
+                <span>** Click Quotes to Expand! **</span>
+                <img src="./images/arrow1.png" id="instructionsArrow" class="arrow2">
+            </div>
             <table id="leaderboard">
                 <thead>
                     <tr>
@@ -68,31 +72,31 @@
 
                 </tbody>
             </table>
-            <div id="modal-layout" class="modal-layout hide">
-                <div id="mainContainerModal" class="mainContainer modal">
-                    <div id="theoHeadContainerModal" class="theoHeadContainer">
-                        <img src="./images/favicon.png" alt="Theo Von Cartoon Head" id="theoPictureButtonModal" class="theoPictureButton modal"/>
+        </div>
+        <div id="modal-layout" class="modal-layout hide">
+            <div id="mainContainerModal" class="mainContainer modal">
+                <div id="theoHeadContainerModal" class="theoHeadContainer">
+                    <img src="./images/favicon.png" alt="Theo Von Cartoon Head" id="theoPictureButtonModal" class="theoPictureButton modal"/>
+                </div>
+                <div id="quoteContainerModal" class="quoteContainer">
+                    <div id="innerQuoteContainerModal" class="innerQuoteContainer">
+                        <span id="quoteTextModal" class="quoteText"></span>
+                        <a id="quoteReferenceModal" class="quoteReference">[ref]</a>
                     </div>
-                    <div id="quoteContainerModal" class="quoteContainer">
-                        <div id="innerQuoteContainerModal" class="innerQuoteContainer">
-                            <span id="quoteTextModal" class="quoteText"></span>
-                            <a id="quoteReferenceModal" class="quoteReference">[ref]</a>
-                        </div>
+                </div>
+                <div id="emptyPaddingDivModal" class="emptyPaddingDiv">
+                    <div id="emptyDivModal" class="emptyDiv"></div>
+                    <div id="likeMeModal" class="likeMe">Like & Share!</div>
+                    <img src="./images/arrow1.png" id="arrow2Modal" class="arrow2">
+                </div>
+                <div id="actionContainerModal" class="actionContainer">
+                    <div id="likesOverlayModal" class="likesOverlay">
+                        <img src="images/like-button.png" alt="like button" id="likeButtonModal" class="likeButton"/>
+                        <div id="quoteLikesModal" class="quoteLikes">0</div>
                     </div>
-                    <div id="emptyPaddingDivModal" class="emptyPaddingDiv">
-                        <div id="emptyDivModal" class="emptyDiv"></div>
-                        <div id="likeMeModal" class="likeMe">Like & Share!</div>
-                        <img src="./images/arrow1.png" id="arrow2Modal" class="arrow2">
-                    </div>
-                    <div id="actionContainerModal" class="actionContainer">
-                        <div id="likesOverlayModal" class="likesOverlay">
-                            <img src="images/like-button.png" alt="like button" id="likeButtonModal" class="likeButton"/>
-                            <div id="quoteLikesModal" class="quoteLikes">0</div>
-                        </div>
-                        <div id="shareModal" class="share">
-                            <img src="images/share3.png" alt="share button" id="shareButtonModal" class="shareButton"/>
-                            <div id="quoteSharesModal" class="quoteShares">0</div>
-                        </div>
+                    <div id="shareModal" class="share">
+                        <img src="images/share3.png" alt="share button" id="shareButtonModal" class="shareButton"/>
+                        <div id="quoteSharesModal" class="quoteShares">0</div>
                     </div>
                 </div>
             </div>

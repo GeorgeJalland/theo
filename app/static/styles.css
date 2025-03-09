@@ -25,6 +25,10 @@ body {
     background-attachment: fixed; /* Keeps background fixed on scroll */
     text-shadow: 0.2rem 0.2rem 0.5rem black;
 }
+#theoh1 {
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+}
 main {
     display: flex;
     position: relative;
@@ -34,8 +38,7 @@ main {
 header {
     font-size: 3rem;
     font-family: 'retro';
-    margin-top: 5vh;
-    margin-bottom: 8vh;
+    margin-bottom: 5vh;
 }
 #menu {
     margin-top: -2vh;
@@ -59,9 +62,10 @@ a:hover {
     position: relative;
     display: flex;
     justify-content: center;
+    margin-top: 8vh;
 }
 .mainContainer.modal {
-    margin: 90% auto;
+    margin-top: 0;
 }
 .clickMe, .likeMe {
     position: absolute;
@@ -74,8 +78,8 @@ a:hover {
     left: -10.5rem;
 }
 .likeMe {
-    bottom: -11.1rem;
-    right: -7rem;
+    bottom: -12rem;
+    right: -10rem;
     width: 12rem;
 }
 .arrow, .arrow2 {
@@ -90,9 +94,16 @@ a:hover {
     left: -8rem;
 }
 .arrow2 {
-    bottom: -6.5rem;
-    right: -2.5rem;
+    bottom: -7rem;
+    right: -6rem;
     transform: rotate(180deg);;
+}
+#arrow2Modal {
+    filter: invert(1);
+}
+#likeMeModal {
+    color: black;
+    text-shadow: none;
 }
 .theoHeadContainer, .emptyPaddingDiv{
     position: relative;
@@ -220,21 +231,28 @@ a:hover {
 .quoteLikes, .quoteShares {
     margin-left: 0.1rem;
 }
-#leaderboardContainer {
-    margin-top: -15rem;
-}
 #leaderboard {
-    color: black;
-    /* border-collapse: collapse; */
     border-spacing: 0.75rem;
-    /* box-shadow: 0.2rem 0.2rem 0.4rem black; */
     font-family:Arial, Helvetica, sans-serif;
-    /* font-family: "retro"; */
-    /* font-style: italic; */
     font-size: 2rem;
 }
+#instructions {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+#instructionsArrow {
+    top: 0rem;
+    right: -8rem;
+    transform: scaleX(-1) rotate(90deg) scale(0.7) !important;
+}
+tbody {
+    color: black;
+}
 td {
-    padding: 0.3rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
     text-shadow: none;
     background-color: rgb(228, 216, 216);
     box-shadow: 0 0.2rem 0.4rem black;
@@ -252,19 +270,32 @@ th {
     text-shadow: none;
 }
 .modal-layout {
+    display: flex;
     position: fixed;
+    align-items: center;
+    justify-content: center;
     z-index: 1;
     left: 0;
     top: 0;
+    bottom: 0;
+    right: 0;
     width: 100%;
-    height: 100%;
     overflow: auto; /* Enable scroll if needed */
     background-color: rgba(255, 255, 255, 0.7);
 }
 .quoteCell {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.quoteCell:hover {
+    filter: brightness(1.15)
+}
+.likesCell {
+    font-family: 'retro';
+    font-size: 3rem;
+    font-weight: bold;
 }
 #titleContainer {
-    /* color: white; */
     position: relative;
     display: flex;
     align-items: center;
@@ -335,7 +366,7 @@ th {
     }
     header {
         font-size: 6vw;
-        margin-bottom: 16vh;
+        margin-top: 5vh;
     }
     .quoteContainer {
         width: 72vw;
