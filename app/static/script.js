@@ -82,6 +82,10 @@ const likeButtonModal = document.getElementById("likeButtonModal");
 const shareButtonModal = document.getElementById("shareButtonModal");
 const likeArrowModal = document.getElementById("arrow2Modal");
 const likeMeModal = document.getElementById("likeMeModal");
+const leaderboardMeta = document.getElementById("leaderboardMeta");
+const leaderboardArrowLeft = document.getElementById("leaderboardArrowLeft");
+const leaderboardArrowRight = document.getElementById("leaderboardArrowRight");
+const sortOptionsContainer = document.getElementById("sortOptionsContainer");
 
 const growAnimations = ['grow', 'grow2', 'grow3']
 
@@ -107,7 +111,8 @@ let qotdState = {
 }
 
 let leaderboardState = {
-    top_quotes_page: 1
+    page: 1,
+    orderBy: "likes"
 }
 
 let modalState = {
@@ -122,7 +127,7 @@ const qotdLoadFunction = async (state) => {
     await fetchQuote(state.quoteId);
 }
 const leaderboardLoadFunction = async (state) => {
-    await fetchTopQuotes("likes", state.top_quotes_page, quote_limit);
+    await fetchQuotes("likes", state.page, quote_limit);
 }
 const qotdMenuItem = new MenuItem(mode="qotd", displayElement=mainContainer, state=qotdState, button=qotdButton, loadFunction=qotdLoadFunction, historyStatesToPush=["quoteId"])
 const leaderboardMenuItem = new MenuItem(mode="leaderboard", displayElement=leaderboardContainer, state=leaderboardState, button=leaderboardButton, loadFunction=leaderboardLoadFunction)
@@ -142,6 +147,15 @@ async function handleClickMenuItem(event, menuState) {
     await menuItem.render(menuState)
 }
 
+async function handleClickSortOption(event, state) {
+    state.orderBy = event.target.dataset.sortby
+    state.page = 1
+    selectElement(event.target)
+    let siblings = [...event.target.parentNode.children].filter(child => child !== event.target)
+    siblings.forEach(element => unselectElement(element))
+    await fetchQuotes(state.orderBy, state.page, quote_limit)
+}
+
 async function handleClickQuoteCell(event) {
     unhideElement(modal)
     const row = event.target.parentElement
@@ -151,6 +165,16 @@ async function handleClickQuoteCell(event) {
     quoteSharesModal.textContent = row.dataset.shares
     modalState.quoteId = row.dataset.quoteId
     setLikeButtonColourInitial(modalState, likeButtonModal, await userLikedQuote(modalState.quoteId))
+}
+
+async function handleClickNextArrow(state) {
+    state.page += 1
+    await fetchQuotes(state.orderBy, state.page, quote_limit)
+}
+
+async function handleClickPrevArrow(state) {
+    state.page -= 1
+    await fetchQuotes(state.orderBy, state.page, quote_limit)
 }
 
 function handleClickLike(state, likeButtonElement, quoteLikesElement, likeArrowElement, likeMeElement) {
@@ -238,7 +262,7 @@ async function fetchQuotesServedCount() {
     }
 }
 
-async function fetchTopQuotes(orderBy, page, limit) {
+async function fetchQuotes(orderBy, page, limit) {
     endpoint_uri = "/quotes" + "?" + "order_by=" + orderBy + "&" + "page=" + page + "&" + "size=" + limit
     try {
         const response = await fetch(buildApiString(endpoint_uri), {
@@ -247,6 +271,7 @@ async function fetchTopQuotes(orderBy, page, limit) {
         if (!response.ok) throw new Error("Failed to fetch");
         const data = await response.json();
         leaderboardBody.innerHTML = "";
+        // can some of this be abstracted into functions?
         data.items.forEach(function (item) {
             const tr = document.createElement('tr');
             const likesCell = document.createElement('td');
@@ -267,6 +292,17 @@ async function fetchTopQuotes(orderBy, page, limit) {
             tr.appendChild(quoteCell);
             leaderboardBody.appendChild(tr);
         });
+        leaderboardMeta.textContent = "[" + data.page + "/" + data.pages + "]"
+        if (data.page == 1) {
+            hideElement(leaderboardArrowLeft)
+        } else {
+            unhideElement(leaderboardArrowLeft)
+        }
+        if (data.page == data.pages) {
+            hideElement(leaderboardArrowRight)
+        } else {
+            unhideElement(leaderboardArrowRight)
+        }
         // populate some state with top quotes???
         // display in tables
 
@@ -402,6 +438,13 @@ leaderboard.addEventListener("click", event => {
         handleClickQuoteCell(event);
     }
 })
+sortOptionsContainer.addEventListener("click", (event) => {
+    if (event.target.classList.contains("sortOption")) {
+        handleClickSortOption(event, leaderboardState)
+    }
+})
+leaderboardArrowRight.addEventListener("click", () => handleClickNextArrow(leaderboardState));
+leaderboardArrowLeft.addEventListener("click", () => handleClickPrevArrow(leaderboardState));
 likeButtonModal.addEventListener("click", () => handleClickLikeModal(modalState, likeButtonModal, quoteLikesModal, likeArrowModal, likeMeModal));
 shareButtonModal.addEventListener("click", () => handleClickShare(modalState.quoteId));
 

@@ -57,10 +57,13 @@
                 <img id="rat" alt="pixelart rat with a crown" src="images/pixel rat.png">
                 <div class="line"></div>
             </div>
-            <div id="instructions">
-                <span>** Click Quotes to Expand! **</span>
-                <img src="./images/arrow1.png" id="instructionsArrow" class="arrow2">
+            <div id="sortOptionsContainer">
+                <span id="sortLikes" class="sortOption selected" data-sortby="likes">[LIKES]</span>|<span id="sortNewest" class="sortOption" data-sortby="id">[NEWEST]</span>|<span id="sortShares" class="sortOption" data-sortby="shares">[SHARES]</span>
             </div>
+            <!-- <div id="instructions">
+                <span id="expandText">** Click Quotes to Expand! **</span>
+                <img src="./images/arrow1.png" id="instructionsArrow" class="arrow2">
+            </div> -->
             <table id="leaderboard">
                 <thead>
                     <tr>
@@ -72,6 +75,11 @@
 
                 </tbody>
             </table>
+            <div class="tableMeta">
+                <img id="leaderboardArrowLeft" class="leaderboardArrows" src="./images/next-arrow.png" alt="arrow pointing right">
+                <div id="leaderboardMeta" class="leaderboardMeta">[/]</div>
+                <img id="leaderboardArrowRight" class="leaderboardArrows" src="./images/next-arrow.png" alt="arrow pointing left">
+            </div>
         </div>
         <div id="modal-layout" class="modal-layout hide">
             <div id="mainContainerModal" class="mainContainer modal">

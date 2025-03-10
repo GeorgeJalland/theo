@@ -68,8 +68,7 @@ sudo docker compose up --build --detach
 ```bash
 git checkout master
 git pull origin master
-sudo docker compose build
-docker compose up --detach
+sudo docker compose up --build --detach
 ```
 
 ### Nginx

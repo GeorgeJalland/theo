@@ -236,6 +236,13 @@ a:hover {
     font-family:Arial, Helvetica, sans-serif;
     font-size: 2rem;
 }
+/* Can this be put in a class along with menu items */
+.sortOption {
+    filter: invert(0.4)
+}
+.sortOption:hover {
+    text-decoration: underline;
+}
 #instructions {
     position: relative;
     display: inline-flex;
@@ -259,7 +266,6 @@ td {
     border-radius: 0.5rem;
     border: solid black 0.125rem;
     height: 3rem;
-    max-width: 80vw;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -268,6 +274,33 @@ th {
     font-family: "retro";
     font-size: 3rem;
     text-shadow: none;
+}
+.tableMeta {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    color: white
+}
+.leaderboardMeta {
+    /* padding-left: 1rem;
+    padding-right: 1rem; */
+    /* color: white; */
+}
+/*  Should put clickables in a class, e.g. pointer, transformation hover etc*/
+.leaderboardArrows {
+    height: 2.5rem;
+    width: 4rem;
+    transition: filter 0.1s ease-in-out, transform 0.1s ease-in-out;
+    cursor: pointer;
+}
+.leaderboardArrows:active {
+    transform: scale(0.7);
+}
+#leaderboardArrowRight {
+    transform: scaleX(-1);
+}
+#leaderboardArrowRight:active {
+    transform: scaleX(-1) scale(0.7);
 }
 .modal-layout {
     display: flex;
@@ -286,6 +319,8 @@ th {
 .quoteCell {
     font-size: 1.5rem;
     cursor: pointer;
+    max-width: 80vw;
+    min-width: 80vw;
 }
 .quoteCell:hover {
     filter: brightness(1.15)
