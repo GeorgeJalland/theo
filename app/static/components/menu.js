@@ -29,7 +29,6 @@ export class Menu {
         menuItem.display()
         this.state.selectedItem = menuItem
         await menuItem.render()
-        menuItem.pushHistory()
     }
 
     async renderWithState(mode, state) {
@@ -37,8 +36,8 @@ export class Menu {
         this.state.selectedItem.undisplay()
         menuItem.display()
         this.state.selectedItem = menuItem
-        this.state.selectedItem.component.state = state
-        await menuItem.render()
+        this.state.selectedItem.setState(state)
+        await menuItem.render(false)
     }
 
     getMenuItemFromEvent(event) {
@@ -55,7 +54,6 @@ export class Menu {
         menuItem.display()
         this.state.selectedItem = menuItem
         await menuItem.render()
-        menuItem.pushHistory()
     }
 }
 
@@ -75,11 +73,12 @@ export class MenuItem {
         hideElement(this.component.elements.main)
     }
 
-    async render() {
-        await this.component.render()
+    setState(state) {
+        this.component.state = state
+        console.log("state set as: ", this.component)
     }
 
-    pushHistory() {
-        this.component.pushHistory()
+    async render(pushHistory) {
+        await this.component.render(pushHistory)
     }
 }

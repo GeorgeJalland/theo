@@ -3,7 +3,8 @@ import { hideElement, unhideElement, selectElement, unselectElement } from "../h
 
 export class Leaderboard {
     constructor(searchParams) {
-        this.searchParams = searchParams
+        this.state.page = parseInt(searchParams.get("page"))
+        this.state.orderBy = searchParams.get("orderBy")
         this.addListeners()
     }
 
@@ -25,7 +26,7 @@ export class Leaderboard {
     QUOTE_LIMIT = 10
 
     getHistoryStatesToPush () {
-        return []
+        return [{"page": this.state.page}, {"orderBy": this.state.orderBy}]
     }
 
     addListeners() {
@@ -38,8 +39,11 @@ export class Leaderboard {
         this.elements.leaderboardArrowLeft.addEventListener("click", () => this.handleClickPrevArrow());
     }
 
-    async render() {
+    async render(pushHistory = true) {
         await this.updateQuotes();
+        if (pushHistory) {
+            this.pushHistory();
+        }
     }
 
     async updateQuotes() {
@@ -88,17 +92,17 @@ export class Leaderboard {
         selectElement(event.target)
         let siblings = [...event.target.parentNode.children].filter(child => child !== event.target)
         siblings.forEach(element => unselectElement(element))
-        await this.updateQuotes()
+        await this.render()
     }
 
     async handleClickNextArrow() {
         this.state.page += 1
-        await this.updateQuotes()
+        await this.render()
     }
     
     async handleClickPrevArrow() {
         this.state.page -= 1
-        await updateQuotes()
+        await this.render()
     }
 
     pushHistory() {

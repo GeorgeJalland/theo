@@ -45,9 +45,12 @@ export class QOTD {
         this.elements.shareButton.addEventListener("click", () => this.handleClickShare());        
     }
 
-    async render() {
+    async render(pushHistory = true) {
         await this.updateQuotesServedCount();
         await this.updateQuote(this.state.quoteId);
+        if (pushHistory) {
+            this.pushHistory()
+        }
     }
 
     async handleClickShare() {
