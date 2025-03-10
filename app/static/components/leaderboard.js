@@ -3,9 +3,10 @@ import { hideElement, unhideElement, selectElement, unselectElement } from "../h
 
 export class Leaderboard {
     constructor(searchParams) {
-        this.state.page = parseInt(searchParams.get("page"))
-        this.state.orderBy = searchParams.get("orderBy")
+        this.state.page = parseInt(searchParams.get("page")) || 1
+        this.state.orderBy = searchParams.get("orderBy") || "likes"
         this.addListeners()
+        this.selectSortOption(this.getSortElement())
     }
 
     elements = {
@@ -15,11 +16,12 @@ export class Leaderboard {
         leaderboardArrowLeft: document.getElementById("leaderboardArrowLeft"),
         leaderboardArrowRight: document.getElementById("leaderboardArrowRight"),
         sortOptionsContainer: document.getElementById("sortOptionsContainer"),
+        metricHeader: document.getElementById("leaderboardMetric"),
     }
 
     state = {
         page: 1,
-        orderBy: "likes"
+        orderBy: "likes",
     }
 
     mode = "leaderboard"
@@ -47,6 +49,7 @@ export class Leaderboard {
     }
 
     async updateQuotes() {
+        console.log(this)
         const data = await fetchQuotes(this.state.orderBy, this.state.page, this.QUOTE_LIMIT)
         this.populateLeaderboard(data)
     }
@@ -55,11 +58,11 @@ export class Leaderboard {
         this.elements.leaderboardBody.innerHTML = "";
         data.items.forEach(item => {
             const tr = document.createElement('tr');
-            const likesCell = document.createElement('td');
+            const metricsCell = document.createElement('td');
             const quoteCell = document.createElement('td');
 
-            likesCell.textContent = item.likes
-            likesCell.classList = "likesCell"
+            metricsCell.textContent = item[this.state.orderBy]
+            metricsCell.classList = "likesCell"
             quoteCell.textContent = '"' + item.text + '"'
             quoteCell.classList = "quoteCell"
 
@@ -69,7 +72,7 @@ export class Leaderboard {
             tr.dataset.likes = item.likes
             tr.id = "quote_id_"+item.id
 
-            tr.appendChild(likesCell);
+            tr.appendChild(metricsCell);
             tr.appendChild(quoteCell);
             this.elements.leaderboardBody.appendChild(tr);
         });
@@ -87,12 +90,21 @@ export class Leaderboard {
     }
 
     async handleClickSortOption(event) {
-        this.state.orderBy = event.target.dataset.sortby
+        this.selectSortOption(event.target)
         this.state.page = 1
-        selectElement(event.target)
-        let siblings = [...event.target.parentNode.children].filter(child => child !== event.target)
-        siblings.forEach(element => unselectElement(element))
+        this.state.orderBy = event.target.dataset.sortby
         await this.render()
+    }
+
+    selectSortOption(element) {
+        const selectedElement = [...sortOptionsContainer.children].filter(child => child.classList.contains("selected"))[0]
+        unselectElement(selectedElement)
+        selectElement(element)
+    }
+
+    getSortElement() {
+        const selectedElement = [...sortOptionsContainer.children].filter(child => child.dataset.sortby === this.state.orderBy)[0]
+        return selectedElement
     }
 
     async handleClickNextArrow() {
