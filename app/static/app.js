@@ -1,5 +1,4 @@
-import { Leaderboard } from "./components/leaderboard.js";
-import { Modal } from "./components/modal.js";
+import { Leaderboard } from "./components/leaderboard.js"
 import { QOTD } from "./components/quoteOfTheDay.js"
 import { Menu, MenuItem } from "./components/menu.js"
 
@@ -9,7 +8,6 @@ const mode = searchParams.get("mode")
 
 let leaderboard = new Leaderboard(searchParams, growAnimations)
 let qotd = new QOTD(searchParams, growAnimations)
-
 
 const qotdButton = document.getElementById("menu-qotd")
 const leaderboardButton = document.getElementById("menu-leaderboard")
