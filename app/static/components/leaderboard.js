@@ -1,10 +1,13 @@
 import { fetchQuotes } from "../helpers/api.js"
 import { hideElement, unhideElement, selectElement, unselectElement } from "../helpers/utils.js"
+import { Modal } from "./modal.js"
 
 export class Leaderboard {
-    constructor(searchParams) {
+    constructor(searchParams, growAnimations) {
+        this.growAnimations = growAnimations
         this.state.page = parseInt(searchParams.get("page")) || 1
         this.state.orderBy = searchParams.get("orderBy") || "likes"
+        this.modal = new Modal(this.growAnimations)
         this.addListeners()
         this.selectSortOption(this.getSortElement())
     }
@@ -32,6 +35,11 @@ export class Leaderboard {
     }
 
     addListeners() {
+        this.elements.main.addEventListener("click", event => {
+            if (event.target.classList.contains("quoteCell")) {
+                this.modal.handleClickQuoteCell(event);
+            }
+        })
         this.elements.sortOptionsContainer.addEventListener("click", (event) => {
             if (event.target.classList.contains("sortOption")) {
                 this.handleClickSortOption(event)

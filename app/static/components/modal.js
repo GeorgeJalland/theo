@@ -2,9 +2,8 @@ import { hideElement, unhideElement, setLikeButtonColourInitial, setLikeProperti
 import { likeQuote, userLikedQuote, shareQuote } from "../helpers/api.js";
 
 export class Modal {
-    constructor(growAnimations, leaderboard) {
+    constructor(growAnimations) {
         this.growAnimations = growAnimations
-        this.leaderboard = leaderboard
         this.addListeners()
     }
 
@@ -29,11 +28,6 @@ export class Modal {
     }
 
     addListeners() {
-        this.leaderboard.elements.main.addEventListener("click", event => {
-            if (event.target.classList.contains("quoteCell")) {
-                this.handleClickQuoteCell(event);
-            }
-        })
         this.elements.likeButton.addEventListener("click", () => this.handleClickLike());
         this.elements.shareButton.addEventListener("click", () => this.handleClickShare());
         this.elements.layout.addEventListener("click", (event) => {

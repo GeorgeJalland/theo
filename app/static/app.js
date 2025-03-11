@@ -7,8 +7,7 @@ const growAnimations = ['grow', 'grow2', 'grow3']
 const searchParams = new URLSearchParams(window.location.search)
 const mode = searchParams.get("mode")
 
-let leaderboard = new Leaderboard(searchParams)
-let modal = new Modal(growAnimations, leaderboard)
+let leaderboard = new Leaderboard(searchParams, growAnimations)
 let qotd = new QOTD(searchParams, growAnimations)
 
 

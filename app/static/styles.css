@@ -274,7 +274,6 @@ td {
     position: absolute;
     height: 4rem;
     width: 4rem;
-    filter: invert(1);
     transform: rotate(90deg) !important;
 }
 #expandText {
@@ -442,5 +441,8 @@ td {
     }
     .line {
         background: black;
+    }
+    #instructionsArrow {
+        filter: invert(1);
     }
 }

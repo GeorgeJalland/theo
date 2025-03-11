@@ -75,7 +75,6 @@ export class MenuItem {
 
     setState(state) {
         this.component.state = state
-        console.log("state set as: ", this.component)
     }
 
     async render(pushHistory) {
