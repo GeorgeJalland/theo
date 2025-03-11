@@ -243,17 +243,6 @@ a:hover {
 .sortOption:hover {
     text-decoration: underline;
 }
-#instructions {
-    position: relative;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-}
-#instructionsArrow {
-    top: 0rem;
-    right: -8rem;
-    transform: scaleX(-1) rotate(90deg) scale(0.7) !important;
-}
 tbody {
     color: black;
 }
@@ -276,12 +265,26 @@ td {
     align-items: center;
     color: white
 }
-.leaderboardMeta {
-    /* padding-left: 1rem;
-    padding-right: 1rem; */
-    /* color: white; */
+#leaderboardContainer {
+    position: relative;
 }
-/*  Should put clickables in a class, e.g. pointer, transformation hover etc*/
+#instructionsArrow {
+    top: 8rem;
+    right: 7rem;
+    position: absolute;
+    height: 4rem;
+    width: 4rem;
+    filter: invert(1);
+    transform: rotate(90deg) !important;
+}
+#expandText {
+    top: 6rem;
+    right: 0;
+    position: absolute;
+    display: flex;
+    font-size: 2rem;
+    width: 8rem;
+}
 .leaderboardArrows {
     height: 2.5rem;
     width: 4rem;

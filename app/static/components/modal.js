@@ -17,13 +17,15 @@ export class Modal {
         likeButton: document.getElementById("likeButtonModal"),
         shareButton: document.getElementById("shareButtonModal"),
         likeArrow: document.getElementById("arrow2Modal"),
-        likeMe: document.getElementById("likeMeModal"),     
+        likeMe: document.getElementById("likeMeModal"),
+        instructions: document.getElementById("instructions")
     }
 
     state = {
         quoteId: 0,
         quoteIsLiked: false,
         userHasClickedLike: false,
+        hasUserClickedQuote: false,
     }
 
     addListeners() {
@@ -73,6 +75,10 @@ export class Modal {
     }
 
     async handleClickQuoteCell(event) {
+        if (!this.state.hasUserClickedQuote) {
+            hideElement(instructions)
+            this.state.hasUserClickedQuote = true
+        }
         unhideElement(this.elements.layout)
         const row = event.target.parentElement
         this.elements.quoteText.textContent = event.target.textContent

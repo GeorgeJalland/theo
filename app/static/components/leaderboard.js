@@ -11,10 +11,10 @@ export class Leaderboard {
 
     elements = {
         main: document.getElementById("leaderboardContainer"),
-        leaderboardBody: document.querySelector("#leaderboard tbody"),
-        leaderboardMeta: document.getElementById("leaderboardMeta"),
-        leaderboardArrowLeft: document.getElementById("leaderboardArrowLeft"),
-        leaderboardArrowRight: document.getElementById("leaderboardArrowRight"),
+        body: document.querySelector("#leaderboard tbody"),
+        meta: document.getElementById("leaderboardMeta"),
+        arrowLeft: document.getElementById("leaderboardArrowLeft"),
+        arrowRight: document.getElementById("leaderboardArrowRight"),
         sortOptionsContainer: document.getElementById("sortOptionsContainer"),
         metricHeader: document.getElementById("leaderboardMetric"),
     }
@@ -37,8 +37,8 @@ export class Leaderboard {
                 this.handleClickSortOption(event)
             }
         })
-        this.elements.leaderboardArrowRight.addEventListener("click", () => this.handleClickNextArrow());
-        this.elements.leaderboardArrowLeft.addEventListener("click", () => this.handleClickPrevArrow());
+        this.elements.arrowRight.addEventListener("click", () => this.handleClickNextArrow());
+        this.elements.arrowLeft.addEventListener("click", () => this.handleClickPrevArrow());
     }
 
     async render(pushHistory = true) {
@@ -54,7 +54,7 @@ export class Leaderboard {
     }
 
     populateLeaderboard(data) {
-        this.elements.leaderboardBody.innerHTML = "";
+        this.elements.body.innerHTML = "";
         data.items.forEach(item => {
             const tr = document.createElement('tr');
             const metricsCell = document.createElement('td');
@@ -73,18 +73,18 @@ export class Leaderboard {
 
             tr.appendChild(metricsCell);
             tr.appendChild(quoteCell);
-            this.elements.leaderboardBody.appendChild(tr);
+            this.elements.body.appendChild(tr);
         });
-        this.elements.leaderboardMeta.textContent = "[" + data.page + "/" + data.pages + "]"
+        this.elements.meta.textContent = "[" + data.page + "/" + data.pages + "]"
         if (data.page == 1) {
-            hideElement(this.elements.leaderboardArrowLeft)
+            hideElement(this.elements.arrowLeft)
         } else {
-            unhideElement(this.elements.leaderboardArrowLeft)
+            unhideElement(this.elements.arrowLeft)
         }
         if (data.page == data.pages) {
-            hideElement(this.elements.leaderboardArrowRight)
+            hideElement(this.elements.arrowRight)
         } else {
-            unhideElement(this.elements.leaderboardArrowRight)
+            unhideElement(this.elements.arrowRight)
         }
     }
 
