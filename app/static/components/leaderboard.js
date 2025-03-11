@@ -49,7 +49,6 @@ export class Leaderboard {
     }
 
     async updateQuotes() {
-        console.log(this)
         const data = await fetchQuotes(this.state.orderBy, this.state.page, this.QUOTE_LIMIT)
         this.populateLeaderboard(data)
     }

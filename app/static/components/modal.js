@@ -34,7 +34,7 @@ export class Modal {
         })
         this.elements.likeButton.addEventListener("click", () => this.handleClickLike());
         this.elements.shareButton.addEventListener("click", () => this.handleClickShare());
-        window.addEventListener("click", (event) => {
+        this.elements.layout.addEventListener("click", (event) => {
             if (event.target === this.elements.layout) {
                 hideElement(this.elements.layout);
             }
