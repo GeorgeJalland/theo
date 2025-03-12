@@ -15,7 +15,8 @@ export class Leaderboard {
     elements = {
         main: document.getElementById("leaderboardContainer"),
         body: document.querySelector("#leaderboard tbody"),
-        meta: document.getElementById("leaderboardMeta"),
+        quoteCount: document.getElementById("quoteCount"),
+        pageInfo: document.getElementById("leaderboardPageInfo"),
         arrowLeft: document.getElementById("leaderboardArrowLeft"),
         arrowRight: document.getElementById("leaderboardArrowRight"),
         sortOptionsContainer: document.getElementById("sortOptionsContainer"),
@@ -84,7 +85,8 @@ export class Leaderboard {
             tr.appendChild(quoteCell);
             this.elements.body.appendChild(tr);
         });
-        this.elements.meta.textContent = "[" + data.page + "/" + data.pages + "]"
+        this.elements.pageInfo.textContent = "[" + data.page + "/" + data.pages + "]"
+        this.elements.quoteCount.textContent = data.total
         if (data.page == 1) {
             hideElement(this.elements.arrowLeft)
         } else {
