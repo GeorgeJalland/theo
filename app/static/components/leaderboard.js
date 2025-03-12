@@ -51,6 +51,7 @@ export class Leaderboard {
 
     async render(pushHistory = true) {
         await this.updateQuotes();
+        this.selectSortOption();
         if (pushHistory) {
             this.pushHistory();
         }
@@ -97,13 +98,16 @@ export class Leaderboard {
     }
 
     async handleClickSortOption(event) {
-        this.selectSortOption(event.target)
         this.state.page = 1
         this.state.orderBy = event.target.dataset.sortby
+        this.selectSortOption(event.target)
         await this.render()
     }
 
-    selectSortOption(element) {
+    selectSortOption(element = null) {
+        if (element === null) {
+            element = [...sortOptionsContainer.children].filter(child => child.dataset.sortby === this.state.orderBy)[0]
+        }
         const selectedElement = [...sortOptionsContainer.children].filter(child => child.classList.contains("selected"))[0]
         unselectElement(selectedElement)
         selectElement(element)

@@ -11,8 +11,10 @@ let qotd = new QOTD(searchParams, growAnimations)
 
 const qotdButton = document.getElementById("menu-qotd")
 const leaderboardButton = document.getElementById("menu-leaderboard")
+
 const qotdMenuItem = new MenuItem(qotd, qotdButton)
 const leaderboardMenuItem = new MenuItem(leaderboard, leaderboardButton)
+
 let menu = new Menu([qotdMenuItem, leaderboardMenuItem])
 
 menu.render(mode)
