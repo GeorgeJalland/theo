@@ -1,34 +1,34 @@
 import { fetchQuotes } from "../helpers/api.js"
 import { hideElement, unhideElement, selectElement, unselectElement } from "../helpers/utils.js"
-import { Modal } from "./modal.js"
+import { QuoteModal } from "./quoteModal.js"
 
 export class Leaderboard {
     constructor(searchParams, growAnimations) {
         this.growAnimations = growAnimations
         this.state.page = parseInt(searchParams.get("page")) || 1
         this.state.orderBy = searchParams.get("orderBy") || "likes"
-        this.modal = new Modal(this.growAnimations)
+        this.mode = "leaderboard"
+        this.elements = {
+            main: document.getElementById("leaderboardContainer"),
+            body: document.querySelector("#leaderboard tbody"),
+            quoteCount: document.getElementById("quoteCount"),
+            pageInfo: document.getElementById("leaderboardPageInfo"),
+            arrowLeft: document.getElementById("leaderboardArrowLeft"),
+            arrowRight: document.getElementById("leaderboardArrowRight"),
+            sortOptionsContainer: document.getElementById("sortOptionsContainer"),
+            metricHeader: document.getElementById("leaderboardMetric"),
+        }
+        this.modal = new QuoteModal(this.elements.main, this.growAnimations, this.mode, () => this.pushHistory(), () => this.getNextQuoteId())
         this.addListeners()
         this.selectSortOption(this.getSortElement())
-    }
-
-    elements = {
-        main: document.getElementById("leaderboardContainer"),
-        body: document.querySelector("#leaderboard tbody"),
-        quoteCount: document.getElementById("quoteCount"),
-        pageInfo: document.getElementById("leaderboardPageInfo"),
-        arrowLeft: document.getElementById("leaderboardArrowLeft"),
-        arrowRight: document.getElementById("leaderboardArrowRight"),
-        sortOptionsContainer: document.getElementById("sortOptionsContainer"),
-        metricHeader: document.getElementById("leaderboardMetric"),
     }
 
     state = {
         page: 1,
         orderBy: "likes",
+        selectedQuoteRowId: null
     }
 
-    mode = "leaderboard"
     QUOTE_LIMIT = 10
 
     getHistoryStatesToPush () {
@@ -38,7 +38,9 @@ export class Leaderboard {
     addListeners() {
         this.elements.main.addEventListener("click", event => {
             if (event.target.classList.contains("quoteCell")) {
-                this.modal.handleClickQuoteCell(event);
+                const row = event.target.parentElement
+                this.state.selectedQuoteRowId = row.dataset.quoteId
+                this.modal.handleClickQuoteCell(this.state.selectedQuoteRowId);
             }
         })
         this.elements.sortOptionsContainer.addEventListener("click", (event) => {
@@ -52,7 +54,7 @@ export class Leaderboard {
 
     async render(pushHistory = true) {
         await this.updateQuotes();
-        this.selectSortOption();
+        this.selectSortOption(this.getSortElement());
         if (pushHistory) {
             this.pushHistory();
         }
@@ -76,9 +78,6 @@ export class Leaderboard {
             quoteCell.classList = "quoteCell"
 
             tr.dataset.quoteId = item.id
-            tr.dataset.ref = item.reference
-            tr.dataset.shares = item.shares
-            tr.dataset.likes = item.likes
             tr.id = "quote_id_"+item.id
 
             tr.appendChild(metricsCell);
@@ -106,17 +105,18 @@ export class Leaderboard {
         await this.render()
     }
 
-    selectSortOption(element = null) {
-        if (element === null) {
-            element = [...sortOptionsContainer.children].filter(child => child.dataset.sortby === this.state.orderBy)[0]
-        }
-        const selectedElement = [...sortOptionsContainer.children].filter(child => child.classList.contains("selected"))[0]
+    setState(state) {
+        this.state = state
+    }
+
+    selectSortOption(element) {
+        const selectedElement = [...this.elements.sortOptionsContainer.children].filter(child => child.classList.contains("selected"))[0]
         unselectElement(selectedElement)
         selectElement(element)
     }
 
     getSortElement() {
-        const selectedElement = [...sortOptionsContainer.children].filter(child => child.dataset.sortby === this.state.orderBy)[0]
+        const selectedElement = [...this.elements.sortOptionsContainer.children].filter(child => child.dataset.sortby === this.state.orderBy)[0]
         return selectedElement
     }
 
@@ -130,6 +130,20 @@ export class Leaderboard {
         await this.render()
     }
 
+    getNextQuoteId() {
+        if (!this.state.selectedQuoteRowId) {
+            return null
+        }
+        const selectedRow = [...this.elements.body.children].filter(child => child.dataset.quoteId === this.state.selectedQuoteRowId)[0]
+        const nextRow = selectedRow.nextElementSibling;
+        if (!nextRow) {
+            return 0
+        }
+        const nextQuoteId = nextRow.dataset.quoteId
+        this.state.selectedQuoteRowId = nextQuoteId
+        return nextQuoteId;
+    }
+ 
     pushHistory() {
         let additionalUrlStates = ""
         for (const state of this.getHistoryStatesToPush()) {

@@ -58,13 +58,13 @@ a {
 a:hover {
     text-decoration: underline;
 }
-.mainContainer {
+.quoteBlock {
     position: relative;
     display: flex;
     justify-content: center;
     margin-top: 8vh;
 }
-.mainContainer.modal {
+.quoteBlock.modal {
     margin-top: 0;
 }
 .clickMe, .likeMe {

@@ -1,6 +1,9 @@
 import { buildApiString } from "./utils.js"
 
 export async function fetchQuote(localQuoteId) {
+    if (localQuoteId == 0) {
+        return
+    }
     const api_uri = localQuoteId ? "/quote" + "?" + "id=" + localQuoteId : "/quote"
     try {
         const response = await fetch(buildApiString(api_uri), {
