@@ -1,6 +1,8 @@
 import { Leaderboard } from "./components/leaderboard.js"
 import { QOTD } from "./components/quoteOfTheDay.js"
 import { Menu, MenuItem } from "./components/menu.js"
+import { updateCanonicalLinkWithUrl } from "./helpers/utils.js"
+
 
 const growAnimations = ['grow', 'grow2', 'grow3']
 const searchParams = new URLSearchParams(window.location.search)
@@ -23,5 +25,6 @@ window.addEventListener('popstate', (event) => {
     console.log("popping state: ", event.state)
     if (event.state && event.state.mode) {
         menu.renderWithState(event.state.mode, event.state.state)
+        updateCanonicalLinkWithUrl()
     }
 });

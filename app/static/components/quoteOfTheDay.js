@@ -11,7 +11,6 @@ export class QOTD {
     }
 
     async render(pushHistory = true) {
-        console.log("rendering qotd: ",pushHistory )
         await this.quoteBlock.render(pushHistory)
     }
 

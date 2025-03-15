@@ -1,5 +1,5 @@
 import { fetchQuote, fetchQuotesServedCount, likeQuote, shareQuote } from "../helpers/api.js"
-import { updateTextWithAnimation, setLikeButtonColourInitial, setValueAndAnimation, setLikeProperties, makeOpaque } from "../helpers/utils.js"
+import { updateTextWithAnimation, setLikeButtonColourInitial, setValueAndAnimation, setLikeProperties, makeOpaque, updateCanonicalLinkWithUrl } from "../helpers/utils.js"
 
 export class QuoteBlock {
     constructor(container, parentMode, growAnimations, quoteId = null, getNextQuoteIdOverride = null, pushHistoryOveride = null, failedNextQuoteCallback = null) {
@@ -152,5 +152,6 @@ export class QuoteBlock {
             additionalUrlStates += `&${key}=${value}`
         }
         history.pushState({ "mode": this.mode, "state": this.state }, "", `?mode=${this.mode}${additionalUrlStates}`)
+        updateCanonicalLinkWithUrl()
     }
 }

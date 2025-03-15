@@ -74,3 +74,9 @@ export function setLikeProperties(likeButtonElement, quoteLikesElement, animatio
         likeButtonElement.classList.add("quoteLiked");
     }
 }
+
+export function updateCanonicalLinkWithUrl() {
+    const url = window.location.href
+    let canonicalLink = document.getElementById('canonicalLink');
+    canonicalLink.setAttribute("href", url);
+  }

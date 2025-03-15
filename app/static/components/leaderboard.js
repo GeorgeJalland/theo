@@ -1,5 +1,5 @@
 import { fetchQuotes } from "../helpers/api.js"
-import { hideElement, unhideElement, selectElement, unselectElement } from "../helpers/utils.js"
+import { hideElement, unhideElement, selectElement, unselectElement, updateCanonicalLinkWithUrl } from "../helpers/utils.js"
 import { QuoteModal } from "./quoteModal.js"
 
 export class Leaderboard {
@@ -151,5 +151,6 @@ export class Leaderboard {
             additionalUrlStates += `&${key}=${value}`
         }
         history.pushState({ "mode": this.mode, "state": this.state }, "", `?mode=${this.mode}${additionalUrlStates}`)
+        updateCanonicalLinkWithUrl()
     }
 }
