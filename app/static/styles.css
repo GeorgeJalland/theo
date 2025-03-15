@@ -327,7 +327,7 @@ td {
 .quoteCell:hover {
     filter: brightness(1.15)
 }
-.likesCell {
+.metricsCell {
     font-family: 'retro';
     font-size: 3rem;
     font-weight: bold;

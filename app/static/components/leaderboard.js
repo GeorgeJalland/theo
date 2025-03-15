@@ -73,7 +73,7 @@ export class Leaderboard {
             const quoteCell = document.createElement('td');
 
             metricsCell.textContent = item[this.state.orderBy]
-            metricsCell.classList = "likesCell"
+            metricsCell.classList = "metricsCell"
             quoteCell.textContent = '"' + item.text + '"'
             quoteCell.classList = "quoteCell"
 
