@@ -29,6 +29,7 @@ export class QuoteModal {
 
     close() {
         hideElement(this.elements.main);
+        this.quoteBlock.reset()
         this.onCloseCallback()
     }
 

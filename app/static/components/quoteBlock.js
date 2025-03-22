@@ -1,9 +1,8 @@
 import { fetchQuote, fetchQuotesServedCount, likeQuote, shareQuote } from "../helpers/api.js"
-import { updateTextWithAnimation, setLikeButtonColourInitial, setValueAndAnimation, setLikeProperties, makeOpaque, updateCanonicalLinkWithUrl } from "../helpers/utils.js"
+import { updateTextWithAnimation, setLikeButtonColourInitial, setValueAnimationPlayAudio, setLikeProperties, makeOpaque, updateCanonicalLinkWithUrl } from "../helpers/utils.js"
 
 export class QuoteBlock {
     constructor(container, parentMode, growAnimations, quoteId = null, getNextQuoteIdOverride = null, pushHistoryOveride = null, failedNextQuoteCallback = null) {
-        this.state.quoteId = quoteId
         this.growAnimations = growAnimations
         this.mode = parentMode
         this.root = container
@@ -28,15 +27,15 @@ export class QuoteBlock {
             quoteReference: this.root.querySelector(".quoteReference"),
             shareButton: this.root.querySelector(".shareButton")
         };
+        this.initalState = {
+            quoteId: quoteId,
+            quoteIsLiked: false,
+            userHasClickedLike: false,
+            userHasClickedTheo: false,
+            quotesServed: 0
+        }
+        this.state = this.initalState
         this.addListeners()
-    }
-
-    state = {
-        quoteId: null,
-        quoteIsLiked: false,
-        userHasClickedLike: false,
-        userHasClickedTheo: false,
-        quotesServed: 0
     }
 
     static createClone(classToAdd) {
@@ -56,11 +55,27 @@ export class QuoteBlock {
     }
 
     async render(pushHistory = true) {
-        await this.updateQuotesServedCount();
         await this.updateQuote(this.state.quoteId);
+        await this.updateQuotesServedCount();
         if (pushHistory) {
             this.pushHistory()
         }
+    }
+
+    reset() {
+        this.resetState()
+        this.resetElements()
+    }
+
+    resetState() {
+        this.state = this.initalState
+    }
+
+    resetElements() {
+        this.elements.quoteText.textContent = ""
+        this.elements.quoteLikes.textContent = ""
+        this.elements.quoteShares.textContent = ""
+        this.elements.quotesServedCount.textContent = ""
     }
 
     async handleClickShare() {
@@ -73,7 +88,7 @@ export class QuoteBlock {
             console.log(await navigator.share(shareData));
             console.log("Quote successfully shared");
             shareQuote(this.state.quoteId)
-            setValueAndAnimation(this.elements.quoteShares, parseInt(this.elements.quoteShares.textContent) + 1, this.growAnimations)
+            setValueAnimationPlayAudio(this.elements.quoteShares, parseInt(this.elements.quoteShares.textContent) + 1, this.growAnimations)
         } catch (error) {
             console.error("Error sharing quote: ", error);
         }
@@ -97,7 +112,7 @@ export class QuoteBlock {
             this.state.userHasClickedTheo = true
         }
         this.state.quotesServed += 1;
-        setValueAndAnimation(this.elements.quotesServedCount, this.state.quotesServed, this.growAnimations, true)
+        setValueAnimationPlayAudio(this.elements.quotesServedCount, this.state.quotesServed, this.growAnimations, true)
         await this.updateQuote(this.getNextQuoteId())
         this.pushHistory()
     }

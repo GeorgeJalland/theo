@@ -26,7 +26,8 @@ export class Leaderboard {
     state = {
         page: 1,
         orderBy: "likes",
-        selectedQuoteRowId: null
+        selectedRowQuoteId: null,
+        selectedRowId: null,
     }
 
     QUOTE_LIMIT = 10
@@ -39,8 +40,9 @@ export class Leaderboard {
         this.elements.main.addEventListener("click", event => {
             if (event.target.classList.contains("quoteCell")) {
                 const row = event.target.parentElement
-                this.state.selectedQuoteRowId = row.dataset.quoteId
-                this.modal.handleClickQuoteCell(this.state.selectedQuoteRowId);
+                this.state.selectedRowId = row.id
+                this.state.selectedRowQuoteId = row.dataset.quoteId
+                this.modal.handleClickQuoteCell(this.state.selectedRowQuoteId);
             }
         })
         this.elements.sortOptionsContainer.addEventListener("click", (event) => {
@@ -131,16 +133,17 @@ export class Leaderboard {
     }
 
     getNextQuoteId() {
-        if (!this.state.selectedQuoteRowId) {
+        if (!this.state.selectedRowId) {
             return null
         }
-        const selectedRow = [...this.elements.body.children].filter(child => child.dataset.quoteId === this.state.selectedQuoteRowId)[0]
+        const selectedRow = this.elements.body.querySelector(`#${this.state.selectedRowId}`)
         const nextRow = selectedRow.nextElementSibling;
         if (!nextRow) {
             return 0
         }
+        this.state.selectedRowId = nextRow.id
         const nextQuoteId = nextRow.dataset.quoteId
-        this.state.selectedQuoteRowId = nextQuoteId
+        this.state.selectedRowQuoteId = nextQuoteId
         return nextQuoteId;
     }
  

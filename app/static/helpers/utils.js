@@ -7,7 +7,7 @@ export function buildApiString(endpoint) {
     return apiBase + ':' + apiPort + apiRoot + endpoint
 }
 
-export function setValueAndAnimation(element, value, animationOptions, setLocaleString = false) {
+export function setValueAnimationPlayAudio(element, value, animationOptions, setLocaleString = false) {
     const animation = getAnimationTypeFromCount(value, animationOptions)
     if (setLocaleString) {
         value = value.toLocaleString()
@@ -16,8 +16,14 @@ export function setValueAndAnimation(element, value, animationOptions, setLocale
         element.textContent = value
         return
     }
+    playAudio("audio/praise_god.mp3")
     updateTextWithAnimation(element, element, value, animation, 1000)
 };
+
+export function playAudio(source) {
+    const audio = new Audio(source)
+    audio.play()
+}
 
 export function getAnimationTypeFromCount(count, options) {
     // This checks to see if count is multiple of powers of 10 and returns corresponding animation options
@@ -70,7 +76,7 @@ export function setLikeProperties(likeButtonElement, quoteLikesElement, animatio
         quoteLikesElement.textContent = parseInt(quoteLikesElement.textContent) - 1
         likeButtonElement.classList.remove("quoteLiked");
     } else {
-        setValueAndAnimation(quoteLikesElement, parseInt(quoteLikesElement.textContent) + 1, animationOptions)
+        setValueAnimationPlayAudio(quoteLikesElement, parseInt(quoteLikesElement.textContent) + 1, animationOptions)
         likeButtonElement.classList.add("quoteLiked");
     }
 }
