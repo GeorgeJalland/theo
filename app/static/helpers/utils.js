@@ -7,24 +7,6 @@ export function buildApiString(endpoint) {
     return apiBase + ':' + apiPort + apiRoot + endpoint
 }
 
-export function setValueAnimationPlayAudio(element, value, animationOptions, setLocaleString = false) {
-    const animation = getAnimationTypeFromCount(value, animationOptions)
-    if (setLocaleString) {
-        value = value.toLocaleString()
-    }
-    if (!animation) {
-        element.textContent = value
-        return
-    }
-    playAudio("audio/praise_god.mp3")
-    updateTextWithAnimation(element, element, value, animation, 1000)
-};
-
-export function playAudio(source) {
-    const audio = new Audio(source)
-    audio.play()
-}
-
 export function getAnimationTypeFromCount(count, options) {
     // This checks to see if count is multiple of powers of 10 and returns corresponding animation options
     for (let i = 0; i < options.length; i++) {
@@ -33,11 +15,10 @@ export function getAnimationTypeFromCount(count, options) {
     return options[options.length - 1]
 }
 
-export function updateTextWithAnimation(containerElement, element, newText, animation, duration) {
-    element.textContent = newText;
-    containerElement.classList.add(animation);
+export function applyAnimation(element, animation, duration) {
+    element.classList.add(animation);
     setTimeout(() => {
-        containerElement.classList.remove(animation);
+        element.classList.remove(animation);
     }, duration);
 }
 
@@ -59,26 +40,6 @@ export function unselectElement(element) {
 
 export function makeOpaque(element) {
     element.classList.add("makeOpaque")
-}
-
-export function setLikeButtonColourInitial(state, likeButtonLocal, hasUserLikedQuote) {
-    state.quoteIsLiked = hasUserLikedQuote
-    if (hasUserLikedQuote) {
-        likeButtonLocal.classList.add("quoteLiked");
-    } else {
-        likeButtonLocal.classList.remove("quoteLiked");
-    }
-}
-
-export function setLikeProperties(likeButtonElement, quoteLikesElement, animationOptions, quoteLiked) {
-    // This function sets like count and button colour based on if like was previously selected, sets animation on positive increment
-    if (quoteLiked) {
-        quoteLikesElement.textContent = parseInt(quoteLikesElement.textContent) - 1
-        likeButtonElement.classList.remove("quoteLiked");
-    } else {
-        setValueAnimationPlayAudio(quoteLikesElement, parseInt(quoteLikesElement.textContent) + 1, animationOptions)
-        likeButtonElement.classList.add("quoteLiked");
-    }
 }
 
 export function updateCanonicalLinkWithUrl() {

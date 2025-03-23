@@ -1,5 +1,5 @@
 import { fetchQuote, fetchQuotesServedCount, likeQuote, shareQuote } from "../helpers/api.js"
-import { updateTextWithAnimation, setLikeButtonColourInitial, setValueAnimationPlayAudio, setLikeProperties, makeOpaque, updateCanonicalLinkWithUrl } from "../helpers/utils.js"
+import { applyAnimation, makeOpaque, updateCanonicalLinkWithUrl, getAnimationTypeFromCount } from "../helpers/utils.js"
 
 export class QuoteBlock {
     constructor(container, parentMode, growAnimations, quoteId = null, getNextQuoteIdOverride = null, pushHistoryOveride = null, failedNextQuoteCallback = null) {
@@ -32,9 +32,12 @@ export class QuoteBlock {
             quoteIsLiked: false,
             userHasClickedLike: false,
             userHasClickedTheo: false,
-            quotesServed: 0
+            quotesServed: 0,
+            likes: 0,
+            shares: 0
         }
         this.state = this.initalState
+        this.audio = new Audio("audio/praise_god.mp3")
         this.addListeners()
     }
 
@@ -88,7 +91,12 @@ export class QuoteBlock {
             console.log(await navigator.share(shareData));
             console.log("Quote successfully shared");
             shareQuote(this.state.quoteId)
-            setValueAnimationPlayAudio(this.elements.quoteShares, parseInt(this.elements.quoteShares.textContent) + 1, this.growAnimations)
+            this.state.shares += 1
+            this.elements.quoteShares.textContent = this.state.shares.toLocaleString()
+            const animationApplied = this.animateElement(this.elements.quoteShares, this.state.shares)
+            if (animationApplied) {
+                this.audio.play()
+            }
         } catch (error) {
             console.error("Error sharing quote: ", error);
         }
@@ -100,7 +108,18 @@ export class QuoteBlock {
             makeOpaque(this.elements.likeMe)
             this.state.userHasClickedLike = true
         }
-        setLikeProperties(this.elements.likeButton, this.elements.quoteLikes, this.growAnimations, this.state.quoteIsLiked)
+        if (this.state.quoteIsLiked) {
+            this.state.likes -= 1
+            this.elements.likeButton.classList.remove("quoteLiked");
+        } else {
+            this.state.likes += 1
+            const animationApplied = this.animateElement(this.elements.quoteLikes, this.state.likes)
+            if (animationApplied) {
+                this.audio.play()
+            }
+            this.elements.likeButton.classList.add("quoteLiked");
+        }
+        this.elements.quoteLikes.textContent = this.state.likes
         likeQuote(this.state.quoteId)
         this.state.quoteIsLiked = !this.state.quoteIsLiked
     }
@@ -112,7 +131,11 @@ export class QuoteBlock {
             this.state.userHasClickedTheo = true
         }
         this.state.quotesServed += 1;
-        setValueAnimationPlayAudio(this.elements.quotesServedCount, this.state.quotesServed, this.growAnimations, true)
+        this.elements.quotesServedCount.textContent = this.state.quotesServed.toLocaleString()
+        const animationApplied = this.animateElement(this.elements.quotesServedCount, this.state.quotesServed)
+        if (animationApplied) {
+            this.audio.play()
+        }
         await this.updateQuote(this.getNextQuoteId())
         this.pushHistory()
     }
@@ -120,6 +143,15 @@ export class QuoteBlock {
     async updateQuote(quoteId) {
         const data = await fetchQuote(quoteId)
         this.setQuoteData(data)
+    }
+
+    animateElement(element, value) {
+        const animation = getAnimationTypeFromCount(value, this.growAnimations)
+        if (animation) {
+            applyAnimation(element, animation, 1000)
+            return true
+        }
+        return false
     }
 
     getNextQuoteId() {
@@ -132,17 +164,29 @@ export class QuoteBlock {
 
     setQuoteData(data) {
         if (data) {
-            updateTextWithAnimation(this.elements.innerQuoteContainer, this.elements.quoteText, '"' + data.text + '"', 'bounce', 500)
-            this.elements.quoteLikes.textContent = data.likes;
-            this.elements.quoteShares.textContent = data.shares;
+            this.elements.quoteText.textContent = '"' + data.text + '"'
+            applyAnimation(this.elements.innerQuoteContainer, 'bounce', 500)
+            this.state.likes = data.likes
+            this.elements.quoteLikes.textContent = this.state.likes;
+            this.state.shares = data.shares;
+            this.elements.quoteShares.textContent = this.state.shares;
             this.elements.quoteReference.href = data.reference;
-            setLikeButtonColourInitial(this.state, this.elements.likeButton, data.has_user_liked_quote);
+            this.state.quoteIsLiked = data.has_user_liked_quote;
             this.state.quoteId = data.id;
+            this.setLikeButtonColourInitial()
         } else {
             if (this.failedNextQuoteCallback) {
                 this.failedNextQuoteCallback()
             }
             this.elements.quoteText.textContent = "Error Loading Quote"
+        }
+    }
+
+    setLikeButtonColourInitial() {
+        if (this.state.quoteIsLiked) {
+            this.elements.likeButton.classList.add("quoteLiked");
+        } else {
+            this.elements.likeButton.classList.remove("quoteLiked");
         }
     }
 
