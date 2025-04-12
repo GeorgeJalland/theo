@@ -1,14 +1,14 @@
 @font-face {
     font-family: 'posh';
-    src: url('./fonts/Tangerine-Regular.ttf');
+    src: url('/static/fonts/Tangerine-Regular.ttf');
 }
 @font-face{
     font-family: 'playful';
-    src: url('./fonts/Knewave-Regular.ttf');
+    src: url('/static/fonts/Knewave-Regular.ttf');
 }
 @font-face {
     font-family: 'retro';
-    src: url('./fonts/cool_font.woff2') format('woff2');
+    src: url('/static/fonts/cool_font.woff2') format('woff2');
 }
 body {
     color: white;
@@ -18,7 +18,7 @@ body {
     align-items: center;
     flex-direction: column;
     font-family: 'retro';
-    background-image: url("./images/f2b617fdfb8e851.png");
+    background-image: url("/static/images/f2b617fdfb8e851.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
@@ -440,7 +440,7 @@ td {
         font-size: 2.8rem;
     }
     body{
-        background-image: url("./images/0d9a3e9958673e4.png");
+        background-image: url("/static/images/0d9a3e9958673e4.png");
         color: black;
         text-shadow: 0.2rem 0.2rem 0.5rem grey;
     }
