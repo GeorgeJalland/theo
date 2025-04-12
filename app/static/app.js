@@ -5,11 +5,11 @@ import { updateCanonicalLinkWithUrl } from "./helpers/utils.js"
 
 
 const growAnimations = ['grow', 'grow2', 'grow3']
-const searchParams = new URLSearchParams(window.location.search)
-const mode = searchParams.get("mode")
+const pathVars = window.location.pathname.split("/")
+const mode = pathVars[1]
 
-let leaderboard = new Leaderboard(searchParams, growAnimations)
-let qotd = new QOTD(searchParams, growAnimations)
+let leaderboard = new Leaderboard(pathVars ? mode === "leaderboard" : [], growAnimations)
+let qotd = new QOTD(pathVars ? mode === "quote" : [], growAnimations)
 
 const qotdButton = document.getElementById("menu-qotd")
 const leaderboardButton = document.getElementById("menu-leaderboard")

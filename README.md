@@ -40,14 +40,9 @@ Table creation will be handled by SQLModel library
 
 ### Run App Locally
 
-**Api**
+**App**
 ```bash
 fastapi dev app/main.py --port 7000
-```
-
-**Client**
-```bash
-python3 -m http.server --directory app/static/ 5500
 ```
 
 ### Docker

@@ -1,13 +1,13 @@
 import { QuoteBlock } from "./quoteBlock.js"
 
 export class QOTD {
-    constructor(searchParams, growAnimations) {
+    constructor(pathVars, growAnimations) {
         this.growAnimations = growAnimations
-        this.mode = "qotd"
+        this.mode = "quote"
         this.elements = {
             main: document.getElementById("qotd"),
         };
-        this.quoteBlock = new QuoteBlock(this.elements.main, this.mode, this.growAnimations, parseInt(searchParams.get("quoteId")))
+        this.quoteBlock = new QuoteBlock(this.elements.main, this.mode, this.growAnimations, pathVars[2])
     }
 
     async render(pushHistory = true) {

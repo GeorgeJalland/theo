@@ -37,7 +37,7 @@ export class QuoteBlock {
             shares: 0
         }
         this.state = this.initalState
-        this.audio = new Audio("audio/praise_god.mp3")
+        this.audio = new Audio("/static/audio/praise_god.mp3")
         this.addListeners()
     }
 
@@ -45,10 +45,6 @@ export class QuoteBlock {
         let clone = document.getElementById("quoteBlock").cloneNode(true)
         clone.classList.add(classToAdd)
         return clone
-    }
-
-    getHistoryStatesToPush () {
-        return [{"quoteId": this.state.quoteId}]
     }
 
     addListeners() {
@@ -85,7 +81,7 @@ export class QuoteBlock {
         const shareData = {
             title: 'Theo Von Quote',
             text: this.elements.quoteText.textContent,
-            url: window.location.origin + window.location.pathname + `?mode=this&quoteId=${this.state.quoteId}`
+            url: window.location.origin + `/quote/${this.state.quoteId}`
         };
         try {
             console.log(await navigator.share(shareData));
@@ -205,12 +201,7 @@ export class QuoteBlock {
     }
 
     pushHistory() {
-        let additionalUrlStates = ""
-        for (const state of this.getHistoryStatesToPush()) {
-            const [key, value] = Object.entries(state)[0]
-            additionalUrlStates += `&${key}=${value}`
-        }
-        history.pushState({ "mode": this.mode, "state": this.state }, "", `?mode=${this.mode}${additionalUrlStates}`)
+        history.pushState({ "mode": this.mode, "state": this.state }, "", `/${this.mode}/${this.state.quoteId}`)
         updateCanonicalLinkWithUrl()
     }
 }

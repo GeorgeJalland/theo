@@ -3,10 +3,10 @@ import { hideElement, unhideElement, selectElement, unselectElement, updateCanon
 import { QuoteModal } from "./quoteModal.js"
 
 export class Leaderboard {
-    constructor(searchParams, growAnimations) {
+    constructor(pathVars, growAnimations) {
         this.growAnimations = growAnimations
-        this.state.page = parseInt(searchParams.get("page")) || 1
-        this.state.orderBy = searchParams.get("orderBy") || "likes"
+        this.state.page = pathVars[3] || 1
+        this.state.orderBy = pathVars[2] || "likes"
         this.mode = "leaderboard"
         this.elements = {
             main: document.getElementById("leaderboardContainer"),
@@ -31,10 +31,6 @@ export class Leaderboard {
     }
 
     QUOTE_LIMIT = 10
-
-    getHistoryStatesToPush () {
-        return [{"page": this.state.page}, {"orderBy": this.state.orderBy}]
-    }
 
     addListeners() {
         this.elements.main.addEventListener("click", event => {
@@ -144,16 +140,12 @@ export class Leaderboard {
         this.state.selectedRowId = nextRow.id
         const nextQuoteId = nextRow.dataset.quoteId
         this.state.selectedRowQuoteId = nextQuoteId
+
         return nextQuoteId;
     }
  
     pushHistory() {
-        let additionalUrlStates = ""
-        for (const state of this.getHistoryStatesToPush()) {
-            const [key, value] = Object.entries(state)[0]
-            additionalUrlStates += `&${key}=${value}`
-        }
-        history.pushState({ "mode": this.mode, "state": this.state }, "", `?mode=${this.mode}${additionalUrlStates}`)
+        history.pushState({ "mode": this.mode, "state": this.state }, "", `/${this.mode}/${this.state.orderBy}/${this.state.page}`)
         updateCanonicalLinkWithUrl()
     }
 }
