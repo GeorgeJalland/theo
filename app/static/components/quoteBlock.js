@@ -37,7 +37,7 @@ export class QuoteBlock {
             shares: 0
         }
         this.state = this.initalState
-        this.audio = new Audio("/static/audio/praise_god.mp3")
+        this.audio = new Audio("./audio/praise_god.mp3")
         this.addListeners()
     }
 

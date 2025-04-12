@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Theo Von's best quotes, like and share your favourites! Our leaderboard feature let's you view the most liked, shared and newest quotes from Theo Von. We have the funniest, most out of pocket quotes from Theo's podcasts, standup and more.">
     <title>Theo Von Quotes</title>
-    <link rel="stylesheet" href="/static/styles.css">
-    <link rel="icon" href="/static/images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="icon" href="./images/favicon.png" type="image/png">
     <link id="canonicalLink" rel="canonical" href="https://theo-von.com">
-    <script type="module" src="/static/app.js"></script>
+    <script type="module" src="./app.js"></script>
 </head>
 <body>
     <header>
@@ -23,9 +23,9 @@
         <div id="qotd" class="hide">
             <div id="quoteBlock" class="quoteBlock">
                 <div id="theoHeadContainer" class="theoHeadContainer">
-                    <img src="/static/images/favicon.png" alt="Theo Von Cartoon Head" id="theoPictureButton" class="theoPictureButton"/>
+                    <img src="./images/favicon.png" alt="Theo Von Cartoon Head" id="theoPictureButton" class="theoPictureButton"/>
                     <div id="clickMe" class="clickMe">Click Me!</div>
-                    <img src="/static/images/arrow1.png" alt="arrow" id="arrow" class="arrow">
+                    <img src="./images/arrow1.png" alt="arrow" id="arrow" class="arrow">
                     <div id="quotesServed" class="quotesServed">
                         <div>Served:</div>
                         <div id="servedCount" class="servedCount"></div>
@@ -40,15 +40,15 @@
                 <div id="emptyPaddingDiv" class="emptyPaddingDiv">
                     <div id="emptyDiv" class="emptyDiv"></div>
                     <div id="likeMe" class="likeMe">Like & Share!</div>
-                    <img src="/static/images/arrow1.png" id="arrow2" class="arrow2">
+                    <img src="./images/arrow1.png" id="arrow2" class="arrow2">
                 </div>
                 <div id="actionContainer" class="actionContainer">
                     <div id="likesOverlay" class="likesOverlay">
-                        <img src="/static/images/like-button.png" alt="like button" id="likeButton" class="likeButton"/>
+                        <img src="./images/like-button.png" alt="like button" id="likeButton" class="likeButton"/>
                         <div id="quoteLikes" class="quoteLikes">0</div>
                     </div>
                     <div id="share" class="share">
-                        <img src="/static/images/share3.png" alt="share button" id="shareButton" class="shareButton"/>
+                        <img src="./images/share3.png" alt="share button" id="shareButton" class="shareButton"/>
                         <div id="quoteShares" class="quoteShares">0</div>
                     </div>
                 </div>
@@ -57,12 +57,12 @@
         <div id="leaderboardContainer" class="hide">
             <div id="titleContainer">
                 <div class="line"></div>
-                <img id="rat" alt="pixelart rat with a crown" src="/static/images/pixel rat.png">
+                <img id="rat" alt="pixelart rat with a crown" src="./images/pixel rat.png">
                 <div class="line"></div>
             </div>
             <div id="instructions" class="instructions">
                 <span id="expandText">Click to Expand!</span>
-                <img src="/static/images/arrow1.png" id="instructionsArrow">
+                <img src="./images/arrow1.png" id="instructionsArrow">
             </div>
             <div id="sortOptionsContainer">
                 <span id="sortLikes" class="sortOption selected" data-sortby="likes">[LIKES]</span>|<span id="sortNewest" class="sortOption" data-sortby="id">[NEWEST]</span>|<span id="sortShares" class="sortOption" data-sortby="shares">[SHARES]</span>
@@ -74,9 +74,9 @@
             <div class="tableMeta">
                 <div id="quoteCountContainer"><span id="quoteCountText">[QUOTE COUNT]: </span><span id="quoteCount">0</span></div>
                 <div id="leaderboardPageInfoContainer">
-                    <img id="leaderboardArrowLeft" class="leaderboardArrows" src="/static/images/next-arrow.png" alt="arrow pointing right">
+                    <img id="leaderboardArrowLeft" class="leaderboardArrows" src="./images/next-arrow.png" alt="arrow pointing right">
                     <div id="leaderboardPageInfo" class="leaderboardPageInfo">[/]</div>
-                    <img id="leaderboardArrowRight" class="leaderboardArrows" src="/static/images/next-arrow.png" alt="arrow pointing left">
+                    <img id="leaderboardArrowRight" class="leaderboardArrows" src="./images/next-arrow.png" alt="arrow pointing left">
                 </div>
             </div>
             <div id="modal-layout" class="modal-layout hide">
