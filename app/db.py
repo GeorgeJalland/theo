@@ -83,3 +83,7 @@ async def get_quotes_served_count(session: AsyncSession) -> int:
 async def get_quotes(session: AsyncSession, order_by: str) -> list[Quote]:
     order_column = getattr(Quote, order_by, None)
     return await paginate(session, select(Quote).order_by(desc(order_column)))
+
+async def get_all_quotes(session: AsyncSession) -> list[Quote]:
+    result = await session.execute(select(Quote))
+    return result.scalars().all()

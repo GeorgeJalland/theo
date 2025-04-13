@@ -9,6 +9,8 @@ from typing import Optional, Dict, Any
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
+import math
+
 
 from app import db
 from app.models import Quote, QuoteOut
@@ -84,13 +86,48 @@ async def like_quote(quote_id: int, session: AsyncSession = Depends(db.get_sessi
 
     return await db.increment_quote_shares(session, quote)
 
+@app.get("/api/sitemap.xml", response_class=Response)
+async def sitemap(session: AsyncSession = Depends(db.get_session)):
+
+    base_url = "https://theo-von.com"
+    lastmod = "2025-04-13"
+    sitemap_items = ""
+
+    quotes = await db.get_all_quotes(session)
+
+    for quote in quotes:
+        loc = f"{base_url}/quote/{quote.id}"
+        sitemap_items += f"""
+        <url>
+            <loc>{loc}</loc>
+            <lastmod>{lastmod}</lastmod>
+        </url>"""
+
+    leaderboard_sort_options = ["likes", "id", "shares"]
+    no_of_pages = math.ceil(len(quotes) / 10)
+    for option in leaderboard_sort_options:
+        for page in range(1,no_of_pages+1):
+            loc = f"{base_url}/leaderboard/{option}/{page}"
+            sitemap_items += f"""
+            <url>
+                <loc>{loc}</loc>
+                <lastmod>{lastmod}</lastmod>
+            </url>"""
+
+    xml_content = f"""<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        {sitemap_items}
+    </urlset>"""
+
+    return Response(content=xml_content, media_type="application/xml")
+
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
     file_path = os.path.join("app/static", full_path)
     if os.path.exists(file_path) and not os.path.isdir(file_path):
         return FileResponse(file_path)
-    print("file doesnt exist")
     return FileResponse("app/static/index.html")
+
 
 def read_cookie_list_value(cookie: str) -> list:
     if not cookie:
