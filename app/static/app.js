@@ -23,7 +23,7 @@ menu.render(mode)
 window.addEventListener('popstate', (event) => {
     console.log("popping state: ", event.state)
     if (event.state && event.state.mode) {
-        menu.renderWithState(event.state.mode, event.state.state)
         updateCanonicalLinkWithUrl()
+        menu.renderWithState(event.state.mode, event.state.state)
     }
 });

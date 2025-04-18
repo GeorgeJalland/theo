@@ -1,10 +1,10 @@
 const isLocal = window.location.hostname === "localhost"
 const apiBase = window.location.protocol + '//' + window.location.hostname
 const apiRoot = "/api"
-const apiPort = isLocal ? "7000" : ""
+const apiPort = isLocal ? ":7000" : ""
 
 export function buildApiString(endpoint) {
-    return apiBase + ':' + apiPort + apiRoot + endpoint
+    return apiBase + apiPort + apiRoot + endpoint
 }
 
 export function getAnimationTypeFromCount(count, options) {
