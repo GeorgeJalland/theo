@@ -159,6 +159,8 @@ def migrate_old_quotes(old_session, new_session, aggregated_quotes, transformer_
             shares=data["shares"],
             source_type="legacy",
             url=data["reference"],
+            status=QuoteStatus.APPROVED,
+            status_updated_at=datetime(2024, 1, 1),
             created_at=datetime(2024, 1, 1)
             # TODO: add sentence embedding
         )
