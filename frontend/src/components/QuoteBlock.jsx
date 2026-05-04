@@ -17,17 +17,18 @@ import {
 
 import { growAnimations } from "@/lib/constants"
 
-export default function QuoteBlock({ quote, quotesServed }) {
+export default function QuoteBlock({ id, text, likes: initialLikes, shares: initialShares, url, has_user_liked_quote, quotesServed }) {
   const router = useRouter()
   const audioRef = useRef(null)
   const likesRef = useRef(null)
   const sharesRef = useRef(null)
   const servedRef = useRef(null)
+  const innerQuoteContainerRef = useRef(null)
 
   const [_quotesServed, setQuotesServed] = useState(quotesServed || 0)  // TODO: move quotesServed into context or something
-  const [likes, setLikes] = useState(quote?.likes || 0)
-  const [shares, setShares] = useState(quote?.shares || 0)
-  const [userHasLiked, setUserHasLiked] = useState(quote.has_user_liked_quote || false)
+  const [likes, setLikes] = useState(initialLikes || 0)
+  const [shares, setShares] = useState(initialShares || 0)
+  const [userHasLiked, setUserHasLiked] = useState(has_user_liked_quote || false)
   const [userHasClickedTheo, setUserHasClickedTheo] = useState(false) // TODO: lift state or persist this in local storage or something so it doesn't reset on every quote change
   const [userHasClickedLikeHint, setUserHasClickedLikeHint] = useState(false) // TODO: lift state or persist this in local storage or something so it doesn't reset on every quote change
 
@@ -36,6 +37,7 @@ export default function QuoteBlock({ quote, quotesServed }) {
   // -----------------------
   useEffect(() => {
     audioRef.current = new Audio("/audio/praise_god.mp3")
+    applyAnimation(innerQuoteContainerRef.current, "bounce", 500)
   }, [])
 
   // -----------------------
@@ -49,7 +51,7 @@ export default function QuoteBlock({ quote, quotesServed }) {
     const newLikes = userHasLiked ? likes - 1 : likes + 1
     setLikes(newLikes)
 
-    likeQuote(quote.id)
+    likeQuote(id)
     setUserHasLiked(!userHasLiked)
 
     console.log(userHasLiked)
@@ -66,11 +68,11 @@ export default function QuoteBlock({ quote, quotesServed }) {
     try {
       await navigator.share({
         title: "Theo Von Quote",
-        text: quote.text,
-        url: window.location.origin + `/quote/${quote.id}`,
+        text: text,
+        url: window.location.origin + `/quote/${id}`,
       })
 
-      shareQuote(quote.id)
+      shareQuote(id)
 
       const newShares = shares + 1
       setShares(newShares)
@@ -89,7 +91,7 @@ export default function QuoteBlock({ quote, quotesServed }) {
       setUserHasClickedTheo(true)
     }
 
-    const nextId = quote.id + 1
+    const nextId = id + 1
 
     const newCount = quotesServed + 1
     setQuotesServed(newCount)
@@ -111,10 +113,6 @@ export default function QuoteBlock({ quote, quotesServed }) {
     }
   }
 
-  // -----------------------
-  // RENDER
-  // -----------------------
-  if (!quote) return <div>Loading...</div>
 
   return (
     <div className="quoteBlock">
@@ -150,12 +148,12 @@ export default function QuoteBlock({ quote, quotesServed }) {
 
       {/* QUOTE */}
       <div className="quoteContainer">
-        <div className="innerQuoteContainer">
-          <span className="quoteText">"{quote.text}"</span>
+        <div className="innerQuoteContainer" ref={innerQuoteContainerRef}>
+          <span className="quoteText">"{text}"</span>
 
           <a
             className="quoteReference"
-            href={quote.reference}
+            href={url}
           >
             [ref]
           </a>

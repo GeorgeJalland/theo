@@ -14,7 +14,7 @@ export default async function QOTDPage({ params }) {
 
   return (
     <QuoteBlock
-      quote={quote}
+      {...quote}
       quotesServed={servedData.quotes_served}
     />
   )

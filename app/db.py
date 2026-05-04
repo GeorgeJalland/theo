@@ -3,9 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 import random
 from sqlmodel import select, func, desc
-from fastapi_pagination.ext.sqlalchemy import paginate
 
-from app.models import Quote, Counter
+from app.models import Quote, Counter, QuoteStatus
 
 DATABASE_URL = "sqlite+aiosqlite:///./app/instance/app.db"
 
@@ -32,7 +31,7 @@ async def get_next_quote(session: AsyncSession, current_id: int, max_quote_id: i
 
 async def get_quote_record(session: AsyncSession, id: int, max_quote_id: int) -> Quote:
     id = (id - 1) % max_quote_id + 1 #Creates loop of quote ids
-    quote = await session.execute(select(Quote).where(Quote.id >= id).limit(1))
+    quote = await session.execute(select(Quote).where(Quote.id >= id, Quote.status == QuoteStatus.APPROVED).limit(1))
     return quote.scalar()
 
 async def get_exact_quote_record(session: AsyncSession, id: int) -> Quote:
@@ -80,10 +79,10 @@ async def get_quotes_served_count(session: AsyncSession) -> int:
     result = await session.execute(select(Counter))
     return result.scalar()
 
-async def get_quotes(session: AsyncSession, order_by: str) -> list[Quote]:
+def get_quotes_stmt(order_by: str):
     order_column = getattr(Quote, order_by, None)
-    return await paginate(session, select(Quote).order_by(desc(order_column)))
+    return select(Quote).where(Quote.status == QuoteStatus.APPROVED).order_by(desc(order_column))
 
 async def get_all_quotes(session: AsyncSession) -> list[Quote]:
-    result = await session.execute(select(Quote))
+    result = await session.execute(select(Quote).where(Quote.status == QuoteStatus.APPROVED))
     return result.scalars().all()

@@ -3,7 +3,6 @@ export function buildApiString(endpoint) {
 }
 
 export function getAnimationTypeFromCount(count, options) {
-    console.log("Getting animation type for count: " + count, " with options: " + options)
     // This checks to see if count is multiple of powers of 10 and returns corresponding animation options
     for (let i = 0; i < options.length; i++) {
         if (count % 10 ** (i + 1) != 0) return options[i - 1];
@@ -11,10 +10,10 @@ export function getAnimationTypeFromCount(count, options) {
     return options[options.length - 1]
 }
 
-export function applyAnimation(element, animation, duration) {
-    element.classList.add(animation);
+export function applyAnimation(ref, animation, duration) {
+    ref.classList.add(animation);
     setTimeout(() => {
-        element.classList.remove(animation);
+        ref.classList.remove(animation);
     }, duration);
 }
 

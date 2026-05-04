@@ -3,6 +3,7 @@ import urllib.parse
 from fastapi import FastAPI, Depends, HTTPException, Response, Cookie
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pagination import Page, add_pagination
+from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 import asyncio
 from typing import Optional, Dict, Any
@@ -11,9 +12,8 @@ from fastapi.staticfiles import StaticFiles
 import os
 import math
 
-
 from app import db
-from app.models import Quote, QuoteOut
+from app.schemas import QuoteRead, to_quote_read
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -36,8 +36,8 @@ async def startup_event():
         app.state.cookie_expiry = 5 * 365 * 24 * 60 * 60
 
 
-@app.get("/api/quote")
-async def get_quote(response: Response, id: Optional[int] = None, quote_id: int = Cookie(None), liked_quotes: str = Cookie(None), session: AsyncSession = Depends(db.get_session)) -> QuoteOut:
+@app.get("/api/quote", response_model=QuoteRead)
+async def get_quote(response: Response, id: Optional[int] = None, quote_id: int = Cookie(None), liked_quotes: str = Cookie(None), session: AsyncSession = Depends(db.get_session)):
     asyncio.create_task(db.increment_quotes_served())
 
     if not id:
@@ -48,23 +48,24 @@ async def get_quote(response: Response, id: Optional[int] = None, quote_id: int 
     quote = await db.get_quote_record(session, id, app.state.QUOTE_MAX_ID)
 
     response.set_cookie(key="quote_id", value=quote.id, httponly=True, max_age=app.state.cookie_expiry)
-    return {**quote.model_dump() , "has_user_liked_quote": has_user_liked_quote(id=quote.id, liked_quotes=liked_quotes)}
+    return to_quote_read(quote, has_user_liked_quote(id=quote.id, liked_quotes=liked_quotes))
 
-@app.get("/api/quotes")
-async def get_quotes(order_by: str, session: AsyncSession = Depends(db.get_session)) -> Page[Quote]:
-    return await db.get_quotes(session, order_by)
+@app.get("/api/quotes", response_model=Page[QuoteRead])
+async def get_quotes(order_by: str, session: AsyncSession = Depends(db.get_session)):
+    page = await paginate(session, db.get_quotes_stmt(order_by), transformer=lambda quotes: [to_quote_read(quote) for quote in quotes])
+    return page
 
-@app.get("/api/user-liked-quote/{quote_id}")
-async def user_liked_quote(quote_id: int, liked_quotes: str = Cookie(None)) -> bool:
+@app.get("/api/user-liked-quote/{quote_id}", response_model=bool)
+async def user_liked_quote(quote_id: int, liked_quotes: str = Cookie(None)):
     return has_user_liked_quote(quote_id, liked_quotes)
 
-@app.get("/api/quotes-served")
-async def get_quotes_served(session: AsyncSession = Depends(db.get_session)) -> Dict[str, int]:
+@app.get("/api/quotes-served", response_model=Dict[str, int])
+async def get_quotes_served(session: AsyncSession = Depends(db.get_session)):
     quotes_served = await db.get_quotes_served_count(session)
     return {"quotes_served": quotes_served.served}
 
-@app.put("/api/like-quote/{quote_id}")
-async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cookie(None), session: AsyncSession = Depends(db.get_session)) -> None:
+@app.put("/api/like-quote/{quote_id}", response_model=None)
+async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cookie(None), session: AsyncSession = Depends(db.get_session)):
     liked_quotes_list = read_cookie_list_value(liked_quotes)
 
     quote = await db.get_exact_quote_record(session, quote_id)
@@ -77,8 +78,8 @@ async def like_quote(response: Response, quote_id: int, liked_quotes: str= Cooki
     response.set_cookie(key="liked_quotes", value=encoded_quotes_list, httponly=True, max_age=app.state.cookie_expiry)
     return None
 
-@app.put("/api/share-quote/{quote_id}")
-async def like_quote(quote_id: int, session: AsyncSession = Depends(db.get_session)) -> None:
+@app.put("/api/share-quote/{quote_id}", response_model=None)
+async def share_quote(quote_id: int, session: AsyncSession = Depends(db.get_session)):
 
     quote = await db.get_exact_quote_record(session, quote_id)
     if not quote:
