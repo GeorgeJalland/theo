@@ -1,5 +1,7 @@
 import { buildApiString } from "./utils.js"
 
+// TODO: pass caching headers?
+
 export async function fetchQuote(localQuoteId) {
     if (localQuoteId == 0) {
         return

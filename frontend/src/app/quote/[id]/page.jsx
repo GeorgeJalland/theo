@@ -1,16 +1,21 @@
 import QuoteBlock from "@/components/QuoteBlock"
 import { fetchQuote, fetchQuotesServedCount } from "@/lib/api"
+import { notFound } from "next/navigation"
 
 export default async function QOTDPage({ params }) {
   const { id } = await params
 
-  const quote = await fetchQuote(id)
-  const {quotes_served } = await fetchQuotesServedCount()
+  const [quote, servedData] = await Promise.all([
+    fetchQuote(id),
+    fetchQuotesServedCount(),
+  ])
+
+  if (!quote) notFound()
 
   return (
     <QuoteBlock
       quote={quote}
-      quotesServed={quotes_served}
+      quotesServed={servedData.quotes_served}
     />
   )
 }

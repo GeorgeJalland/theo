@@ -20,6 +20,9 @@ import { growAnimations } from "@/lib/constants"
 export default function QuoteBlock({ quote, quotesServed }) {
   const router = useRouter()
   const audioRef = useRef(null)
+  const likesRef = useRef(null)
+  const sharesRef = useRef(null)
+  const servedRef = useRef(null)
 
   const [_quotesServed, setQuotesServed] = useState(quotesServed || 0)  // TODO: move quotesServed into context or something
   const [likes, setLikes] = useState(quote?.likes || 0)
@@ -51,7 +54,7 @@ export default function QuoteBlock({ quote, quotesServed }) {
 
     console.log(userHasLiked)
 
-    animate("likes", newLikes)
+    animate(likesRef, newLikes)
   }
 
   // -----------------------
@@ -72,7 +75,7 @@ export default function QuoteBlock({ quote, quotesServed }) {
       const newShares = shares + 1
       setShares(newShares)
 
-      animate("shares", newShares)
+      animate(sharesRef, newShares)
     } catch (err) {
       console.error("Share failed:", err)
     }
@@ -91,7 +94,7 @@ export default function QuoteBlock({ quote, quotesServed }) {
     const newCount = quotesServed + 1
     setQuotesServed(newCount)
 
-    animate("served", newCount)
+    animate(servedRef, newCount)
 
     router.push(`/quote/${nextId}`)
   }
@@ -99,17 +102,12 @@ export default function QuoteBlock({ quote, quotesServed }) {
   // -----------------------
   // ANIMATION
   // -----------------------
-  function animate(type, value) {
+  function animate(ref, value) {
     const animation = getAnimationTypeFromCount(value, growAnimations)
 
-    console.log("Animation for " + type + ": " + animation)
-
-    if (animation) {
-      const el = document.querySelector(`[data-anim="${type}"]`)
-      if (el) {
-        applyAnimation(el, animation, 1000)
+    if (animation && ref.current) {
+        applyAnimation(ref.current, animation, 1000)
         audioRef.current?.play()
-      }
     }
   }
 
@@ -144,7 +142,9 @@ export default function QuoteBlock({ quote, quotesServed }) {
 
         <div className="quotesServed">
           <div>Served:</div>
-          <div data-anim="served">{_quotesServed}</div>
+          <div data-anim="served" ref={servedRef}>
+            {_quotesServed}
+          </div>
         </div>
       </div>
 
@@ -189,7 +189,9 @@ export default function QuoteBlock({ quote, quotesServed }) {
             className={`likeButton ${userHasLiked ? "quoteLiked" : ""}`}
             onClick={handleLike}
           />
-          <div data-anim="likes">{likes}</div>
+          <div data-anim="likes" ref={likesRef}>
+            {likes}
+          </div>
         </div>
 
         {/* SHARES */}
@@ -199,7 +201,9 @@ export default function QuoteBlock({ quote, quotesServed }) {
             className="shareButton"
             onClick={handleShare}
           />
-          <div data-anim="shares">{shares}</div>
+          <div data-anim="shares" ref={sharesRef}>
+            {shares}
+          </div>
         </div>
 
       </div>
