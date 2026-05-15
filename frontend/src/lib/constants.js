@@ -1,0 +1,1 @@
+export const growAnimations = ['grow', 'grow2', 'grow3']

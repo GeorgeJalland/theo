@@ -1,0 +1,13 @@
+spotipy
+sentence-transformers
+numpy
+scikit-learn
+transformers
+torch
+rapidfuzz
+google-auth-oauthlib
+SQLAlchemy==2.0.38
+sqlmodel==0.0.22
+groq
+python-dotenv
+google-api-python-client

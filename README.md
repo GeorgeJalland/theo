@@ -31,9 +31,9 @@ pip install -r requirements.txt
 ### Database
 Create sqlite database under instance/app.db by running
 ```bash
-mkdir ./app/instance
-touch ./app/instance.db
-sqlite3 ./app/instance/app.db #check
+mkdir ./backend/instance
+touch ./backend/instance.db
+sqlite3 ./backend/instance/app.db #check
 ```
 
 Table creation will be handled by SQLModel library
@@ -42,12 +42,12 @@ Table creation will be handled by SQLModel library
 
 **App**
 ```bash
-fastapi dev app/main.py --port 7000
+fastapi dev backend/main.py --port 7000
 ```
 
 ### Docker
 
-Make sure database is created under ./app/instance/app.db
+Make sure database is created under ./backend/instance/app.db
 
 ```bash
 sudo docker compose up --build --detach

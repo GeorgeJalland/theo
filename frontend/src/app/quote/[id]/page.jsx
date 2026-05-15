@@ -1,0 +1,32 @@
+import { cookies } from "next/headers";
+import { fetchQuote } from "@/lib/api"
+import { notFound } from "next/navigation"
+import Link from "next/link";
+
+import Panel from "@/components/Panel";
+import QuoteBlock from "@/components/QuoteBlock"
+
+export default async function Page({ params }) {
+  const { id } = await params
+  const cookieStore = await cookies();
+
+  let quote;
+
+  try {
+    quote = await fetchQuote(id, cookieStore.toString())
+  } catch {
+    console.log("throwing")
+    notFound()
+  }
+
+  return (
+    <div className="flex w-[80%] h-[80%] items-center justify-center md:mt-20 mt-40 flex-col gap-20">
+      <QuoteBlock key={quote.id} quote={quote} />
+        <Panel>
+          <Link href="/quotes">
+            <h2 className="text-4xl">[More Quotes]</h2>
+          </Link>
+        </Panel>
+    </div>
+  )
+}
