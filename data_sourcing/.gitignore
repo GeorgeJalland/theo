@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+ENV/
+env/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+
+# data artifacts
+*.sqlite3
+*.db
+instance/
+
+# App-specific
+.cache
+.cache/
+episodes/
+examples/funny/
+examples/non-funny/
+
+.env

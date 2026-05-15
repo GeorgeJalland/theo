@@ -439,11 +439,6 @@ td {
     .clickMe, .likeMe {
         font-size: 2.8rem;
     }
-    body{
-        background-image: url("./images/0d9a3e9958673e4.png");
-        color: black;
-        text-shadow: 0.2rem 0.2rem 0.5rem grey;
-    }
     .line {
         background: black;
     }

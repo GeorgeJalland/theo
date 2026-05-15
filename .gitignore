@@ -171,4 +171,4 @@ cython_debug/
 .pypirc
 
 # sqlite database
-app/instance/*
+backend/instance/*

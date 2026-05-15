@@ -2,10 +2,13 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+
+import MetaContainer from "./MetaContainer"
+import { timeAgo, isLessThanXWeeksOld } from "../lib/utils"
 
 import {
   fetchQuote,
-  fetchQuotesServedCount,
   likeQuote,
   shareQuote,
 } from "@/lib/api"
@@ -17,194 +20,67 @@ import {
 
 import { growAnimations } from "@/lib/constants"
 
-export default function QuoteBlock({ id, text, likes: initialLikes, shares: initialShares, url, has_user_liked_quote, quotesServed }) {
+export default function QuoteBlock({ quote, loading, index }) {
   const router = useRouter()
-  const audioRef = useRef(null)
-  const likesRef = useRef(null)
-  const sharesRef = useRef(null)
-  const servedRef = useRef(null)
-  const innerQuoteContainerRef = useRef(null)
+  const quoteTextRef = useRef(null)
 
-  const [_quotesServed, setQuotesServed] = useState(quotesServed || 0)  // TODO: move quotesServed into context or something
-  const [likes, setLikes] = useState(initialLikes || 0)
-  const [shares, setShares] = useState(initialShares || 0)
-  const [userHasLiked, setUserHasLiked] = useState(has_user_liked_quote || false)
-  const [userHasClickedTheo, setUserHasClickedTheo] = useState(false) // TODO: lift state or persist this in local storage or something so it doesn't reset on every quote change
-  const [userHasClickedLikeHint, setUserHasClickedLikeHint] = useState(false) // TODO: lift state or persist this in local storage or something so it doesn't reset on every quote change
+  const [userHasLiked, setUserHasLiked] = useState(quote.has_user_liked_quote || false)
 
-  // -----------------------
-  // INIT
-  // -----------------------
-  useEffect(() => {
-    audioRef.current = new Audio("/audio/praise_god.mp3")
-    applyAnimation(innerQuoteContainerRef.current, "bounce", 500)
-  }, [])
-
-  // -----------------------
-  // LIKE
-  // -----------------------
   function handleLike() {
-    if (!userHasClickedLikeHint) {
-      setUserHasClickedLikeHint(true)
-    }
-
-    const newLikes = userHasLiked ? likes - 1 : likes + 1
-    setLikes(newLikes)
-
-    likeQuote(id)
-    setUserHasLiked(!userHasLiked)
-
-    console.log(userHasLiked)
-
-    animate(likesRef, newLikes)
+    likeQuote(quote.id)
   }
 
-  // -----------------------
-  // SHARE
-  // -----------------------
   async function handleShare() {
-    if (!quote) return
-
     try {
       await navigator.share({
         title: "Theo Von Quote",
-        text: text,
-        url: window.location.origin + `/quote/${id}`,
+        text: quote.text,
+        url: window.location.origin + `/quote/${quote.id}`,
       })
 
-      shareQuote(id)
-
-      const newShares = shares + 1
-      setShares(newShares)
-
-      animate(sharesRef, newShares)
+      shareQuote(quote.id)
     } catch (err) {
       console.error("Share failed:", err)
     }
   }
 
-  // -----------------------
-  // NEXT QUOTE
-  // -----------------------
-  async function handleNextQuote() {
-    if (!userHasClickedTheo) {
-      setUserHasClickedTheo(true)
-    }
-
-    const nextId = id + 1
-
-    const newCount = quotesServed + 1
-    setQuotesServed(newCount)
-
-    animate(servedRef, newCount)
-
-    router.push(`/quote/${nextId}`)
-  }
-
-  // -----------------------
-  // ANIMATION
-  // -----------------------
   function animate(ref, value) {
-    const animation = getAnimationTypeFromCount(value, growAnimations)
+      const animation = getAnimationTypeFromCount(value, growAnimations)
 
-    if (animation && ref.current) {
-        applyAnimation(ref.current, animation, 1000)
-        audioRef.current?.play()
-    }
+      if (animation && ref.current) {
+          applyAnimation(ref.current, animation, 1000)
+      }
   }
 
+  const quoteDate = timeAgo(quote.episode_publish_date)
+  const new_ = isLessThanXWeeksOld(quote.episode_publish_date, 2)
 
   return (
-    <div className="quoteBlock">
-
-      {/* TOP / THEO HEADER */}
-      <div className="theoHeadContainer">
-        <img
-          src="/images/favicon.png"
-          alt="Theo Von Cartoon Head"
-          className="theoPictureButton"
-          onClick={handleNextQuote}
-        />
-
-        <div
-          className={`clickMe ${userHasClickedTheo ? "makeOpaque" : ""}`}
-        >
-          Click Me!
-        </div>
-
-        <img
-          src="/images/arrow1.png"
-          alt="arrow"
-          className={`arrow ${userHasClickedTheo ? "makeOpaque" : ""}`}
-        />
-
-        <div className="quotesServed">
-          <div>Served:</div>
-          <div data-anim="served" ref={servedRef}>
-            {_quotesServed}
+      <div className="quoteBlock">
+        <div className="quoteContainer">
+          <div className="w-full flex justify-between gap-4 pt-1">
+            <span className="quoteText" ref={quoteTextRef}>"{quote.text}"</span>
+            <div className="flex flex justify-end text-3xl">
+              {index && <Link href={`/quote/${quote.id}`}>#{index}</Link>}
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* QUOTE */}
-      <div className="quoteContainer">
-        <div className="innerQuoteContainer" ref={innerQuoteContainerRef}>
-          <span className="quoteText">"{text}"</span>
-
-          <a
-            className="quoteReference"
-            href={url}
-          >
-            [ref]
-          </a>
-        </div>
-      </div>
-
-      {/* LIKE HINT AREA */}
-      <div className="emptyPaddingDiv">
-        <div className="emptyDiv" />
-
-        <div
-          className={`likeMe ${userHasClickedLikeHint ? "makeOpaque" : ""}`}
-        >
-          Like & Share!
-        </div>
-
-        <img
-          src="/images/arrow1.png"
-          className={`arrow2 ${userHasClickedLikeHint ? "makeOpaque" : ""}`}
-          alt="arrow"
-        />
-      </div>
-
-      {/* ACTIONS */}
-      <div className="actionContainer">
-
-        {/* LIKES */}
-        <div className="likesOverlay">
-          <img
-            src="/images/like-button.png"
-            className={`likeButton ${userHasLiked ? "quoteLiked" : ""}`}
-            onClick={handleLike}
+          <div className="flex w-full gap-2 justify-end text-3xl">
+            {new_ && (
+              <span className="text-yellow-500">
+                New
+              </span>
+            )}
+            <div className="text-gray-700 whitespace-nowrap" title={`Quote dated ${quoteDate} ago: ${quote.episode_publish_date?.split("T")[0]}`}>{quoteDate}</div>
+          </div>
+          <MetaContainer
+            quote={quote}
+            index={index}
+            handleLike={handleLike}
+            userHasLiked={userHasLiked}
+            handleShare={handleShare}
+            animate={animate}
           />
-          <div data-anim="likes" ref={likesRef}>
-            {likes}
-          </div>
         </div>
-
-        {/* SHARES */}
-        <div className="share">
-          <img
-            src="/images/share3.png"
-            className="shareButton"
-            onClick={handleShare}
-          />
-          <div data-anim="shares" ref={sharesRef}>
-            {shares}
-          </div>
-        </div>
-
       </div>
-    </div>
-  )
+    )
 }

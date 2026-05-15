@@ -1,50 +1,151 @@
-import { buildApiString } from "./utils.js"
+function buildApiString(endpoint) {
+    const baseUrl =
+    typeof window === "undefined"
+        ? process.env.API_URL
+        : ""
+    return `${baseUrl}/api${endpoint}`
+}
 
-// TODO: pass caching headers?
-
-export async function fetchQuote(localQuoteId) {
-    if (localQuoteId == 0) {
-        return
-    }
-    const api_uri = localQuoteId ? "/quote" + "?" + "id=" + localQuoteId : "/quote"
+async function tryGetError(response) {
+    let errorMessage;
     try {
-        const response = await fetch(buildApiString(api_uri), {
+        const errorData = await response.json();
+
+        errorMessage =
+            errorData.detail ||
+            errorData.message ||
+            `Request failed with status ${response.status}`;
+    } catch {
+        errorMessage = `Request failed with status ${response.status}`;
+    }
+
+    return errorMessage
+}
+
+async function serversideGetRequest(
+    endpointUri, 
+    {
+        cookie = null,
+        revalidate = null,
+    } = {}
+) {
+        try {
+        const options = {
             method: "GET",
-            credentials: "include"
-        });
-        if (!response.ok) throw new Error("Failed to fetch");
+        };
+
+        if (cookie) {
+            options.headers = {
+                cookie,
+            };
+        }
+        else {
+            options.credentials = "include";
+        }
+
+        if (revalidate !== null) {
+            options.next = {
+                revalidate: revalidate
+            }
+        }
+
+        const response = await fetch(
+            buildApiString(endpointUri),
+            options
+        );
+
+        if (!response.ok) {
+            throw new Error(await tryGetError(response));
+        }
 
         return await response.json();
+
     } catch (error) {
         console.error("Error:", error);
     }
 }
 
-export async function fetchQuotes(orderBy, page, quoteLimit) {
-    let endpoint_uri = "/quotes" + "?" + "order_by=" + orderBy + "&" + "page=" + page + "&" + "size=" + quoteLimit
-    try {
-        const response = await fetch(buildApiString(endpoint_uri), {
-            method: "GET"
-        });
-        if (!response.ok) throw new Error("Failed to fetch");
-        return await response.json();
+export async function fetchQuote(id, cookie=null) {
+    const queryParams = new URLSearchParams({
+        id: String(id),
+    });
 
-    } catch (error) {
-        console.error("Error:", error);
+    const apiUri = `/quote?${queryParams.toString()}`;
+
+    return await serversideGetRequest(apiUri, { cookie })
+}
+
+export async function fetchEpisode(id) {
+    const queryParams = new URLSearchParams({
+        id: String(id),
+    });
+
+    const apiUri = `/episode?${queryParams.toString()}`;
+
+    return await serversideGetRequest(apiUri, { revalidate: 3600 })
+}
+
+export async function fetchQuotes(
+    orderBy,
+    sortOrder,
+    page,
+    quoteLimit,
+    episodeId = null,
+    cookie = null
+) {
+    const params = new URLSearchParams({
+        order_by: orderBy,
+        sort_order: sortOrder,
+        page: String(page),
+        size: String(quoteLimit),
+    });
+
+    if (episodeId) {
+        params.append("episode_id", episodeId);
     }
+
+    const endpointUri = `/quotes?${params.toString()}`;
+
+    return await serversideGetRequest(endpointUri, { cookie })
+}
+
+export async function fetchEpisodes(
+    orderBy,
+    sortOrder,
+    page,
+    limit
+) {
+    const queryParams = new URLSearchParams({
+        order_by: orderBy,
+        sort_order: sortOrder,
+        page: String(page),
+        size: String(limit),
+    });
+
+    const endpointUri = `/episodes?${queryParams.toString()}`;
+
+    return await serversideGetRequest(endpointUri, { revalidate: 3600 })
+}
+
+export async function searchQuotes(
+    searchTerm,
+    page,
+    quoteLimit,
+    cookie = null
+) {
+    const queryParams = new URLSearchParams({
+        search_term: searchTerm,
+        page: String(page),
+        size: String(quoteLimit),
+    });
+
+    const endpointUri = `/search_quotes?${queryParams.toString()}`;
+
+    return await serversideGetRequest(endpointUri, { cookie })
 }
 
 export async function fetchQuotesServedCount() {
-    try {
-        const response = await fetch(buildApiString("/quotes-served"), {
-            method: "GET"
-        });
-        if (!response.ok) throw new Error("Failed to fetch");
-        return await response.json();
-
-    } catch (error) {
-        console.error("Error:", error);
-    }
+    return await serversideGetRequest(buildApiString("/quotes-served"))
 }
 
 export async function likeQuote(localQuoteId) {
@@ -53,7 +154,7 @@ export async function likeQuote(localQuoteId) {
             method: "PUT",
             credentials: "include"
         });
-        if (!response.ok) throw new Error("Failed to like quote");
+        if (!response.ok) throw new Error(await tryGetError(response));
 
     } catch (error) {
         console.error("Error:", error);
@@ -66,22 +167,15 @@ export async function shareQuote(localQuoteId) {
             method: "PUT",
             credentials: "include"
         });
-        if (!response.ok) throw new Error("Failed to share quote");
+        if (!response.ok) throw new Error(await tryGetError(response));
 
     } catch (error) {
         console.error("Error:", error);
     }
 }
 
-export async function userLikedQuote(localQuoteId) {
-    try {
-        const response = await fetch(buildApiString("/user-liked-quote" + "/" + localQuoteId), {
-            method: "GET",
-            credentials: "include"
-        });
-        if (!response.ok) throw new Error("Failed to determine if quote is liked by user.");
-        return response.json()
-    } catch (error) {
-        console.error("Error:", error);
-    }
+export async function fetchBootstrap() {
+    const endpointUri = `/bootstrap`;
+
+    return await serversideGetRequest(endpointUri)
 }

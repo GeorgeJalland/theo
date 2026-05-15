@@ -1,7 +1,3 @@
-export function buildApiString(endpoint) {
-  return `${process.env.NEXT_PUBLIC_API_URL}/api${endpoint}`
-}
-
 export function getAnimationTypeFromCount(count, options) {
     // This checks to see if count is multiple of powers of 10 and returns corresponding animation options
     for (let i = 0; i < options.length; i++) {
@@ -41,4 +37,29 @@ export function updateCanonicalLinkWithUrl() {
     const url = window.location.href
     let canonicalLink = document.getElementById('canonicalLink');
     canonicalLink.setAttribute("href", url);
-  }
+}
+
+export function timeAgo(dateString) {
+    if (dateString == null) {
+        return "?d"
+    }
+
+    const now = new Date();
+    const date = new Date(dateString);
+
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) return "0d";
+
+    return `${diffDays}d`;
+}
+
+export function isLessThanXWeeksOld(date, weeks) {
+    const X_WEEKS = 7 * 24 * 60 * 60 * 1000 * weeks;
+
+    const now = Date.now();
+    const inputTime = new Date(date).getTime();
+
+    return now - inputTime < X_WEEKS;
+};

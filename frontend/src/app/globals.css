@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 @font-face {
     font-family: 'posh';
     src: url('/fonts/Tangerine-Regular.ttf');
@@ -11,34 +13,35 @@
     src: url('/fonts/cool_font.woff2') format('woff2');
 }
 body {
-    color: white;
+    color: white !important;
     text-align: center;
-    font-size: 2.75rem;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+    font-size: 1.75rem;
+    display: block;
+    min-height: 100dvh;
     font-family: 'retro';
-    background-image: url("/images/f2b617fdfb8e851.png");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-attachment: fixed; /* Keeps background fixed on scroll */
     text-shadow: 0.2rem 0.2rem 0.5rem black;
 }
-#theoh1 {
-    margin-top: 5vh;
-    margin-bottom: 5vh;
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background-image: url("/images/f2b617fdfb8e851.png");
+    background-repeat: no-repeat;
+    background-position: center;
+
+    background-size: cover;
+
+    z-index: -1;
+
+    transform: translateZ(0);
+    will-change: transform;
 }
 main {
     display: flex;
     position: relative;
     flex-direction: column;
     align-items: center;
-}
-header {
-    font-size: 3rem;
-    font-family: 'retro';
-    margin-bottom: 5vh;
 }
 #menu {
     margin-top: -2vh;
@@ -51,21 +54,17 @@ header {
     cursor: pointer;
 }
 a {
-    all: unset;
     cursor: pointer;
 }
 button {
-    all: unset;
     cursor: pointer;
-}
-a:hover {
-    text-decoration: underline;
 }
 .quoteBlock {
     position: relative;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    margin-top: 8vh;
+    width: 95%;
 }
 .quoteBlock.modal {
     margin-top: 0;
@@ -109,9 +108,17 @@ a:hover {
     text-shadow: none;
 }
 .theoHeadContainer, .emptyPaddingDiv{
-    position: relative;
+    position: absolute;
     display: flex;
     align-items: center;
+    top: 0;
+    bottom: 0;
+}
+.theoHeadContainerLeft {
+    left: -5rem;
+}
+.theoHeadContainerRight {
+    right: 1rem;
 }
 .theoHeadContainer {
     z-index: 2;
@@ -146,57 +153,68 @@ a:hover {
 }
 .quoteContainer, .actionContainer {
     display: flex;
+    flex-direction: column;
     align-items: center;
     background-color: rgb(228, 216, 216);
     color: black;
     z-index: 1;
     box-shadow: 0.2rem 0.2rem 0.4rem black;
     text-shadow: none;
+    width: 100%;
+}
+.quoteText {
+    font-size: 2rem;
+    font-weight: bold;
+    font-family:Arial, Helvetica, sans-serif;
+    text-align: left;
 }
 .quoteContainer {
     position: relative;
     justify-content: center;
-    width: 50vw;
     background-color: rgb(228, 216, 216);
     color: black;
     z-index: 1;
-    margin: 1rem;
-    padding-left: 3rem;
-    padding-right: 3rem;
+    padding: 0rem 1rem 0rem 1rem;
     border-radius: 1.5rem;
     border: solid black 0.25rem;
-    font-size: 2.25rem;
-    font-family:Arial, Helvetica, sans-serif;
-    font-style: italic;
 }
 .actionContainer {
-    position: absolute;
-    justify-content: left;
-    border-bottom-left-radius: 1rem;
-    border-bottom-right-radius: 1rem;
-    border-top: solid black 0.125rem;
-    border-left: solid black 0.25rem;
-    border-right: solid black 0.25rem;
-    border-bottom: solid black 0.25rem;
-    right: 3rem;
-    bottom: -2.5rem;
-    text-shadow: none;
-    padding: 0.125rem;
+  position: absolute;
+  justify-content: right;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  border-top: solid black 0.125rem;
+  border-left: solid black 0.25rem;
+  border-right: solid black 0.25rem;
+  border-bottom: solid black 0.25rem;
+  top: 100%;
+  width: 100%;
+  text-shadow: none;
+  padding: 0.125rem;
 }
+
+/* .actionContainerRight {
+  right: 3rem;
+}
+
+.actionContainerLeft {
+  left: 3rem;
+} */
 .likeButton, .shareButton {
-    height: 2.5rem;
-    width: 2.5rem;
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
+    height: 2rem;
+    width: 2rem;
     cursor: pointer;
     filter:invert(0.6);
     transition: filter 0.1s ease-in-out, transform 0.1s ease-in-out;
 }
 .quoteLiked {
-    filter:invert(0) !important;
+    filter:none;
 }
-.likeButton:hover, .shareButton:hover {
-    filter:invert(0);
+@media (hover: hover) {
+    .likeButton:hover,
+    .shareButton:hover {
+        filter: none;
+    }
 }
 .likeButton:active, .shareButton:active {
     transform: scale(0.7);
@@ -205,19 +223,11 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 0.8vw;
-}
-.quoteReference {
-    font-size: 1.5rem;
 }
 .share {
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 1.5rem;
-    color: black;
-    margin-left: 0.4vw;
-    margin-right: 1.6vw;
     text-shadow: none;
 }
 .emptyPaddingDiv {
@@ -409,13 +419,6 @@ td {
     html {
         font-size: 8px;
     }
-    header {
-        font-size: 6vw;
-        margin-top: 5vh;
-    }
-    .quoteContainer {
-        width: 72vw;
-    }
     .clickMe {
         top: -9.5rem;
         left: 10.5rem;
@@ -441,11 +444,6 @@ td {
     }
     .clickMe, .likeMe {
         font-size: 2.8rem;
-    }
-    body{
-        background-image: url("/images/0d9a3e9958673e4.png");
-        color: black;
-        text-shadow: 0.2rem 0.2rem 0.5rem grey;
     }
     .line {
         background: black;

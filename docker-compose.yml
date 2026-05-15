@@ -1,12 +1,20 @@
 services:
-  theo:
+  backend:
     build:
-      context: .
-      dockerfile: ./dockerfile
-    image: theo
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "7000:7000"
     volumes:
-      - type: bind
-        source: ./app/instance
-        target: /code/app/instance
+      - ./backend/instance:/code/instance
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        API_URL: http://backend:7000
+    environment:
+      - API_URL=http://backend:7000
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
