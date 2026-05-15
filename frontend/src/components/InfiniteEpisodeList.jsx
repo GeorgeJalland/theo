@@ -66,7 +66,7 @@ export default function InfiniteEpisodeList({
     
     return (
         <>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mx-4">
                 {episodes.map((ep, i) => {
                     const thumbnails = JSON.parse(ep.thumbnails)
                     return (
@@ -79,7 +79,7 @@ export default function InfiniteEpisodeList({
                                 title={ep.title}
                                 alt={`${ep.title} thumbnail`}
                                 src={thumbnails[0].url}
-                                className="h-80 w-full border-2 border-white/80 rounded-2xl"
+                                className="h-auto w-80 border-2 border-white/80 rounded-2xl"
                                 />
                             </Link>
                         </div>
