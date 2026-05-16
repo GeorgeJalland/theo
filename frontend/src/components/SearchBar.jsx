@@ -29,7 +29,7 @@ export default function SearchBar({ onFocus, onBlur, onSearch }) {
       onFocus={onFocus}
       onBlur={handleBlur}
       placeholder="🔎Search for quotes"
-      className="w-full h-full rounded-lg border-1 md:border-2 p-2"
+      className="w-full h-full rounded-lg border-1 md:border-2 p-2 backdrop-blur-sm"
     />
   );
 }

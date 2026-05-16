@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export default async function AboutUs({}) {
     return (
         <>
-            <div className="flex flex-col items-center justify-start gap-6 p-4 w-full">
+            <div className="flex flex-col items-start justify-start gap-6 p-4 w-full">
                 <div className="flex items-center justify-start w-full mt-4">
                         <h1 className="text-5xl">About</h1>
                 </div>
