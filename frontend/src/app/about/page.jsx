@@ -3,8 +3,16 @@ import Image from "next/image";
 import Stats from "@/components/Stats";
 import FuzzyBlock from "@/components/FuzzyBlock";
 import TheoHead from "@/components/TheoHead";
+import { buildPageMeta } from "@/lib/utils.js";
 
-export const dynamic = "force-dynamic"; 
+export const dynamic = "force-dynamic";
+
+export const metadata = buildPageMeta({
+  title: "About",
+  description:
+    "Learn more about the Theo Von Quotes website and its mission. Contact us. See website stats.",
+  path: "/about",
+});
 
 export default async function AboutUs({}) {
     return (

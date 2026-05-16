@@ -63,3 +63,29 @@ export function isLessThanXWeeksOld(date, weeks) {
 
     return now - inputTime < X_WEEKS;
 };
+
+export function buildPageMeta({ title, description, path }) {
+    const url = `https://theo-von.com${path}`;
+
+    return {
+        title,
+        description,
+
+        alternates: {
+            canonical: url,
+        },
+
+        openGraph: {
+            title: `${title} | Theo Von Quotes`,
+            description,
+            url,
+            type: "website",
+        },
+
+        twitter: {
+            card: "summary",
+            title: `${title} | Theo Von Quotes`,
+            description,
+        },
+    };
+};

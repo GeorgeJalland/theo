@@ -6,16 +6,22 @@ import Panel from "@/components/Panel"
 import BootstrapCookie from "@/components/BootstrapCookie"
 
 export const metadata = {
-  title: "Theo Von Quotes",
-  description:
-    "Theo Von's best quotes, like and share your favourites! Our leaderboard feature let's you view the most liked, shared and newest quotes from Theo Von.",
+  title: {
+    default: "Theo Von Quotes",
+    template: "%s | Theo Von Quotes",
+  },
   icons: {
     icon: "/images/favicon.png",
   },
-  alternates: {
-    canonical: "https://theo-von.com",
+  openGraph: {
+  title: "%s | Theo Von Quotes",
   },
-}
+
+  twitter: {
+    card: "summary",
+    title: "%s | Theo Von Quotes"
+  }
+};
 
 export default function RootLayout({ children }) {
   return (

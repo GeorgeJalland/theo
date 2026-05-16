@@ -145,19 +145,19 @@ export async function searchQuotes(
 }
 
 export async function fetchQuotesServedCount() {
-    return await serversideGetRequest("/quotes-served")
+    return await serversideGetRequest("/quotes-served", { revalidate: 0 })
 }
 
 export async function fetchQuoteCount() {
-    return await serversideGetRequest("/quote-count")
+    return await serversideGetRequest("/quote-count", { revalidate: 0 })
 }
 
 export async function fetchEpisodeCount() {
-    return await serversideGetRequest("/episode-count")
+    return await serversideGetRequest("/episode-count", { revalidate: 0 })
 }
 
 export async function fetchLikeCount() {
-    return await serversideGetRequest("/like-count")
+    return await serversideGetRequest("/like-count", { revalidate: 0 })
 }
 
 export async function likeQuote(localQuoteId) {

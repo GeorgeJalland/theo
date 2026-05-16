@@ -1,13 +1,22 @@
 import { Suspense } from "react"
 import Image from "next/image"
+
 import Filters from "../../components/Filters"
 import QuoteListSkeleton from "../../components/QuoteListSkeleton"
 import QuoteListServer from "../../components/QuoteListServer"
 import RatDivider from "../../components/RatDivider"
 import Panel from "@/components/Panel"
+import { buildPageMeta } from "@/lib/utils.js";
 
 const DEFAULT_SORT = "trending"
 const DEFAULT_SORT_ORDER = "desc"
+
+export const metadata = buildPageMeta({
+  title: "Quotes",
+  description:
+    "Browse and search Theo Von quotes. Sort by trending, newest, or most liked. Updated regularly with his funniest and most popular quotes.",
+  path: "/quotes",
+});
 
 export default async function Quotes({ searchParams }) {
   const params = await searchParams

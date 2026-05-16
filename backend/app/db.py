@@ -206,7 +206,7 @@ async def get_episode_count(session: AsyncSession) -> int:
     return result.scalar()
 
 async def get_like_count(session: AsyncSession) -> int:
-    result = await session.execute(select(func.count(Quote.likes)).where(Quote.status == QuoteStatus.APPROVED))
+    result = await session.execute(select(func.sum(Quote.likes)).where(Quote.status == QuoteStatus.APPROVED))
     return result.scalar()
 
 async def get_quotes(session: AsyncSession, user_id: str, order_by: str, sort_order: str, episode_id: int | None) -> Page[QuoteRead]:

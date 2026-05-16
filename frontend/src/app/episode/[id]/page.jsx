@@ -1,14 +1,34 @@
 import Image from "next/image"
 import Link from "next/link";
-import { Suspense } from "react";
+import { notFound } from "next/navigation"
+import { Suspense, cache } from "react";
 
 import { fetchEpisode } from "../../../lib/api"
-import { timeAgo } from "../../../lib/utils";
+import { timeAgo, buildPageMeta } from "../../../lib/utils";
 import QuoteBlock from "@/components/QuoteBlock"
 import QuoteListServer from "../../../components/QuoteListServer";
 import QuoteListSkeleton from "../../../components/QuoteListSkeleton"
 import Panel from "@/components/Panel";
 import FuzzyBlock from "@/components/FuzzyBlock";
+
+export const getEpisode = cache(async (id) => {
+  return fetchEpisode(id);
+});
+
+export async function generateMetadata({ params }) {
+    const { id } = await params
+    const episode = await getEpisode(id);
+
+    const title = episode.title;
+    const description = `${episode.title} - Published on ${episode.publish_date.split("T")[0]} - Explore and view top quotes from this episode of This Past Weekend with Theo Von.`;
+    const path = `/episode/${id}`;
+
+    return buildPageMeta({
+        title: episode.title,
+        description: description,
+        path: path,
+    });
+}
 
 export default async function Episode({params}){
     const { id } = await params
@@ -20,7 +40,7 @@ export default async function Episode({params}){
         episodeId: id
     }
 
-    const episode = await fetchEpisode(id)
+    const episode = await getEpisode(id)
 
     if (!episode) {
         notFound()

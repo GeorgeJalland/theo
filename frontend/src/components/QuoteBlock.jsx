@@ -70,7 +70,13 @@ export default function QuoteBlock({ quote, loading, index }) {
                 New
               </span>
             )}
-            <div className="text-gray-700 whitespace-nowrap" title={`Quote dated ${quoteDate} ago: ${quote.episode_publish_date?.split("T")[0]}`}>{quoteDate}</div>
+          <time
+            className="text-gray-700 whitespace-nowrap"
+            dateTime={quote.episode_publish_date}
+            title={`Quote published on ${quote.episode_publish_date?.split("T")[0]}`}
+          >
+            {quoteDate}
+          </time>
           </div>
           <MetaContainer
             quote={quote}

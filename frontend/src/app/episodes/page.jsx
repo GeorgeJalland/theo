@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation"
+
+import { buildPageMeta } from "@/lib/utils.js";
 import { fetchEpisodes } from "../../lib/api"
 import SearchBar from "../../components/SearchBar";
 import InfiniteEpisodeList from "../../components/InfiniteEpisodeList";
@@ -9,7 +11,15 @@ const PAGE = 1;
 const DEFAULT_SORT = "publish_date";
 const DEFAULT_ORDER = "desc"
 
-export const dynamic = "force-dynamic"; 
+export const dynamic = "force-dynamic";
+
+export const metadata = buildPageMeta({
+  title: "This Past Weekend Episodes",
+  description:
+    "Browse and search Theo Von This Past Weekend podcast episodes. Updated regularly with new episodes.",
+  path: "/episodes",
+});
+
 
 export default async function Episodes({}) {
     const results = await fetchEpisodes(DEFAULT_SORT, DEFAULT_ORDER, PAGE, LIMIT)
