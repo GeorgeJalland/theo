@@ -9,5 +9,5 @@ export default function BootstrapCookie() {
         fetchBootstrap()
     }, [])
 
-    return null
+    return null;
 }

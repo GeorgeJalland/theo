@@ -19,7 +19,7 @@ const nextConfig = {
       },
       {
         source: "/",
-        destination: "/quotes?sort=trending&sortOrder=desc",
+        destination: "/quotes",
       }
     ];
   },

@@ -20,7 +20,7 @@ export default async function Page({ params }) {
   }
 
   return (
-    <div className="flex w-[80%] h-[80%] items-center justify-center md:mt-20 mt-40 flex-col gap-20">
+    <div className="flex w-[90%] h-[80%] items-center justify-center md:mt-20 mt-40 flex-col gap-20">
       <QuoteBlock key={quote.id} quote={quote} />
         <Panel>
           <Link href="/quotes">

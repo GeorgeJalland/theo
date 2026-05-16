@@ -19,10 +19,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="">
-      <body className="">
+    <html lang="en">
+      <body>
         <BootstrapCookie />
-        <header className="w-full z-100 flex mb-6 items-center justify-between">
+        <header className="w-full z-100 flex mb-6 items-end justify-between">
           <Panel className="ml-2">
             <Link href="/quotes">
             <h1 id="theoh1" className="text-5xl tracking-tight">[Theo Von Quotes]</h1>
