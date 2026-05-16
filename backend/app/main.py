@@ -159,7 +159,7 @@ async def sitemap(session: AsyncSession = Depends(db.get_session)):
     add_sitemap_item(uri="quotes", lastmod=lastmod)
     add_sitemap_item(uri="episodes", lastmod=lastmod)
     add_sitemap_item(uri="clips", lastmod=lastmod)
-    add_sitemap_item(uri="about-us", lastmod=lastmod)
+    add_sitemap_item(uri="about", lastmod="2026-05-16")
 
     quotes = await db.get_all_quotes_id_and_time(session)
 
