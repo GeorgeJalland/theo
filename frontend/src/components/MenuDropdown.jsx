@@ -9,7 +9,7 @@ const menuItems = [
     {title: "Quotes", url:"/quotes"},
     {title: "Episodes", url:"/episodes"},
     {title: "Clips", url:"/clips"},
-    {title: "About Us", url:"/about-us"},
+    {title: "About Us", url:"/about"},
 ]
 
 export default function MenuDropdown() {
@@ -49,7 +49,8 @@ export default function MenuDropdown() {
                     ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" 
                     : "opacity-0 scale-95 -translate-y-2 pointer-events-none"}
             `}
-            >
+            > 
+            <nav aria-label="Main menu">
                 {menuItems.map(item => {
                     const isActive = pathname === item.url;
                     const isHovered = hoveredItem === item.url;
@@ -80,6 +81,7 @@ export default function MenuDropdown() {
                         </Link>
                     )
                 })}
+            </nav>
             </div>
         </div>
     )

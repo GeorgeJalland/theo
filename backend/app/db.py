@@ -197,6 +197,18 @@ async def get_quotes_served_count(session: AsyncSession) -> int:
     result = await session.execute(select(Counter))
     return result.scalar()
 
+async def get_quote_count(session: AsyncSession) -> int:
+    result = await session.execute(select(func.count(Quote.id)).where(Quote.status == QuoteStatus.APPROVED))
+    return result.scalar()
+
+async def get_episode_count(session: AsyncSession) -> int:
+    result = await session.execute(select(func.count(PodcastEpisode.id)))
+    return result.scalar()
+
+async def get_like_count(session: AsyncSession) -> int:
+    result = await session.execute(select(func.count(Like.id)))
+    return result.scalar()
+
 async def get_quotes(session: AsyncSession, user_id: str, order_by: str, sort_order: str, episode_id: int | None) -> Page[QuoteRead]:
     direction = asc if sort_order == "asc" else desc
     stmt = get_base_stmt(user_id)

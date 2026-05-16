@@ -145,7 +145,19 @@ export async function searchQuotes(
 }
 
 export async function fetchQuotesServedCount() {
-    return await serversideGetRequest(buildApiString("/quotes-served"))
+    return await serversideGetRequest("/quotes-served")
+}
+
+export async function fetchQuoteCount() {
+    return await serversideGetRequest("/quote-count")
+}
+
+export async function fetchEpisodeCount() {
+    return await serversideGetRequest("/episode-count")
+}
+
+export async function fetchLikeCount() {
+    return await serversideGetRequest("/like-count")
 }
 
 export async function likeQuote(localQuoteId) {

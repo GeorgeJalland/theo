@@ -84,10 +84,25 @@ async def search_quotes(search_term: str, qid: str | None = Cookie(default=None)
     asyncio.create_task(db.increment_quotes_served(by=page.size))
     return page
 
-@app.get("/api/quotes-served", response_model=Dict[str, int])
+@app.get("/api/quotes-served", response_model=int)
 async def get_quotes_served(session: AsyncSession = Depends(db.get_session)):
     quotes_served = await db.get_quotes_served_count(session)
-    return {"quotes_served": quotes_served.served}
+    return quotes_served.served
+
+@app.get("/api/quote-count", response_model=int)
+async def get_quote_count(session: AsyncSession = Depends(db.get_session)):
+    quote_count = await db.get_quote_count(session)
+    return quote_count
+
+@app.get("/api/episode-count", response_model=int)
+async def get_episode_count(session: AsyncSession = Depends(db.get_session)):
+    episode_count = await db.get_episode_count(session)
+    return episode_count
+
+@app.get("/api/like-count", response_model=int)
+async def get_like_count(session: AsyncSession = Depends(db.get_session)):
+    like_count = await db.get_like_count(session)
+    return like_count
 
 @app.put("/api/like-quote/{quote_id}")
 async def like_quote(quote_id: int, qid: str = Depends(require_qid), session: AsyncSession = Depends(db.get_session)):

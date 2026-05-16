@@ -20,6 +20,7 @@ body {
     min-height: 100dvh;
     font-family: 'retro';
     text-shadow: 0.2rem 0.2rem 0.5rem black;
+    background-color: black;
 }
 body::before {
     content: "";
