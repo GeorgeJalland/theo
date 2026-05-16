@@ -17,6 +17,9 @@ class QuoteRead(BaseModel):
     episode_title: Optional[str] = None
     episode_publish_date: Optional[datetime] = None
     liked_by_user: bool
+    daily_likes: int
+    weekly_likes: int
+    trending_score: float
 
 def to_quote_read(quote: Quote) -> QuoteRead:
     return QuoteRead(
@@ -30,7 +33,10 @@ def to_quote_read(quote: Quote) -> QuoteRead:
         episode_id=quote.episode_id,
         episode_title=quote.episode.title if quote.episode else None,
         episode_publish_date=quote.episode.publish_date if quote.episode else None,
-        liked_by_user=quote.liked_by_user
+        liked_by_user=quote.liked_by_user,
+        daily_likes=quote.daily_likes,
+        weekly_likes=quote.weekly_likes,
+        trending_score=quote.trending_score
     )
 
 spotify_url_template = "https://open.spotify.com/episode/{episode_id}"

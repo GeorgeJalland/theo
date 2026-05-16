@@ -27,33 +27,78 @@ AsyncSessionLocal = sessionmaker(
     expire_on_commit=False
 )
 
-@lru_cache
-def get_trending_stmt(base_stmt):
+def get_trending_metrics_subquery():
 
-    one_week_ago = datetime.now(timezone.utc) - timedelta(days=7)
+    now = datetime.now(timezone.utc)
 
-    trending_subquery = (
+    one_day_ago = now - timedelta(days=1)
+    one_week_ago = now - timedelta(days=7)
+
+    return (
         select(
             Like.quote_id,
-            func.count(Like.id).label("weekly_likes")
+
+            func.count()
+            .filter(Like.created_at >= one_day_ago)
+            .label("daily_likes"),
+
+            func.count()
+            .filter(Like.created_at >= one_week_ago)
+            .label("weekly_likes"),
+
+            func.max(Like.created_at)
+            .label("last_like_at"),
         )
-        .where(Like.created_at >= one_week_ago)
         .group_by(Like.quote_id)
         .subquery()
     )
 
+def add_trending_metrics(stmt):
+
+    trending_subquery = get_trending_metrics_subquery()
+
+    hours_since_last_like = case(
+        (
+            trending_subquery.c.last_like_at.is_(None),
+            999999,
+        ),
+        else_=(func.julianday("now") - func.julianday(trending_subquery.c.last_like_at)) * 24.0,
+    )
+
+    weekly_likes = func.coalesce(
+        trending_subquery.c.weekly_likes,
+        0
+    )
+
+    daily_likes = func.coalesce(
+        trending_subquery.c.daily_likes,
+        0
+    )
+
+    # IMPORTANT: wrap whole denominator safely
+    decay = func.pow(
+        hours_since_last_like + 2,
+        1.5
+    )
+
+    trending_score = (
+        weekly_likes / decay
+    ).label("trending_score")
+
     return (
-        base_stmt
+        stmt
         .outerjoin(
             trending_subquery,
             trending_subquery.c.quote_id == Quote.id
         )
-        .order_by(
-            trending_subquery.c.weekly_likes.desc().nullslast()
+        .add_columns(
+            daily_likes.label("daily_likes"),
+            weekly_likes.label("weekly_likes"),
+            trending_subquery.c.last_like_at,
+            trending_score,
         )
     )
 
-@lru_cache
 def get_base_stmt(user_id: str):
 
     liked_by_user = (
@@ -65,7 +110,7 @@ def get_base_stmt(user_id: str):
         .exists()
     )
 
-    return (
+    stmt = (
         select(
             Quote.id,
             Quote.text,
@@ -85,6 +130,8 @@ def get_base_stmt(user_id: str):
         .outerjoin(Quote.episode)
         .where(Quote.status == QuoteStatus.APPROVED)
     )
+
+    return add_trending_metrics(stmt)
 
 async def init_db():
     async with async_engine.begin() as conn:
@@ -217,7 +264,7 @@ async def get_quotes(session: AsyncSession, user_id: str, order_by: str, sort_or
         stmt = stmt.where(Quote.episode_id == episode_id)
 
     if order_by == "trending":
-        stmt = get_trending_stmt(stmt)
+        stmt = stmt.order_by(direction("trending_score"))
     elif order_by == "new":
         stmt = stmt.order_by(direction("episode_publish_date"))
     else:

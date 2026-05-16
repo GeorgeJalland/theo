@@ -60,6 +60,8 @@ async def get_quote(id: int, qid: str | None = Cookie(default=None), session: As
 
     quote = await db.get_quote(session, qid, id)
 
+    print("quote from db:", quote)
+
     if not quote:
         raise HTTPException(status_code=404, detail="Quote not found")
 

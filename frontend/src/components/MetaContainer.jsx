@@ -19,6 +19,7 @@ export default function MetaContainer({ quote, index, handleLike, handleShare, a
                 userHasLikedInitial={quote.liked_by_user}
                 initialLikes={quote.likes}
                 animate={animate}
+                initialDailyLikes={quote.daily_likes}
                 />
                 <div className="w-px h-8 bg-black/50 self-center" />
                 <ShareButton

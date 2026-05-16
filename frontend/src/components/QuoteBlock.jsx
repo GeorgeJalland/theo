@@ -65,18 +65,21 @@ export default function QuoteBlock({ quote, loading, index }) {
             </div>
           </div>
           <div className="flex w-full gap-2 justify-end text-3xl">
-            {new_ && (
-              <span className="text-yellow-500">
-                New
-              </span>
-            )}
-          <time
-            className="text-gray-700 whitespace-nowrap"
-            dateTime={quote.episode_publish_date}
-            title={`Quote published on ${quote.episode_publish_date?.split("T")[0]}`}
-          >
-            {quoteDate}
-          </time>
+            <div className="flex items-center gap-2">
+              {new_ && (
+                <span className="text-yellow-500">
+                  New
+                </span>
+              )}
+              <time
+                className="text-gray-700 whitespace-nowrap"
+                dateTime={quote.episode_publish_date}
+                title={`Quote published on ${quote.episode_publish_date?.split("T")[0]}`}
+              >
+                {quoteDate}
+              </time>
+            </div>
+
           </div>
           <MetaContainer
             quote={quote}
