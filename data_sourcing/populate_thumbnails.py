@@ -16,14 +16,13 @@ if __name__ == "__main__":
     create_db_and_tables(engine)
 
     import spotipy
-    from spotipy.oauth2 import SpotifyOAuth
+    from spotipy.oauth2 import SpotifyClientCredentials
     from googleapiclient.discovery import build
 
     from data_sourcing.db.database import get_session
 
-    spotipy_client_id = config.SPOTIPY_CLIENT_ID
-    spotipy_client_secret = config.SPOTIPY_CLIENT_SECRET
-    spotipy_redirect_uri = config.SPOTIPY_REDIRECT_URI
+    spotify_client_id = config.SPOTIFY_CLIENT_ID
+    spotify_client_secret = config.SPOTIFY_CLIENT_SECRET
     scope = config.SCOPE
     override_files = config.OVERRIDE_FILES
     destination_folder = config.DESTINATION_FOLDER
@@ -32,10 +31,8 @@ if __name__ == "__main__":
     api_key = config.YOUTUBE_API_KEY
 
     # # Set up Spotify authentication
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=spotipy_client_id,
-                                                   client_secret=spotipy_client_secret,
-                                                   redirect_uri=spotipy_redirect_uri,
-                                                   scope=scope))
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=spotify_client_id,
+                                                              client_secret=spotify_client_secret))
     
     yt = build("youtube", "v3", developerKey=api_key)
 

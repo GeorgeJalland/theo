@@ -36,7 +36,8 @@ def create_podcast_episode(
         youtube_video_id=youtube_video_id,
         publish_date=publish_date,
         transcript_file_path=transcript_file_path,
-        thumbnails=thumbnails
+        thumbnails=thumbnails,
+        created_by="data_sourcing_process"
     )
 
     session.add(episode)
@@ -68,6 +69,15 @@ def get_unprocessed_episodes(session: Session) -> list[PodcastEpisode]:
 
     return session.exec(statement).all()
 
+def get_podcast_episodes_without_youtube_video_id(session: Session) -> list[PodcastEpisode]:
+    statement = (
+        select(PodcastEpisode)
+        .where(PodcastEpisode.youtube_video_id.is_(None))
+        .order_by(PodcastEpisode.publish_date.desc())
+    )
+
+    return session.exec(statement).all()
+
 def create_quote(
     session: Session,
     text: str,
@@ -86,6 +96,7 @@ def create_quote(
         episode_id=episode_id,
         timestamp=timestamp,
         url=url,
+        created_by="data_sourcing_process"
     )
 
     session.add(quote)

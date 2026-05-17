@@ -74,7 +74,7 @@ export default function QuoteBlock({ quote, loading, index }) {
               <time
                 className="text-gray-700 whitespace-nowrap"
                 dateTime={quote.episode_publish_date}
-                title={`Quote published on ${quote.episode_publish_date?.split("T")[0]}`}
+                title={`Quote published on ${quote.episode_publish_date?.split("T")[0] || "Unknown Date"}`}
               >
                 {quoteDate}
               </time>

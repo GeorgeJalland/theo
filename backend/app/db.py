@@ -27,112 +27,6 @@ AsyncSessionLocal = sessionmaker(
     expire_on_commit=False
 )
 
-def get_trending_metrics_subquery():
-
-    now = datetime.now(timezone.utc)
-
-    one_day_ago = now - timedelta(days=1)
-    one_week_ago = now - timedelta(days=7)
-
-    return (
-        select(
-            Like.quote_id,
-
-            func.count()
-            .filter(Like.created_at >= one_day_ago)
-            .label("daily_likes"),
-
-            func.count()
-            .filter(Like.created_at >= one_week_ago)
-            .label("weekly_likes"),
-
-            func.max(Like.created_at)
-            .label("last_like_at"),
-        )
-        .group_by(Like.quote_id)
-        .subquery()
-    )
-
-def add_trending_metrics(stmt):
-
-    trending_subquery = get_trending_metrics_subquery()
-
-    hours_since_last_like = case(
-        (
-            trending_subquery.c.last_like_at.is_(None),
-            999999,
-        ),
-        else_=(func.julianday("now") - func.julianday(trending_subquery.c.last_like_at)) * 24.0,
-    )
-
-    weekly_likes = func.coalesce(
-        trending_subquery.c.weekly_likes,
-        0
-    )
-
-    daily_likes = func.coalesce(
-        trending_subquery.c.daily_likes,
-        0
-    )
-
-    # IMPORTANT: wrap whole denominator safely
-    decay = func.pow(
-        hours_since_last_like + 2,
-        1.5
-    )
-
-    trending_score = (
-        weekly_likes / decay
-    ).label("trending_score")
-
-    return (
-        stmt
-        .outerjoin(
-            trending_subquery,
-            trending_subquery.c.quote_id == Quote.id
-        )
-        .add_columns(
-            daily_likes.label("daily_likes"),
-            weekly_likes.label("weekly_likes"),
-            trending_subquery.c.last_like_at,
-            trending_score,
-        )
-    )
-
-def get_base_stmt(user_id: str):
-
-    liked_by_user = (
-        select(Like.id)
-        .where(
-            Like.quote_id == Quote.id,
-            Like.user_id == user_id
-        )
-        .exists()
-    )
-
-    stmt = (
-        select(
-            Quote.id,
-            Quote.text,
-            Quote.text_hash,
-            Quote.likes,
-            Quote.shares,
-            Quote.url,
-            Quote.created_at,
-
-            PodcastEpisode.id.label("episode_id"),
-            PodcastEpisode.title.label("episode_title"),
-            PodcastEpisode.publish_date.label("episode_publish_date"),
-
-            liked_by_user.label("liked_by_user"),
-        )
-        .select_from(Quote)
-        .outerjoin(Quote.episode)
-        .where(Quote.status == QuoteStatus.APPROVED)
-    )
-
-    return add_trending_metrics(stmt)
-
 async def init_db():
     async with async_engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
@@ -220,16 +114,6 @@ async def share_quote(session: AsyncSession, user_id: str, quote_id: Quote) -> N
         "quote_id": quote_id,
         "shared": True
     }
-
-async def get_random_quote_id(session: AsyncSession) -> int:
-    max_id = await get_max_quote_id(session)
-    return random.randint(1, max_id)
-
-async def get_max_quote_id(session: AsyncSession) -> int:
-    statement = select(func.max(Quote.id))
-    result = await session.execute(statement)
-    max_id = result.scalar()
-    return max_id
 
 async def increment_quotes_served(by: int) -> None:
     async with AsyncSessionLocal() as session:
@@ -348,3 +232,109 @@ async def get_episode(session: AsyncSession, episode_id: int) -> EpisodeDetailRe
     episode = await session.execute(select(PodcastEpisode).where(PodcastEpisode.id == episode_id))
 
     return to_episode_detail(episode.scalar_one())
+
+def get_trending_metrics_subquery():
+
+    now = datetime.now(timezone.utc)
+
+    one_day_ago = now - timedelta(days=1)
+    one_week_ago = now - timedelta(days=7)
+
+    return (
+        select(
+            Like.quote_id,
+
+            func.count()
+            .filter(Like.created_at >= one_day_ago)
+            .label("daily_likes"),
+
+            func.count()
+            .filter(Like.created_at >= one_week_ago)
+            .label("weekly_likes"),
+
+            func.max(Like.created_at)
+            .label("last_like_at"),
+        )
+        .group_by(Like.quote_id)
+        .subquery()
+    )
+
+def add_trending_metrics(stmt):
+
+    trending_subquery = get_trending_metrics_subquery()
+
+    hours_since_last_like = case(
+        (
+            trending_subquery.c.last_like_at.is_(None),
+            999999,
+        ),
+        else_=(func.julianday("now") - func.julianday(trending_subquery.c.last_like_at)) * 24.0,
+    )
+
+    weekly_likes = func.coalesce(
+        trending_subquery.c.weekly_likes,
+        0
+    )
+
+    daily_likes = func.coalesce(
+        trending_subquery.c.daily_likes,
+        0
+    )
+
+    # IMPORTANT: wrap whole denominator safely
+    decay = func.pow(
+        hours_since_last_like + 2,
+        1.5
+    )
+
+    trending_score = (
+        weekly_likes / decay
+    ).label("trending_score")
+
+    return (
+        stmt
+        .outerjoin(
+            trending_subquery,
+            trending_subquery.c.quote_id == Quote.id
+        )
+        .add_columns(
+            daily_likes.label("daily_likes"),
+            weekly_likes.label("weekly_likes"),
+            trending_subquery.c.last_like_at,
+            trending_score,
+        )
+    )
+
+def get_base_stmt(user_id: str):
+
+    liked_by_user = (
+        select(Like.id)
+        .where(
+            Like.quote_id == Quote.id,
+            Like.user_id == user_id
+        )
+        .exists()
+    )
+
+    stmt = (
+        select(
+            Quote.id,
+            Quote.text,
+            Quote.text_hash,
+            Quote.likes,
+            Quote.shares,
+            Quote.url,
+            Quote.created_at,
+
+            PodcastEpisode.id.label("episode_id"),
+            PodcastEpisode.title.label("episode_title"),
+            PodcastEpisode.publish_date.label("episode_publish_date"),
+
+            liked_by_user.label("liked_by_user"),
+        )
+        .select_from(Quote)
+        .outerjoin(Quote.episode)
+        .where(Quote.status == QuoteStatus.APPROVED)
+    )
+
+    return add_trending_metrics(stmt)

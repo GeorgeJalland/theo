@@ -180,15 +180,3 @@ async def sitemap(session: AsyncSession = Depends(db.get_session)):
 
     return Response(content=xml_content, media_type="application/xml")
 
-
-def read_cookie_list_value(cookie: str) -> list:
-    if not cookie:
-        return []
-    else:
-        return decode_and_parse_cookie(cookie)
-
-def decode_and_parse_cookie(cookie: str):
-    return json.loads(urllib.parse.unquote(cookie))
-
-def encode_and_jsonify_list(list_input: str):
-    return urllib.parse.quote(json.dumps(list_input))

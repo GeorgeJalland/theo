@@ -18,7 +18,7 @@ export async function generateMetadata({ params }) {
     const quote = await getQuote(id);
 
     const title = `"${quote.text.slice(0, 60)}..."`;
-    const description = `${quote.text} - Published on ${quote.episode_publish_date.split("T")[0]}`;
+    const description = `${quote.text} - Published on ${quote.episode_publish_date?.split("T")[0] || "Unknown Date"}`;
     const path = `/quote/${id}`;
 
     return buildPageMeta({

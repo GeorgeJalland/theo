@@ -1,15 +1,13 @@
-def source(config, engine):
+def source(config, engine, backfill_youtube_video_ids=False):
     import spotipy
-    from spotipy.oauth2 import SpotifyOAuth
+    from spotipy.oauth2 import SpotifyClientCredentials
     from googleapiclient.discovery import build
 
     from data_sourcing.sourcing.episodes import EpisodeSourcer
     from data_sourcing.db.database import get_session
 
-    spotipy_client_id = config.SPOTIPY_CLIENT_ID
-    spotipy_client_secret = config.SPOTIPY_CLIENT_SECRET
-    spotipy_redirect_uri = config.SPOTIPY_REDIRECT_URI
-    scope = config.SCOPE
+    spotify_client_id = config.SPOTIFY_CLIENT_ID
+    spotify_client_secret = config.SPOTIFY_CLIENT_SECRET
     override_files = config.OVERRIDE_FILES
     destination_folder = config.DESTINATION_FOLDER
     this_past_weekend_show_id = config.THIS_PAST_WEEKEND_SPOTIFY_SHOW_ID
@@ -17,10 +15,8 @@ def source(config, engine):
     api_key = config.YOUTUBE_API_KEY
 
     print("Configuration:")
-    print(f"  SPOTIPY_CLIENT_ID: {spotipy_client_id}")
-    print(f"  SPOTIPY_CLIENT_SECRET: {spotipy_client_secret}")
-    print(f"  SPOTIPY_REDIRECT_URI: {spotipy_redirect_uri}")
-    print(f"  SCOPE: {scope}")
+    print(f"  SPOTIFY_CLIENT_ID: {spotify_client_id}")
+    print(f"  SPOTIFY_CLIENT_SECRET: {spotify_client_secret}")
     print(f"  OVERRIDE_FILES: {override_files}")
     print(f"  DESTINATION_FOLDER: {destination_folder}")
     print(f"  THIS_PAST_WEEKEND_SPOTIFY_SHOW_ID: {this_past_weekend_show_id}")
@@ -28,32 +24,35 @@ def source(config, engine):
     print(f"  YOUTUBE_API_KEY: {api_key}")
 
     # Set up Spotify authentication
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=spotipy_client_id,
-                                                   client_secret=spotipy_client_secret,
-                                                   redirect_uri=spotipy_redirect_uri,
-                                                   scope=scope))
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=spotify_client_id,
+                                                              client_secret=spotify_client_secret))
     
     yt = build("youtube", "v3", developerKey=api_key)
 
     sourcer = EpisodeSourcer(sp, yt, destination_folder=destination_folder, override_existing=override_files)
     with get_session(engine) as session:
         sourcer.source(session, this_past_weekend_show_id, youtube_playlist_id)
+        if backfill_youtube_video_ids:
+            sourcer.backfill_youtube_video_ids(session, youtube_playlist_id)
 
 def process(config, engine):
     """
     This method finds podcast episodes that have been sourced but not processed,
     and runs the quote matching algorithm on them to extract quotes and save them to the database.
     """
+    from pathlib import Path
     from data_sourcing.db.database import get_session
     from data_sourcing.processing.main import process_unprocessed_episodes
     from googleapiclient.discovery import build
+
+    PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
     api_key = config.YOUTUBE_API_KEY
 
     yt = build("youtube", "v3", developerKey=api_key)
 
     with get_session(engine) as session:
-        process_unprocessed_episodes(config, session, yt, limit=1000)
+        process_unprocessed_episodes(config, session, PROJECT_ROOT, yt, limit=1000)
 
 def classify(config, engine):
     from groq import Groq
@@ -81,6 +80,7 @@ if __name__ == "__main__":
     config = get_config()
     
     run_sourcing = "--source" in sys.argv
+    backfill_youtube_video_ids = "--backfill-youtube-video-ids" in sys.argv
     run_processing = "--process" in sys.argv
     run_classifying = "--classify" in sys.argv
 
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
     if run_sourcing:
         logging.info("Running sourcing...")
-        source(config, engine)
+        source(config, engine, backfill_youtube_video_ids)
     if run_processing:
         logging.info("Running processing...")
         process(config, engine)

@@ -10,10 +10,8 @@ DATABASE_URL = f"sqlite:///{BASE_DIR}/backend/instance/app.db"
 
 @dataclass
 class Config:
-    SPOTIPY_CLIENT_ID: str = os.getenv("SPOTIPY_CLIENT_ID")
-    SPOTIPY_CLIENT_SECRET: str = os.getenv("SPOTIPY_CLIENT_SECRET")
-    SPOTIPY_REDIRECT_URI: str = "http://127.0.0.1:8000/callback"
-    SCOPE: str = "playlist-modify-private"
+    SPOTIFY_CLIENT_ID: str = os.getenv("SPOTIFY_CLIENT_ID")
+    SPOTIFY_CLIENT_SECRET: str = os.getenv("SPOTIFY_CLIENT_SECRET")
     THIS_PAST_WEEKEND_SPOTIFY_SHOW_ID: str = "6PwE1CIZsgfrhX6Bw96PUN"
     THIS_PAST_WEEKEND_YT_PLAYLIST_ID: str = "PLY155lJX6_wcTzyjW2sGB4sTT5ZkivwnN"
     OVERRIDE_FILES: bool = False

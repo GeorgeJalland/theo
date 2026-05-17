@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
 
 from sqlmodel import Session
-from data_sourcing.db.database import create_podcast_episode, episode_exists
+from data_sourcing.db.database import create_podcast_episode, episode_exists, get_podcast_episodes_without_youtube_video_id
 from data_sourcing.sourcing.youtube import find_video_id_by_episode_number
 
 DATE_FORMAT = "%Y-%m-%d"
@@ -119,6 +119,17 @@ class EpisodeSourcer:
         if "-" in episode_name:
             return episode_name.split("-", 1)[1].strip()
         return None
+    
+    def backfill_youtube_video_ids(self, session: Session, youtube_playlist_id: str):
+        print("_______backfilling youtube video ids for episodes missing them_______")
+        # Should probably pass episodes here instead but oh well
+        episodes = get_podcast_episodes_without_youtube_video_id(session)
+        for ep in episodes:
+            video_id = find_video_id_by_episode_number(self.yt, youtube_playlist_id, ep.episode_number)
+            if video_id:
+                print(f"Backfilling episode '{ep.title}' with youtube video id: {video_id}")
+                ep.youtube_video_id = video_id
+        session.commit()
 
 class SentenceExtractor:
     def __init__(self, path_root: str):

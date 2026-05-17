@@ -8,7 +8,7 @@ from data_sourcing.sourcing.episodes import SentenceExtractor
 from data_sourcing.sourcing.youtube import QuoteExtractor
 from sentence_transformers import SentenceTransformer
 
-def process_unprocessed_episodes(config, session, youtube, limit=10):
+def process_unprocessed_episodes(config, session, path_root, youtube, limit=10):
     """
     This method finds podcast episodes that have been sourced but not processed,
     and runs the quote matching algorithm on them to extract quotes and save them to the database.
@@ -17,7 +17,7 @@ def process_unprocessed_episodes(config, session, youtube, limit=10):
 
     counter = 0
 
-    sentence_extractor = SentenceExtractor(path_root=".")
+    sentence_extractor = SentenceExtractor(path_root=path_root)
     quote_extractor = QuoteExtractor(youtube=youtube)
     model = SentenceTransformer('all-MiniLM-L6-v2')
     matcher = QuoteMatcher(
