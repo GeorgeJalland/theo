@@ -11,7 +11,7 @@ cd "$PROJECT_DIR"
   echo "===== $(date) ====="
 
   "$VENV_PYTHON" -m data_sourcing.main \
-    --sourcing \
+    --source \
     --backfill-youtube-video-ids \
     --process \
     --classify
