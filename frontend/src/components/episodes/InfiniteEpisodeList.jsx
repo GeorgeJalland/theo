@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react"
 
-import { fetchEpisodes, searchEpisodes } from "../lib/api";
+import { fetchEpisodes, searchEpisodes } from "../../lib/api";
 import EpisodeCard from "./EpisodeCard";
 
 const LIMIT = 20;

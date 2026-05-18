@@ -5,12 +5,12 @@ import { Suspense, cache } from "react";
 
 import { fetchEpisode } from "../../../lib/api"
 import { timeAgo, buildPageMeta } from "../../../lib/utils";
-import QuoteBlock from "@/components/QuoteBlock"
-import QuoteListServer from "../../../components/QuoteListServer";
-import QuoteListSkeleton from "../../../components/QuoteListSkeleton"
+import QuoteBlock from "@/components/quotes/QuoteBlock"
+import QuoteListServer from "../../../components/quotes/QuoteListServer";
+import QuoteListSkeleton from "../../../components/quotes/QuoteListSkeleton"
 import Panel from "@/components/Panel";
 import FuzzyBlock from "@/components/FuzzyBlock";
-import EpisodeCard from "../../../components/EpisodeCard";
+import EpisodeCard from "../../../components/episodes/EpisodeCard";
 
 export const getEpisode = cache(async (id) => {
   return fetchEpisode(id);

@@ -6,7 +6,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link";
 
 import Panel from "@/components/Panel";
-import QuoteBlock from "@/components/QuoteBlock"
+import QuoteBlock from "@/components/quotes/QuoteBlock"
 import { buildPageMeta } from "@/lib/utils.js";
 
 export const getQuote = cache(async (id, cookieString=null) => {

@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation"
 import SearchBar from "./SearchBar";
 import SortBar from "./SortBar";
-import { completeSoftNavigation } from "next/dist/client/components/segment-cache/navigation";
 
 const focuses = Object.freeze({
     SORT: "sort",
@@ -48,7 +47,13 @@ export default function Filters({ searchParams, currentFilters, page }) {
                 isCompact={focus === focuses.SEARCH}
             />
             <div className={`${focus === focuses.SEARCH ? "w-[65%]" : "w-[40%]"} transition-all duration-300`}>
-                <SearchBar page={page} placeholder={`🔎Search for ${page}...`} onFocus={() => setFocus(focuses.SEARCH)} onBlur={() => setFocus(focuses.SORT)}/>
+                <SearchBar 
+                page={page}
+                placeholder={`🔎Search for ${page}...`}
+                onFocus={() => setFocus(focuses.SEARCH)}
+                onBlur={() => setFocus(focuses.SORT)}
+                searchParams={searchParams}
+                />
             </div>
         </div>
     )

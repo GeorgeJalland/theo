@@ -36,7 +36,7 @@ export default function LikeButton({ handleLike, userHasLikedInitial, initialLik
                 {likes}
             </div>
             {dailyLikes > 0 && (
-                <span title="Daily likes" className="text-green-500 ml-1">
+                <span title="Daily likes" className="text-green-500 ml-1 tracking-tight">
                     ▴{dailyLikes}
                 </span>
             )}

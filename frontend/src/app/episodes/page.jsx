@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import { buildPageMeta } from "@/lib/utils.js";
 import { fetchEpisodes, searchEpisodes } from "../../lib/api"
 import SearchBar from "../../components/SearchBar";
-import InfiniteEpisodeList from "../../components/InfiniteEpisodeList";
+import InfiniteEpisodeList from "../../components/episodes/InfiniteEpisodeList";
 import Panel from "@/components/Panel";
 
 const LIMIT = 20;
@@ -35,7 +35,7 @@ export default async function Episodes({ searchParams }) {
                 <h3>This Past Weekend Podcast Episodes</h3>
             </Panel>
             <div className="w-[90%] flex items-center justify-center mb-4">
-                <SearchBar page="episodes" placeholder="🔎Search for episodes..." />
+                <SearchBar page="episodes" placeholder="🔎Search for episodes..." searchParams={params} />
             </div>
             <InfiniteEpisodeList 
             initialEpisodes={episodes}

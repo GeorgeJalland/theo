@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 
 import MetaContainer from "./MetaContainer"
-import { timeAgo, isLessThanXWeeksOld } from "../lib/utils"
+import { timeAgo, isLessThanXWeeksOld } from "../../lib/utils"
 
 import {
   fetchQuote,

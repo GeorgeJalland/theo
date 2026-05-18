@@ -1,5 +1,5 @@
 import Filters from "../../components/Filters"
-import QuoteListSkeleton from "../../components/QuoteListSkeleton"
+import QuoteListSkeleton from "../../components/quotes/QuoteListSkeleton"
 
 export const dynamic = "force-dynamic";
 

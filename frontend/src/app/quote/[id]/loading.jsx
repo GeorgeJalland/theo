@@ -1,4 +1,4 @@
-import QuoteBlockSkeleton from "../../../components/QuoteBlockSkeleton"
+import QuoteBlockSkeleton from "../../../components/quotes/QuoteBlockSkeleton"
 
 export const dynamic = "force-dynamic";
 

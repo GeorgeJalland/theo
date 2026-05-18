@@ -1,13 +1,10 @@
 "use client";
 
-import { useRouter, useSearchParams  } from "next/navigation"
+import { useRouter  } from "next/navigation"
 import { useEffect, useState, useRef } from "react";
 
-export default function SearchBar({ page, placeholder, onFocus, onBlur }) {
-  const searchParams = useSearchParams()
-  const initialSearch = searchParams.get("search") || ""
-
-  const [query, setQuery] = useState(initialSearch);
+export default function SearchBar({ page, placeholder, onFocus, onBlur, searchParams }) {
+  const [query, setQuery] = useState(searchParams?.search || "");
   const router = useRouter()
 
   function handleBlur() {

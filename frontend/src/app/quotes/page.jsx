@@ -2,8 +2,8 @@ import { Suspense } from "react"
 import Image from "next/image"
 
 import Filters from "../../components/Filters"
-import QuoteListSkeleton from "../../components/QuoteListSkeleton"
-import QuoteListServer from "../../components/QuoteListServer"
+import QuoteListSkeleton from "../../components/quotes/QuoteListSkeleton"
+import QuoteListServer from "../../components/quotes/QuoteListServer"
 import RatDivider from "../../components/RatDivider"
 import Panel from "@/components/Panel"
 import { buildPageMeta } from "@/lib/utils.js";

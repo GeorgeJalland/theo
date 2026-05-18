@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import Image from "next/image"
 
-import QuoteBlock from "@/components/QuoteBlock"
+import QuoteBlock from "@/components/quotes/QuoteBlock"
 import { fetchQuotes, searchQuotes } from "@/lib/api"
 import QuoteSkeleton from "./QuoteBlockSkeleton"
 

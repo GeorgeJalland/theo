@@ -23,7 +23,7 @@ export default function EpisodeCard({ episode, showDate=true }) {
             {showDate && (
                 <div className="flex gap-2 items-center justify-center">
                     {isLessThanXWeeksOld(episode.publish_date, 2) && (
-                        <div className="flex py-0 px-2 rounded-2xl border border-gray-700 bg-yellow-500">
+                        <div className="flex py-0 px-2 rounded-2xl bg-yellow-500">
                             <span  className="leading-tight text-black text-shadow-none text-2xl">New</span>
                         </div>
                     )}
