@@ -1,10 +1,10 @@
 "use client"
 
+import Image from "next/image";
 import { useState, useRef, useEffect } from "react"
 
 import { fetchEpisodes, searchEpisodes } from "../lib/api";
-import Image from "next/image";
-import Link from "next/link";
+import EpisodeCard from "./EpisodeCard";
 
 const LIMIT = 20;
 
@@ -69,25 +69,8 @@ export default function InfiniteEpisodeList({
     
     return (
         <>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mx-4">
-                {episodes.map((ep, i) => {
-                    const thumbnails = JSON.parse(ep.thumbnails)
-                    return (
-                        <div key={ep.id}>
-                            <Link key={ep.id} href={"/episode/"+ep.id}>
-                                <Image
-                                priority
-                                height={640}
-                                width={640}
-                                title={ep.title}
-                                alt={`${ep.title} thumbnail`}
-                                src={thumbnails[0].url}
-                                className="h-auto w-80 border-2 border-white/80 rounded-2xl"
-                                />
-                            </Link>
-                        </div>
-                    )
-                })}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 gap-y-3 mx-4">
+                {episodes.map((ep, i) => <EpisodeCard key={ep.id} episode={ep} />)}
             </div>
             <div ref={loaderRef} className="h-10 flex justify-center items-center">
                     <Image priority alt="rat king" height={64} width={64} className="w-16 h-full mx-4" src="/images/pixel rat.png"/>

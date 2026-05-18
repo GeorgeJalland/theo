@@ -10,6 +10,7 @@ import QuoteListServer from "../../../components/QuoteListServer";
 import QuoteListSkeleton from "../../../components/QuoteListSkeleton"
 import Panel from "@/components/Panel";
 import FuzzyBlock from "@/components/FuzzyBlock";
+import EpisodeCard from "../../../components/EpisodeCard";
 
 export const getEpisode = cache(async (id) => {
   return fetchEpisode(id);
@@ -51,16 +52,7 @@ export default async function Episode({params}){
     return (
         <>
             <div className="w-full flex items-center justify-start gap-8 mb-6 px-8">
-                <Image
-                    priority
-                    height={640}
-                    width={640}
-                    title={episode.title}
-                    alt={`${episode} thumbnail`}
-                    src={thumbnails[0].url}
-                    className="h-100 w-100 border-2 border-white/80 rounded-2xl"
-                />
-                
+                <EpisodeCard episode={episode} showDate={false} />
                 <FuzzyBlock>
                     <div className="text-left">
                         <h1 className="text-4xl">{episode.title}</h1>
