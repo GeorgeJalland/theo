@@ -172,7 +172,7 @@ async def keyword_search_quotes(session: AsyncSession, search_term: str) -> Page
         transformer=lambda quotes: [to_quote_read(quote) for quote in quotes])
     return result
 
-MIN_SCORE = 80
+MIN_SCORE = 90
 
 @lru_cache()
 def calc_fuzzy_scores(quote_texts: tuple, search_term: str):
@@ -232,6 +232,19 @@ async def get_episode(session: AsyncSession, episode_id: int) -> EpisodeDetailRe
     episode = await session.execute(select(PodcastEpisode).where(PodcastEpisode.id == episode_id))
 
     return to_episode_detail(episode.scalar_one())
+
+async def search_episodes(session: AsyncSession, search_term: str) -> Page[EpisodeBaseRead]:
+    stmt = get_episode_base_stmt().where(
+        PodcastEpisode.title.ilike(f"%{search_term}%"),
+        PodcastEpisode.guest_name.ilike(f"%{search_term}%")        
+    ).order_by(desc(PodcastEpisode.publish_date))
+
+    return await paginate(
+        session,
+        stmt,
+        transformer=lambda episodes: [to_episode_base(ep) for ep in episodes]
+        )
+
 
 def get_trending_metrics_subquery():
 

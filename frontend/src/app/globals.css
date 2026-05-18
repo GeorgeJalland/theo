@@ -12,6 +12,9 @@
     font-family: 'retro';
     src: url('/fonts/cool_font.woff2') format('woff2');
 }
+html {
+    font-size: 12px;
+}
 body {
     color: white !important;
     text-align: center;

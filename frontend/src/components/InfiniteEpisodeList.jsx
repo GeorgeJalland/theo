@@ -2,16 +2,19 @@
 
 import { useState, useRef, useEffect } from "react"
 
-import { fetchEpisodes } from "../lib/api";
+import { fetchEpisodes, searchEpisodes } from "../lib/api";
 import Image from "next/image";
 import Link from "next/link";
+
+const LIMIT = 20;
 
 export default function InfiniteEpisodeList({
     initialEpisodes,
     pages,
     total,
     initialOrderBy,
-    initialSortOrder 
+    initialSortOrder,
+    searchTerm = null
 }) {
     const [episodes, setEpisodes] = useState(initialEpisodes)
     const [orderBy, setOrderBy] = useState(initialOrderBy)
@@ -31,7 +34,7 @@ export default function InfiniteEpisodeList({
         try {
             const nextPage = page + 1
 
-            const res = await fetchEpisodes(orderBy, sortOrder, nextPage, 20)
+            const res = searchTerm ? await searchEpisodes(searchTerm, nextPage, LIMIT) : await fetchEpisodes(orderBy, sortOrder, nextPage, LIMIT)
 
             setEpisodes(prev => [...prev, ...res.items])
             setPage(nextPage)
@@ -62,7 +65,7 @@ export default function InfiniteEpisodeList({
     useEffect(() => {
         setEpisodes(initialEpisodes)
         setPage(1)
-    }, [initialOrderBy, initialSortOrder])
+    }, [initialEpisodes, initialOrderBy, initialSortOrder])
     
     return (
         <>

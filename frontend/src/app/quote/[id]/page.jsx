@@ -37,7 +37,6 @@ export default async function Page({ params }) {
   try {
     quote = await getQuote(id, cookieStore.toString())
   } catch {
-    console.log("throwing")
     notFound()
   }
 

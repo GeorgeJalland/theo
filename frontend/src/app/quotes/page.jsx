@@ -35,7 +35,7 @@ export default async function Quotes({ searchParams }) {
         <h2 className="text-6xl font-bold">[Quotes]</h2>
         <h3>Quotes by Comedian Theo Von</h3>
       </Panel>
-      <Filters searchParams={params} currentFilters={filters} />
+      <Filters searchParams={params} currentFilters={filters} page="quotes" />
       <RatDivider/>
       <Suspense fallback={<QuoteListSkeleton clones={10} />}>
         <QuoteListServer filters={filters} />

@@ -34,17 +34,9 @@ export default function RootLayout({ children }) {
             <h1 id="theoh1" className="text-5xl tracking-tight">[Theo Von Quotes]</h1>
             </Link>
           </Panel>
-          {/* <div className="flex items-center justify-center leading-none"> */}
-            {/* <div className="flex flex-col items-end justify-start leading-none">
-              <div>[Quotes]</div>
-              <div>Served: 1000</div>
-              <div>Count: 500</div>
-            </div> */}
-            {/* <Image priority height={400} width={400} src="/images/favicon.png" alt="theos head" className="w-25 h-full z-1"/> */}
-          {/* </div> */}
           <MenuDropdown/>
         </header>
-        <main className="w-full h-full items-center">
+        <main className="w-full h-full items-center max-w-7xl mx-auto">
           {children}
         </main>
       </body>

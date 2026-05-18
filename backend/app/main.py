@@ -1,4 +1,5 @@
 import json
+from urllib import response
 import urllib.parse
 from fastapi import FastAPI, Depends, HTTPException, Response, Cookie, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -140,6 +141,11 @@ async def get_episode(
     episode = await db.get_episode(session, id)
     response.headers["Cache-Control"] = "public, max-age=3600"
     return episode
+
+@app.get("/api/search_episodes", response_model=Page[EpisodeListItemRead])
+async def search_episodes_by_title(response: Response,search_term: str, session: AsyncSession = Depends(db.get_session)):
+    response.headers["Cache-Control"] = "public, max-age=3600"
+    return await db.search_episodes(session, search_term)
 
 @app.get("/api/sitemap.xml", response_class=Response)
 async def sitemap(session: AsyncSession = Depends(db.get_session)):

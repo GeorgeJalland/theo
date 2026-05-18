@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 
 import { buildPageMeta } from "@/lib/utils.js";
-import { fetchEpisodes } from "../../lib/api"
+import { fetchEpisodes, searchEpisodes } from "../../lib/api"
 import SearchBar from "../../components/SearchBar";
 import InfiniteEpisodeList from "../../components/InfiniteEpisodeList";
 import Panel from "@/components/Panel";
@@ -21,8 +21,10 @@ export const metadata = buildPageMeta({
 });
 
 
-export default async function Episodes({}) {
-    const results = await fetchEpisodes(DEFAULT_SORT, DEFAULT_ORDER, PAGE, LIMIT)
+export default async function Episodes({ searchParams }) {
+    const params = await searchParams
+
+    const results = params?.search ? await searchEpisodes(params.search, PAGE, LIMIT) : await fetchEpisodes(DEFAULT_SORT, DEFAULT_ORDER, PAGE, LIMIT)
 
     const episodes = results.items
 
@@ -32,13 +34,16 @@ export default async function Episodes({}) {
                 <h2 className="text-6xl font-bold">[Episodes]</h2>
                 <h3>This Past Weekend Podcast Episodes</h3>
             </Panel>
-            {/* <SearchBar onSearch={"hello"}/> */}
+            <div className="w-[90%] flex items-center justify-center mb-4">
+                <SearchBar page="episodes" placeholder="🔎Search for episodes..." />
+            </div>
             <InfiniteEpisodeList 
             initialEpisodes={episodes}
             pages={results.pages}
             total={results.total}
             initialOrderBy={DEFAULT_SORT}
             initialSortOrder={DEFAULT_ORDER}
+            searchTerm={params?.search}
             />
         </>
     )

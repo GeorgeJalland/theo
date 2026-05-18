@@ -1,21 +1,36 @@
 "use client";
 
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams  } from "next/navigation"
+import { useEffect, useState, useRef } from "react";
 
-export default function SearchBar({ onFocus, onBlur, onSearch }) {
-  const [query, setQuery] = useState("");
+export default function SearchBar({ page, placeholder, onFocus, onBlur }) {
+  const searchParams = useSearchParams()
+  const initialSearch = searchParams.get("search") || ""
+
+  const [query, setQuery] = useState(initialSearch);
   const router = useRouter()
 
   function handleBlur() {
     if (!query) {
-      onBlur()
+      onBlur && onBlur()
     }
+  }
+
+  function handleSearch(value) {
+    const params = new URLSearchParams(searchParams)
+
+    if (value?.trim()) {
+      params.set("search", value)
+    } else {
+      params.delete("search")
+    }
+
+    router.push(`/${page}?${params.toString()}`)
   }
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      onSearch(query);
+      handleSearch(query);
     }, 300);
 
     return () => clearTimeout(timer);
@@ -28,7 +43,7 @@ export default function SearchBar({ onFocus, onBlur, onSearch }) {
       onChange={(e) => setQuery(e.target.value)}
       onFocus={onFocus}
       onBlur={handleBlur}
-      placeholder="🔎Search for quotes"
+      placeholder={placeholder || "🔎Search..."}
       className="w-full h-full rounded-lg border-1 md:border-2 p-2 backdrop-blur-sm"
     />
   );

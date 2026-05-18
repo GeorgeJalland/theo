@@ -144,6 +144,18 @@ export async function searchQuotes(
     return await serversideGetRequest(endpointUri, { cookie })
 }
 
+export async function searchEpisodes(searchTerm, page, limit) {
+    const queryParams = new URLSearchParams({
+        search_term: searchTerm,
+        page: String(page),
+        size: String(limit),
+    });
+
+    const endpointUri = `/search_episodes?${queryParams.toString()}`;
+
+    return await serversideGetRequest(endpointUri, { revalidate: 3600 })
+}
+
 export async function fetchQuotesServedCount() {
     return await serversideGetRequest("/quotes-served", { revalidate: 0 })
 }

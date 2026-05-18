@@ -17,7 +17,7 @@ const sortOptions = [
   { title: "Likes", requestArg: "likes"},
 ]
 
-export default function Filters({ searchParams, currentFilters, handleSearch }) {
+export default function Filters({ searchParams, currentFilters, page }) {
     const hasSearch = currentFilters?.search != null
 
     const [focus, setFocus] = useState(hasSearch ? focuses.SEARCH : focuses.SORT)
@@ -27,19 +27,6 @@ export default function Filters({ searchParams, currentFilters, handleSearch }) 
         setFocus(hasSearch ? focuses.SEARCH : focuses.SORT)
     }, [currentFilters])
 
-
-    function handleSearch(value) {
-        const params = new URLSearchParams(searchParams)
-    
-        if (value) {
-          params.set("search", value)
-        } else {
-          params.delete("search")
-        }
-    
-        router.push(`/quotes?${params.toString()}`)
-    }
-
     function handleSort(sort, sortOrder) {
         const params = new URLSearchParams(searchParams)
         params.delete("search")
@@ -47,7 +34,7 @@ export default function Filters({ searchParams, currentFilters, handleSearch }) 
         if (sortOrder) {
             params.set("sortOrder", sortOrder)
         }
-        router.push(`/quotes?${params.toString()}`)
+        router.push(`/${page}?${params.toString()}`)
     }
 
     return (
@@ -61,7 +48,7 @@ export default function Filters({ searchParams, currentFilters, handleSearch }) 
                 isCompact={focus === focuses.SEARCH}
             />
             <div className={`${focus === focuses.SEARCH ? "w-[65%]" : "w-[40%]"} transition-all duration-300`}>
-                <SearchBar onFocus={() => setFocus(focuses.SEARCH)} onBlur={() => setFocus(focuses.SORT)} onSearch={handleSearch}/>
+                <SearchBar page={page} placeholder={`🔎Search for ${page}...`} onFocus={() => setFocus(focuses.SEARCH)} onBlur={() => setFocus(focuses.SORT)}/>
             </div>
         </div>
     )
