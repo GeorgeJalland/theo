@@ -53,13 +53,16 @@ export default async function AboutUs({}) {
                         <h1 className="text-5xl">Stats</h1>
                 </div>
 
-                <div className="flex flex-col gap-6 md:text-2xl text-4xl text-left w-full">
+                <div className="relative flex gap-20 md:text-2xl text-4xl text-left w-full">
                     <Stats />
+                    <TheoHead />
+                    <div className="absolute left-180 top-20 flex flex-col items-center gap-4">
+                        <Image src="/images/arrow1.png" alt="arrow" width={300} height={300} className="w-30 h-30 scale-x-[-1] scale-y-[-1]" />
+                        <span>Click me!</span>
+                    </div>
+
                 </div>
             </div>
-            <footer>
-                <TheoHead />
-            </footer>
         </>
     )
 }

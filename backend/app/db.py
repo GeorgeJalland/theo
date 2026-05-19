@@ -368,7 +368,7 @@ async def get_quote_embeddings_map() -> dict[int, list[float]]:
         result = await session.execute(select(Quote.id, Quote.text_embedding).where(Quote.status == QuoteStatus.APPROVED))
         rows = result.mappings().all()
 
-        ids = [r["id"] for r in rows]
+        ids = [r["id"] for r in rows] # TODO: make this dict for faster lookup
         matrix = np.array([json.loads(r["text_embedding"]) for r in rows], dtype=np.float32)
         return ids, matrix
 
@@ -378,7 +378,7 @@ async def get_similar_quote_ids(quote_id: int, top_k: int = 3) -> list[QuoteRead
     if quote_id not in ids:
         raise ValueError("Quote not found")
 
-    idx = ids.index(quote_id)
+    idx = ids.index(quote_id) # TODO: make this dict for faster lookup
 
     target_vec = matrix[idx].reshape(1, -1)
 
