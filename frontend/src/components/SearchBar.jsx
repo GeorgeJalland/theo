@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from "react";
 export default function SearchBar({ page, placeholder, onFocus, onBlur, searchParams }) {
   const [query, setQuery] = useState(searchParams?.search || "");
   const router = useRouter()
+  const didMount = useRef(false)
 
   function handleBlur() {
     if (!query) {
@@ -14,24 +15,31 @@ export default function SearchBar({ page, placeholder, onFocus, onBlur, searchPa
   }
 
   function handleSearch(value) {
-    const params = new URLSearchParams(searchParams)
+    const params = new URLSearchParams()
 
     if (value?.trim()) {
       params.set("search", value)
-    } else {
-      params.delete("search")
     }
 
     router.push(`/${page}?${params.toString()}`)
   }
 
   useEffect(() => {
+    if (!didMount.current) {
+      didMount.current = true
+      return
+    }
+
     const timer = setTimeout(() => {
       handleSearch(query);
     }, 300);
 
     return () => clearTimeout(timer);
   }, [query]);
+
+  useEffect(() => {
+    setQuery(searchParams?.search || "")
+  }, [searchParams?.search])
 
   return (
     <input

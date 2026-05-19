@@ -1,17 +1,21 @@
 from functools import lru_cache
 from datetime import datetime, timedelta, timezone
+import json
+from pathlib import Path
+
 from sqlmodel import SQLModel
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import exists, and_, case
 from sqlalchemy.engine import RowMapping
-import random
 from sqlmodel import select, func, asc, desc, delete, update
 from fastapi_pagination.ext.sqlalchemy import paginate
 from fastapi_pagination import Page
 from rapidfuzz import fuzz
-from pathlib import Path
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+from aiocache import cached
 
 from app.models import Quote, Counter, QuoteStatus, PodcastEpisode, Like, Share
 from app.schemas import to_quote_read, QuoteRead, to_episode_base, EpisodeBaseRead, EpisodeDetailRead, to_episode_detail 
@@ -40,6 +44,12 @@ async def get_quote(session: AsyncSession, user_id: str, id: int) -> Quote:
     result = await session.execute(stmt.where(Quote.id == id))
     return result.mappings().first()
 
+async def get_quotes_by_ids(session: AsyncSession, user_id: str, quote_ids: list[int]) -> list[QuoteRead]:
+    stmt = get_base_stmt(user_id)
+    result = await session.execute(stmt.where(Quote.id.in_(quote_ids)))
+    quotes = result.mappings().all()
+    return [QuoteRead(**quote) for quote in quotes]
+
 async def quote_exists(session: AsyncSession, id: int) -> bool:
     stmt = select(
         exists().where(
@@ -56,7 +66,7 @@ async def toggle_like_quote(session: AsyncSession, user_id: str, quote_id: int):
         raise ValueError("User ID is required to like a quote")
     
     like = Like(quote_id=quote_id, user_id=user_id)
-    print(f"Toggling like for quote_id={quote_id} by user_id={user_id}")
+
     session.add(like)
 
     try:
@@ -94,7 +104,7 @@ async def toggle_like_quote(session: AsyncSession, user_id: str, quote_id: int):
 
         return {"liked": False, "quote_id": quote_id}
 
-async def share_quote(session: AsyncSession, user_id: str, quote_id: Quote) -> None:
+async def share_quote(session: AsyncSession, user_id: str, quote_id: int) -> None:
     if user_id is None:
         raise ValueError("User ID is required to share a quote")
     
@@ -351,3 +361,31 @@ def get_base_stmt(user_id: str):
     )
 
     return add_trending_metrics(stmt)
+
+@cached(ttl=3600)
+async def get_quote_embeddings_map() -> dict[int, list[float]]:
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(Quote.id, Quote.text_embedding).where(Quote.status == QuoteStatus.APPROVED))
+        rows = result.mappings().all()
+
+        ids = [r["id"] for r in rows]
+        matrix = np.array([json.loads(r["text_embedding"]) for r in rows], dtype=np.float32)
+        return ids, matrix
+
+async def get_similar_quote_ids(quote_id: int, top_k: int = 3) -> list[QuoteRead]:
+    ids, matrix = await get_quote_embeddings_map()
+
+    if quote_id not in ids:
+        raise ValueError("Quote not found")
+
+    idx = ids.index(quote_id)
+
+    target_vec = matrix[idx].reshape(1, -1)
+
+    sims = cosine_similarity(target_vec, matrix)[0]
+
+    sims[idx] = -1
+
+    top_indices = np.argsort(sims)[-top_k:][::-1]
+
+    return [ids[i] for i in top_indices]

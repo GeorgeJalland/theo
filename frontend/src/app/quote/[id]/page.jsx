@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { cache } from "react";
 
-import { fetchQuote } from "@/lib/api"
+import { fetchQuote, fetchSimilarQuotes } from "@/lib/api"
 import { notFound } from "next/navigation"
 import Link from "next/link";
 
@@ -28,26 +28,35 @@ export async function generateMetadata({ params }) {
     });
 }
 
+const LIMIT = 3;
+
 export default async function Page({ params }) {
   const { id } = await params
   const cookieStore = await cookies();
 
-  let quote;
+  const [quote, similarQuotes] = await Promise.all([
+    getQuote(id, cookieStore.toString()),
+    fetchSimilarQuotes(id, LIMIT, cookieStore.toString()),
+  ]);
 
-  try {
-    quote = await getQuote(id, cookieStore.toString())
-  } catch {
+  if (!quote) {
     notFound()
   }
 
   return (
-    <div className="flex w-full h-[80%] items-center justify-center md:mt-20 mt-40 flex-col gap-20">
+    <div className="flex w-full h-[80%] items-center justify-center mt-20 flex-col gap-10">
       <QuoteBlock key={quote.id} quote={quote} />
-        <Panel>
-          <Link href="/quotes">
+      <h2 className="text-4xl mt-20">You might also like...</h2>
+      <div className="flex flex-col items-center w-full">
+        {similarQuotes.map((quote) => (
+          <QuoteBlock key={quote.id} quote={quote} className="scale-80 opacity-80 hover:opacity-100 transition-opacity duration-100" />
+        ))}
+      </div>
+      <Panel className="mb-5">
+        <Link href="/quotes">
             <h2 className="text-4xl">[More Quotes]</h2>
-          </Link>
-        </Panel>
+        </Link>
+      </Panel>
     </div>
   )
 }

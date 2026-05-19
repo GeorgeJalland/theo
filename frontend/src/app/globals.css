@@ -161,7 +161,7 @@ button {
     align-items: center;
     background-color: rgb(228, 216, 216);
     color: black;
-    z-index: 1;
+    z-index: -10;
     box-shadow: 0.2rem 0.2rem 0.4rem black;
     text-shadow: none;
     width: 100%;

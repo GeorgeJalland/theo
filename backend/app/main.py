@@ -61,8 +61,6 @@ async def get_quote(id: int, qid: str | None = Cookie(default=None), session: As
 
     quote = await db.get_quote(session, qid, id)
 
-    print("quote from db:", quote)
-
     if not quote:
         raise HTTPException(status_code=404, detail="Quote not found")
 
@@ -143,9 +141,18 @@ async def get_episode(
     return episode
 
 @app.get("/api/search_episodes", response_model=Page[EpisodeListItemRead])
-async def search_episodes_by_title(response: Response,search_term: str, session: AsyncSession = Depends(db.get_session)):
+async def search_episodes_by_title(response: Response, search_term: str, session: AsyncSession = Depends(db.get_session)):
     response.headers["Cache-Control"] = "public, max-age=3600"
     return await db.search_episodes(session, search_term)
+
+@app.get("/api/similar_quotes", response_model=list[QuoteRead])
+async def get_similar_quotes(
+    quote_id: int, qid: str | None = Cookie(default=None),
+    limit: int = 3,
+    session: AsyncSession = Depends(db.get_session)
+    ) -> list[QuoteRead]:
+    quote_ids = await db.get_similar_quote_ids(quote_id, top_k=limit)
+    return await db.get_quotes_by_ids(session, qid, quote_ids)
 
 @app.get("/api/sitemap.xml", response_class=Response)
 async def sitemap(session: AsyncSession = Depends(db.get_session)):

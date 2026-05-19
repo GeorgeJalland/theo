@@ -144,6 +144,17 @@ export async function searchQuotes(
     return await serversideGetRequest(endpointUri, { cookie })
 }
 
+export async function fetchSimilarQuotes(quoteId, limit = 3, cookie = null) {
+    const queryParams = new URLSearchParams({
+        quote_id: String(quoteId),
+        limit: String(limit),
+    });
+
+    const endpointUri = `/similar_quotes?${queryParams.toString()}`;
+
+    return await serversideGetRequest(endpointUri, { cookie })
+}
+
 export async function searchEpisodes(searchTerm, page, limit) {
     const queryParams = new URLSearchParams({
         search_term: searchTerm,

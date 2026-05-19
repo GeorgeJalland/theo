@@ -22,7 +22,7 @@ export default function LikeButton({ handleLike, userHasLikedInitial, initialLik
 
     return (
     <>
-        <div className="likesOverlay shrink-0">
+        <div className="likesOverlay shrink-0 z-10">
             <Image
                 priority
                 alt="like button"
