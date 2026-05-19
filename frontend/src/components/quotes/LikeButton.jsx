@@ -22,7 +22,7 @@ export default function LikeButton({ handleLike, userHasLikedInitial, initialLik
 
     return (
     <>
-        <div className="likesOverlay">
+        <div className="likesOverlay shrink-0">
             <Image
                 priority
                 alt="like button"
@@ -36,7 +36,7 @@ export default function LikeButton({ handleLike, userHasLikedInitial, initialLik
                 {likes}
             </div>
             {dailyLikes > 0 && (
-                <span title="Daily likes" className="text-green-500 ml-1 tracking-tight">
+                <span title="Daily likes" className="text-green-500 tracking-tight">
                     ▴{dailyLikes}
                 </span>
             )}

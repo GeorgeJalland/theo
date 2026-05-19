@@ -12,8 +12,8 @@ export default function MetaContainer({ quote, index, handleLike, handleShare, a
     const isUrlSpotify = quote.url.includes("spotify")
 
     return (
-        <div className="flex justify-between items-end w-full text-gray-700 pb-2 text-3xl">
-            <div className="flex gap-3 px-4 border md:border-2 border-black/50 bg-white/30 rounded-2xl">
+        <div className="flex justify-between items-center w-full text-gray-700 pb-2 gap-4 text-3xl">
+            <div className="flex gap-3 px-4 border md:border-2 border-black/50 bg-white/30 rounded-2xl shrink-0">
                 <LikeButton
                 handleLike={handleLike}
                 userHasLikedInitial={quote.liked_by_user}
@@ -28,13 +28,13 @@ export default function MetaContainer({ quote, index, handleLike, handleShare, a
                 animate={animate}
                 />
             </div>
-            <div className="flex justify-end items-center w-full min-w-0 gap-3">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
                 {isUrlSpotify ? (
                     <>
-                        <Link href={quote.url} target="_blank" rel="noopener noreferrer" title="open spotify clip">
-                            <Image height={64} width={64} src="/images/spotify_logo.png" alt="spotify logo"className="w-7 h-full"/>
+                        <Link href={quote.url} target="_blank" rel="noopener noreferrer" title="open spotify clip" className="flex-none">
+                            <Image height={64} width={64} src="/images/spotify_logo.png" alt="spotify logo"className="w-7 h-7 block"/>
                         </Link>
-                        <Link href={"/episode/"+quote.episode_id} className="truncate max-w-[50%]" title={quote.episode_title}>{quote.episode_title}</Link>
+                        <Link href={"/episode/"+quote.episode_id} className="truncate flex-1 min-w-0" title={quote.episode_title}>{quote.episode_title}</Link>
                     </>
                 ) :  <Reference
                     url={quote.url}

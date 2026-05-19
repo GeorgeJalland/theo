@@ -18,7 +18,7 @@ export default function ShareButton({ handleShare, initialShares, animate}) {
 
     return (
     <>
-        <div className="share">
+        <div className="share shrink-0">
             <Image
                 alt="share button"
                 src="/images/share3.png"
