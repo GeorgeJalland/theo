@@ -8,11 +8,13 @@ import {
 import FuzzyBlock from "@/components/FuzzyBlock";
 
 export default async function Stats() {
-  const quotesServed = await fetchQuotesServedCount();
-  const quoteCount = await fetchQuoteCount();
-  const episodeCount = await fetchEpisodeCount();
-  const likeCount = await fetchLikeCount();
-
+  const [quotesServed, quoteCount, episodeCount, likeCount] = await Promise.all([
+    fetchQuotesServedCount(),
+    fetchQuoteCount(),
+    fetchEpisodeCount(),
+    fetchLikeCount()
+  ]);
+  
   return (
     <div className="w-full max-w-md">
 
