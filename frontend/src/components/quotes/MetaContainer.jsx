@@ -8,7 +8,7 @@ import LikeButton from "./LikeButton"
 import ShareButton from "./ShareButton"
 import Reference from "./Reference"
 
-export default function MetaContainer({ quote, index, handleLike, handleShare, animate }) {
+export default function MetaContainer({ quote, index, handleLike, handleShare }) {
     const isUrlSpotify = quote.url.includes("spotify")
 
     return (
@@ -18,14 +18,12 @@ export default function MetaContainer({ quote, index, handleLike, handleShare, a
                 handleLike={handleLike}
                 userHasLikedInitial={quote.liked_by_user}
                 initialLikes={quote.likes}
-                animate={animate}
                 initialDailyLikes={quote.daily_likes}
                 />
                 <div className="w-px h-8 bg-black/50 self-center" />
                 <ShareButton
                 handleShare={handleShare}
                 initialShares={quote.shares}
-                animate={animate}
                 />
             </div>
             <div className="flex justify-end items-center gap-3 flex-1 min-w-0">

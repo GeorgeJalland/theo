@@ -3,9 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 
-export default function LikeButton({ handleLike, userHasLikedInitial, initialLikes, animate, initialDailyLikes }) {
-    const likesRef = useRef(null)
-
+export default function LikeButton({ handleLike, userHasLikedInitial, initialLikes, initialDailyLikes }) {
     const [likes, setLikes] = useState(initialLikes || 0)
     const [userHasLiked, setUserHasLiked] = useState(userHasLikedInitial)
     const [dailyLikes, setDailyLikes] = useState(initialDailyLikes || 0)
@@ -17,7 +15,6 @@ export default function LikeButton({ handleLike, userHasLikedInitial, initialLik
         setLikes(newLikes)
         setDailyLikes(userHasLiked? dailyLikes -1 : dailyLikes + 1)
         setUserHasLiked(!userHasLiked)
-        animate(likesRef, newLikes)
     }
 
     return (
@@ -32,7 +29,7 @@ export default function LikeButton({ handleLike, userHasLikedInitial, initialLik
                 className={`likeButton ${userHasLiked ? "quoteLiked" : ""}`}
                 onClick={_handleLike}
             />
-            <div data-anim="likes" className={`text-4xl ${userHasLiked ? "text-black" : ""}`} ref={likesRef}>
+            <div className={`text-4xl ${userHasLiked ? "text-black" : ""}`}>
                 {likes}
             </div>
             {dailyLikes > 0 && (

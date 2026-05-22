@@ -18,8 +18,6 @@ import {
   getAnimationTypeFromCount,
 } from "@/lib/utils"
 
-import { growAnimations } from "@/lib/constants"
-
 export default function QuoteBlock({ quote, loading, index, className }) {
   const router = useRouter()
   const quoteTextRef = useRef(null)
@@ -42,14 +40,6 @@ export default function QuoteBlock({ quote, loading, index, className }) {
     } catch (err) {
       console.error("Share failed:", err)
     }
-  }
-
-  function animate(ref, value) {
-      const animation = getAnimationTypeFromCount(value, growAnimations)
-
-      if (animation && ref.current) {
-          applyAnimation(ref.current, animation, 1000)
-      }
   }
 
   const quoteDate = timeAgo(quote.episode_publish_date)
@@ -89,7 +79,6 @@ export default function QuoteBlock({ quote, loading, index, className }) {
               handleLike={handleLike}
               userHasLiked={userHasLiked}
               handleShare={handleShare}
-              animate={animate}
             />
           </div>
       </div>

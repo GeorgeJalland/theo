@@ -6,39 +6,6 @@ export function getAnimationTypeFromCount(count, options) {
     return options[options.length - 1]
 }
 
-export function applyAnimation(ref, animation, duration) {
-    ref.classList.add(animation);
-    setTimeout(() => {
-        ref.classList.remove(animation);
-    }, duration);
-}
-
-export function hideElement(element) {
-    element.classList.add("hide")
-}
-
-export function unhideElement(element) {
-    element.classList.remove("hide")
-}
-
-export function selectElement(element) {
-    element.classList.add("selected")
-}
-
-export function unselectElement(element) {
-    element.classList.remove("selected")
-}
-
-export function makeOpaque(element) {
-    element.classList.add("makeOpaque")
-}
-
-export function updateCanonicalLinkWithUrl() {
-    const url = window.location.href
-    let canonicalLink = document.getElementById('canonicalLink');
-    canonicalLink.setAttribute("href", url);
-}
-
 export function timeAgo(dateString) {
     if (dateString == null) {
         return "?d"

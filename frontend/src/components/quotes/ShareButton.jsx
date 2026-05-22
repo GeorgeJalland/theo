@@ -3,17 +3,13 @@
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 
-export default function ShareButton({ handleShare, initialShares, animate}) {
-    const sharesRef = useRef(null)
-
+export default function ShareButton({ handleShare, initialShares}) {
     const [shares, setShares] = useState(initialShares || 0)
 
     async function _handleShare() {
         handleShare()
 
         setShares(prev => prev + 1)
-
-        animate(sharesRef, shares)
     }
 
     return (
@@ -28,7 +24,7 @@ export default function ShareButton({ handleShare, initialShares, animate}) {
                 height={64}
                 priority
             />
-            <div data-anim="shares" className="text-4xl" ref={sharesRef}>
+            <div className="text-4xl">
                 {shares}
             </div>
         </div>
