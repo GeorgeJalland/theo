@@ -1,4 +1,4 @@
-def source(config, engine, backfill_youtube_video_ids=False):
+def source(config, engine, backfill_youtube_video_ids=False, spotify_ep_id=None, youtube_video_id=None, transcript_file_path=None):
     import spotipy
     from spotipy.oauth2 import SpotifyClientCredentials
     from googleapiclient.discovery import build
@@ -31,7 +31,10 @@ def source(config, engine, backfill_youtube_video_ids=False):
 
     sourcer = EpisodeSourcer(sp, yt, destination_folder=destination_folder, override_existing=override_files)
     with get_session(engine) as session:
-        sourcer.source(session, this_past_weekend_show_id, youtube_playlist_id)
+        if spotify_ep_id and youtube_video_id:
+            sourcer.source_single_episode(session, spotify_ep_id, youtube_video_id, transcript_file_path=transcript_file_path)
+        else:
+            sourcer.source(session, this_past_weekend_show_id, youtube_playlist_id)
         if backfill_youtube_video_ids:
             sourcer.backfill_youtube_video_ids(session, youtube_playlist_id)
 
@@ -69,7 +72,7 @@ def classify(config, engine):
 
 
 if __name__ == "__main__":
-    import sys
+    import argparse
     import logging
 
     from data_sourcing.config.config import get_config
@@ -77,24 +80,75 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
 
+    parser = argparse.ArgumentParser(
+        description="Data sourcing pipeline"
+    )
+
+    parser.add_argument(
+        "--source",
+        action="store_true",
+        help="Run sourcing pipeline"
+    )
+
+    parser.add_argument(
+        "--process",
+        action="store_true",
+        help="Run processing pipeline"
+    )
+
+    parser.add_argument(
+        "--classify",
+        action="store_true",
+        help="Run classification pipeline"
+    )
+
+    parser.add_argument(
+        "--backfill-youtube-video-ids",
+        action="store_true",
+        help="Backfill missing YouTube video IDs"
+    )
+
+    parser.add_argument(
+        "--spotify-ep-id",
+        type=str,
+        help="Spotify episode ID"
+    )
+
+    parser.add_argument(
+        "--youtube-video-id",
+        type=str,
+        help="YouTube video ID"
+    )
+
+    parser.add_argument(
+        "--transcript-file-path",
+        type=str,
+        help="Path to transcript file"
+    )
+
+    args = parser.parse_args()
+
     config = get_config()
-    
-    run_sourcing = "--source" in sys.argv
-    backfill_youtube_video_ids = "--backfill-youtube-video-ids" in sys.argv
-    run_processing = "--process" in sys.argv
-    run_classifying = "--classify" in sys.argv
 
-    database_url = config.DATABASE_URL
-
-    engine = get_engine(database_url)
+    engine = get_engine(config.DATABASE_URL)
     create_db_and_tables(engine)
 
-    if run_sourcing:
+    if args.source:
         logging.info("Running sourcing...")
-        source(config, engine, backfill_youtube_video_ids)
-    if run_processing:
+
+        source(
+            config=config,
+            engine=engine,
+            backfill_youtube_video_ids=args.backfill_youtube_video_ids,
+            spotify_ep_id=args.spotify_ep_id,
+            youtube_video_id=args.youtube_video_id,
+            transcript_file_path=args.transcript_file_path
+        )
+
+    if args.process:
         logging.info("Running processing...")
         process(config, engine)
-    if run_classifying:
-        logging.info("Running run_classifying...")
+
+    if args.classify:
+        logging.info("Running classifying...")
         classify(config, engine)

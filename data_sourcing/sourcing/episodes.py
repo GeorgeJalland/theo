@@ -48,28 +48,37 @@ class EpisodeSourcer:
         while episodes["items"]:
             for ep in episodes["items"]:
                 if not episode_exists(session, ep["id"]):
-                    self.process_episode(session, ep, youtube_playlist_id)
+                    video_id = find_video_id_by_episode_number(self.yt, youtube_playlist_id, self.get_episode_number(ep["name"]))
+                    self.process_episode(session, ep, video_id)
             offset += limit
             episodes = self.sp.show_episodes(spotify_show_id, limit=limit, offset=offset)
 
-    def process_episode(self, session: Session, episode_data: Dict[str, Any], youtube_playlist_id: str):
+    def source_single_episode(self, session: Session, spotify_episode_id: str, youtube_video_id: str, transcript_file_path: str = None):
+        self.logger.info(f"Sourcing transcript for single episode_id={spotify_episode_id}")
+        episode_data = self.sp.episode(spotify_episode_id)
+        if not episode_exists(session, episode_data["id"]):
+            return self.process_episode(session, episode_data, youtube_video_id, transcript_file_path=transcript_file_path)
+        else:
+            self.logger.info(f"Episode with spotify_podcast_id={spotify_episode_id} already exists in database. Skipping.")
+            return
+
+    def process_episode(self, session: Session, episode_data: Dict[str, Any], youtube_video_id: str, transcript_file_path: str = None):
         episode = {
             "title": episode_data["name"],
             "description": episode_data.get("description"),
             "episode_number": self.get_episode_number(episode_data["name"]),
             "guest_name": self.get_guest_name(episode_data["name"]),
             "spotify_podcast_id": episode_data["id"],
-            "youtube_video_id": None,  # Will be filled in later if needed
+            "youtube_video_id": youtube_video_id,
             "publish_date": datetime.strptime(episode_data.get("release_date"), DATE_FORMAT),
-            "transcript_file_path": None,  # Will be filled in after saving transcript
+            "transcript_file_path": transcript_file_path,
             "thumbnails": json.dumps(episode_data["images"])
         }
 
-        episode["transcript_file_path"] = self.save_transcript_to_file(episode_data["id"], episode_data["name"])
+        if not transcript_file_path:
+            episode["transcript_file_path"] = self.save_transcript_to_file(episode_data["id"], episode_data["name"])
 
-        episode["youtube_video_id"] = find_video_id_by_episode_number(self.yt, youtube_playlist_id, episode["episode_number"])
-
-        if episode["transcript_file_path"] is None:
+        if episode["transcript_file_path"] is None and not transcript_file_path:
             self.logger.warning(f"Skipping episode '{episode['title']}' due to missing transcript.")
             return
 
