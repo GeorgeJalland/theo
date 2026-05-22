@@ -57,7 +57,7 @@ export default async function AboutUs({}) {
                     <Stats />
                     <TheoHead />
                     <div className="absolute left-160 top-25 flex flex-col items-center gap-4">
-                        <Image src="/images/arrow1.png" alt="arrow" width={300} height={300} className="w-20 h-20 scale-x-[-1] scale-y-[-1]" />
+                        <Image priority src="/images/arrow1.png" alt="arrow" width={300} height={300} className="w-20 h-20 scale-x-[-1] scale-y-[-1]" />
                         <span>Click me!</span>
                     </div>
 
