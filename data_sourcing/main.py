@@ -31,7 +31,8 @@ def source(config, engine, backfill_youtube_video_ids=False, spotify_ep_id=None,
         client_secret=spotify_client_secret,
         redirect_uri=spotify_redirect_uri,
         scope=spotify_scope,
-        open_browser=False
+        open_browser=False,
+        cache_path="./data_sourcing/.cache"
     )
 
     sp = spotipy.Spotify(auth_manager=auth_manager)
