@@ -362,8 +362,17 @@ def get_base_stmt(user_id: str):
 
     return add_trending_metrics(stmt)
 
-@cached(ttl=3600)
-async def get_quote_embeddings_map() -> dict[int, list[float]]:
+async def get_quote_table_version(session: AsyncSession) -> str:
+    result = await session.execute(
+        select(func.max(Quote.status_updated_at))
+        .where(Quote.status == QuoteStatus.APPROVED)
+    )
+    version = result.scalar()
+    return version.isoformat() if version else "empty"
+
+@cached()
+async def get_quote_embeddings_map(version: str) -> dict[int, list[float]]:
+    print(f"recalcating embeddings map for db version: {version}")
     async with AsyncSessionLocal() as session:
         result = await session.execute(select(Quote.id, Quote.text_embedding).where(Quote.status == QuoteStatus.APPROVED))
         rows = result.mappings().all()
@@ -372,8 +381,9 @@ async def get_quote_embeddings_map() -> dict[int, list[float]]:
         matrix = np.array([json.loads(r["text_embedding"]) for r in rows], dtype=np.float32)
         return ids, matrix
 
-async def get_similar_quote_ids(quote_id: int, top_k: int = 3) -> list[QuoteRead]:
-    ids, matrix = await get_quote_embeddings_map()
+async def get_similar_quote_ids(session: AsyncSession, quote_id: int, top_k: int = 3) -> list[QuoteRead]:
+    db_version = await get_quote_table_version(session)
+    ids, matrix = await get_quote_embeddings_map(db_version)
 
     if quote_id not in ids:
         raise ValueError("Quote not found")

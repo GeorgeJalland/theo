@@ -151,7 +151,7 @@ async def get_similar_quotes(
     limit: int = 3,
     session: AsyncSession = Depends(db.get_session)
     ) -> list[QuoteRead]:
-    quote_ids = await db.get_similar_quote_ids(quote_id, top_k=limit)
+    quote_ids = await db.get_similar_quote_ids(session, quote_id, top_k=limit)
     return await db.get_quotes_by_ids(session, qid, quote_ids)
 
 @app.get("/api/sitemap.xml", response_class=Response)
