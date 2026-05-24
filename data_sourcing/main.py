@@ -1,6 +1,6 @@
 def source(config, engine, backfill_youtube_video_ids=False, spotify_ep_id=None, youtube_video_id=None, transcript_file_path=None):
     import spotipy
-    from spotipy.oauth2 import SpotifyClientCredentials
+    from spotipy.oauth2 import SpotifyOAuth
     from googleapiclient.discovery import build
 
     from data_sourcing.sourcing.episodes import EpisodeSourcer
@@ -8,6 +8,8 @@ def source(config, engine, backfill_youtube_video_ids=False, spotify_ep_id=None,
 
     spotify_client_id = config.SPOTIFY_CLIENT_ID
     spotify_client_secret = config.SPOTIFY_CLIENT_SECRET
+    spotify_redirect_uri = config.SPOTIFY_REDIRECT_URI
+    spotify_scope = config.SPOTIFY_SCOPE
     override_files = config.OVERRIDE_FILES
     destination_folder = config.DESTINATION_FOLDER
     this_past_weekend_show_id = config.THIS_PAST_WEEKEND_SPOTIFY_SHOW_ID
@@ -24,8 +26,15 @@ def source(config, engine, backfill_youtube_video_ids=False, spotify_ep_id=None,
     print(f"  YOUTUBE_API_KEY: {api_key}")
 
     # Set up Spotify authentication
-    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=spotify_client_id,
-                                                              client_secret=spotify_client_secret))
+    auth_manager = SpotifyOAuth(
+        client_id=spotify_client_id,
+        client_secret=spotify_client_secret,
+        redirect_uri=spotify_redirect_uri,
+        scope=spotify_scope,
+        open_browser=False
+    )
+
+    sp = spotipy.Spotify(auth_manager=auth_manager)
     
     yt = build("youtube", "v3", developerKey=api_key)
 

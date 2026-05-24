@@ -25,7 +25,7 @@ class EpisodeSourcer:
         self.headers = {
             "Authorization": f"Bearer {self.token}"
         }
-        self.transcript_url_template = "https://spclient.wg.spotify.com/transcript-read-along/v2/episode/{episode_id}?format=json&maxSentenceLength=5000&excludeCC=true"
+        self.transcript_url_template = "https://spclient.wg.spotify.com/transcript-read-along/v2/episode/{episode_id}?format=json&maxSentenceLength=500&excludeCC=true"
 
     @property
     def token(self):
@@ -97,7 +97,7 @@ class EpisodeSourcer:
         response = requests.get(self.transcript_url_template.format(episode_id=episode_id), headers=self.headers)
         
         if response.status_code != 200:
-            print(f"Failed to fetch transcript for episode {episode_id}. Status code: {response.status_code}")
+            print(f"Failed to fetch transcript for episode {episode_id}. Status code: {response.status_code}, Response: {response.text}")
             return
         
         res_dict = response.json()
