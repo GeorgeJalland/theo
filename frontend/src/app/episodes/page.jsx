@@ -14,7 +14,7 @@ const DEFAULT_ORDER = "desc"
 export const dynamic = "force-dynamic";
 
 export const metadata = buildPageMeta({
-  title: "This Past Weekend Episodes",
+  title: "Episodes",
   description:
     "Browse and search Theo Von This Past Weekend podcast episodes. Updated regularly with new episodes.",
   path: "/episodes",

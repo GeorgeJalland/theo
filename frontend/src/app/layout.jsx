@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
         <BootstrapCookie />
         <header className="w-full z-100 flex mb-6 items-end justify-between">
           <Panel className="ml-2">
-            <Link href="/quotes">
+            <Link href="/">
             <h1 id="theoh1" className="text-5xl tracking-tight">[Theo Von Quotes]</h1>
             </Link>
           </Panel>

@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const menuItems = [
-    {title: "Quotes", url:"/quotes"},
+    {title: "Quotes", url:"/"},
     {title: "Episodes", url:"/episodes"},
     {title: "Clips", url:"/clips"},
     {title: "About Us", url:"/about"},

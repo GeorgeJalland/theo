@@ -53,7 +53,7 @@ export default async function Page({ params }) {
         ))}
       </div>
       <Panel className="mb-5">
-        <Link href="/quotes">
+        <Link href="/">
             <h2 className="text-4xl">[More Quotes]</h2>
         </Link>
       </Panel>
