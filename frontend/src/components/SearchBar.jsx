@@ -37,10 +37,6 @@ export default function SearchBar({ page, placeholder, onFocus, onBlur, searchPa
     return () => clearTimeout(timer);
   }, [query]);
 
-  useEffect(() => {
-    setQuery(searchParams?.search || "")
-  }, [searchParams?.search])
-
   return (
     <input
       type="search"
