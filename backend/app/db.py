@@ -158,7 +158,7 @@ async def get_quotes(session: AsyncSession, user_id: str, order_by: str, sort_or
         stmt = stmt.where(Quote.episode_id == episode_id)
 
     if order_by == "trending":
-        stmt = stmt.order_by(direction("trending_score"))
+        stmt = stmt.order_by(direction("trending_score"), direction("last_like_at"))
     elif order_by == "new":
         stmt = stmt.order_by(direction("episode_publish_date"))
     else:
