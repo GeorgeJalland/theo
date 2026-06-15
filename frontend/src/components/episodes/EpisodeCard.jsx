@@ -16,6 +16,7 @@ export default function EpisodeCard({ episode, showDate=true }) {
                 width={640}
                 title={episode.title}
                 alt={`${episode.title} thumbnail`}
+                sizes="320px"
                 src={thumbnails[0].url}
                 className="h-auto w-80 border-2 border-white/80 rounded-2xl"
                 />

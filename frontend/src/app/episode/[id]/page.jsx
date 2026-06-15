@@ -59,10 +59,10 @@ export default async function Episode({params}){
                         <h2>{episode.publish_date.split("T")[0]} ({timeAgo(episode.publish_date)} ago)</h2>
                         <div className="flex gap-4 items-center">
                             <Link href={episode.spotify_url} target="_blank" rel="noopener noreferrer" title="open spotify episode">
-                                <Image priority height={64} width={64} src="/images/spotify_logo.png" alt="spotify logo" className="w-14 h-full"/>
+                                <Image priority height={64} width={64} src="/images/spotify_logo.png" alt="spotify logo" className="w-14 h-auto"/>
                             </Link>
                             <Link href={episode.youtube_url} target="_blank" rel="noopener noreferrer" title="open youtube video">
-                                <Image priority height={50} width={64} src="/images/youtube_icon.webp" alt="youtube logo" className="w-16 h-full"/>
+                                <Image priority height={50} width={64} src="/images/youtube_icon.webp" alt="youtube logo" className="w-16 h-auto"/>
                             </Link>
                         </div>
                     </div>

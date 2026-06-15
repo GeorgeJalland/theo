@@ -45,7 +45,7 @@ export default function SearchBar({ page, placeholder, onFocus, onBlur, searchPa
       onFocus={onFocus}
       onBlur={handleBlur}
       placeholder={placeholder || "🔎Search..."}
-      className="w-full h-full rounded-lg border-1 md:border-2 p-2 backdrop-blur-sm"
+      className="w-full h-auto rounded-lg border-1 md:border-2 p-2 backdrop-blur-sm"
     />
   );
 }

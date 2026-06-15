@@ -73,7 +73,7 @@ export default function InfiniteEpisodeList({
                 {episodes.map((ep, i) => <EpisodeCard key={ep.id} episode={ep} />)}
             </div>
             <div ref={loaderRef} className="h-10 flex justify-center items-center">
-                    <Image priority alt="rat king" height={64} width={64} className="w-16 h-full mx-4" src="/images/pixel rat.png"/>
+                    <Image priority alt="rat king" height={64} width={64} className="w-16 h-auto mx-4" src="/images/pixel rat.png"/>
                     {canLoadMore ? "Loading..." : ""}
             </div>
         </>
