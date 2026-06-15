@@ -12,8 +12,9 @@ export default function EpisodeCard({ episode, showDate=true }) {
             <Link key={episode.id} href={"/episode/"+episode.id}>
                 <Image
                 priority
-                height={640}
-                width={640}
+                fetchPriority="high"
+                height={320}
+                width={320}
                 title={episode.title}
                 alt={`${episode.title} thumbnail`}
                 sizes="320px"
