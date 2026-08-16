@@ -24,6 +24,8 @@ Mark FALSE if:
 - The humor depends heavily on knowing prior context
 - The quote lacks standalone absurdity/imagery/impact
 
+Offensive language or sentiment is not a reason for rejection. The quote can be offensive and still be fit for purpose.
+
 EXAMPLES:
 
 FALSE:
@@ -90,7 +92,7 @@ QUOTES TO CLASSIFY:
 {quotes_json}
 """
 
-MODEL = "llama-3.3-70b-versatile"
+MODEL = "qwen/qwen3.6-27b"
 BATCH_SIZE = 50
 
 def classify_pending_quotes(session: Session, client):
@@ -103,6 +105,8 @@ def classify_pending_quotes(session: Session, client):
         response = client.chat.completions.create(
             model=MODEL,
             temperature=0,
+            max_completion_tokens=4096,
+            reasoning_effort="none",
             messages=[
                 {
                     "role": "system",
