@@ -92,7 +92,7 @@ QUOTES TO CLASSIFY:
 {quotes_json}
 """
 
-MODEL = "qwen/qwen3.6-27b"
+MODEL = "qwen/qwen3.8-27b"
 BATCH_SIZE = 50
 
 def classify_pending_quotes(session: Session, client):
